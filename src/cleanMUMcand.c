@@ -1,10 +1,12 @@
 /*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
-*/
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
 
 //\Ignore{
 
@@ -68,7 +70,7 @@ Sint mumuniqueinquery(void *processinfo,
 
     sortMUMcandidates(mumcand);
     for(mumcandptr = mumcand->spaceMUMcandidate;
-        mumcandptr < mumcand->spaceMUMcandidate + 
+        mumcandptr < mumcand->spaceMUMcandidate +
                      mumcand->nextfreeMUMcandidate;
         mumcandptr++)
     {
@@ -93,10 +95,10 @@ Sint mumuniqueinquery(void *processinfo,
       }
       if(mumcandptr > mumcand->spaceMUMcandidate && !ignoreprevious)
       {
-        if(processmum(processinfo, 
-                      (mumcandptr-1)->mumlength, 
-                      (mumcandptr-1)->dbstart, 
-                      (mumcandptr-1)->queryseq, 
+        if(processmum(processinfo,
+                      (mumcandptr-1)->mumlength,
+                      (mumcandptr-1)->dbstart,
+                      (mumcandptr-1)->queryseq,
                       (mumcandptr-1)->querystart) != 0)
         {
           return -1;
@@ -106,11 +108,11 @@ Sint mumuniqueinquery(void *processinfo,
     }
     if(!ignoreprevious)
     {
-      mumcandptr = mumcand->spaceMUMcandidate + 
+      mumcandptr = mumcand->spaceMUMcandidate +
                    mumcand->nextfreeMUMcandidate - 1;
-      if(processmum(processinfo, 
-                    mumcandptr->mumlength, 
-                    mumcandptr->dbstart, 
+      if(processmum(processinfo,
+                    mumcandptr->mumlength,
+                    mumcandptr->dbstart,
                     mumcandptr->queryseq,
                     mumcandptr->querystart) != 0)
       {

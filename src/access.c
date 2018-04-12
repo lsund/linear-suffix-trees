@@ -1,10 +1,13 @@
 /*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
-*/
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +31,7 @@ Uint getlargelinkstree(Suffixtree *stree,Bref btptr,Uint depth)
   }
   if(ISSMALLDEPTH(depth))
   {
-    return (((*(btptr+2) & LOWERLINKPATT) >> SMALLDEPTHBITS) | 
+    return (((*(btptr+2) & LOWERLINKPATT) >> SMALLDEPTHBITS) |
            ((*(btptr+3) & MIDDLELINKPATT) >> SHIFTMIDDLE)   |
            ((stree->leaftab[GETHEADPOS(btptr)] & EXTRAPATT)
               >> SHIFTHIGHER)) << 1;
@@ -42,7 +45,7 @@ Uint getlargelinkstree(Suffixtree *stree,Bref btptr,Uint depth)
     } else
     {
       succ = GETBROTHER(stree->branchtab + succ);
-    } 
+    }
   }
   return succ & MAXINDEX;
 }
@@ -80,7 +83,7 @@ Uint getlargelinkstree(Suffixtree *stree,Bref btptr,Uint depth)
     } else
     {
       succ = GETBROTHER(stree->branchtab + GETBRANCHINDEX(succ));
-    } 
+    }
   }
   return succ & MAXINDEX;
 }
@@ -168,13 +171,13 @@ void getbranchinfostree(Suffixtree *stree,Uint whichinfo,
   }
   if(which & ACCESSSUFFIXLINK)
   {
-    if((stree->chainstart != NULL && btptr >= stree->chainstart) || 
+    if((stree->chainstart != NULL && btptr >= stree->chainstart) ||
        !ISLARGE(*btptr))
     {
       branchinfo->suffixlink = btptr + SMALLINTS;
     } else
     {
-      branchinfo->suffixlink = stree->branchtab + 
+      branchinfo->suffixlink = stree->branchtab +
                                getlargelinkstree(stree,btptr,
                                                  branchinfo->depth);
     }
@@ -237,7 +240,7 @@ void showpathstree(Suffixtree *stree,Bref bnode,
 {
   Branchinfo branchinfo;
   Uint i;
-  
+
   getbranchinfostree(stree,ACCESSHEADPOS | ACCESSDEPTH,&branchinfo,bnode);
   for(i = 0; i < branchinfo.depth; i++)
   {
@@ -274,7 +277,7 @@ void showsimplelocstree(Suffixtree *stree,Simpleloc *loc)
     {
       printf("Small %lu",(Showuint) bnode);
     }
-  } 
+  }
   if(loc->remain > 0)
   {
     (void) putchar(')');
@@ -337,7 +340,7 @@ void rootsucclocationsstree(Suffixtree *stree,ArraySimpleloc *ll)
 void succlocationsstree(Suffixtree *stree,BOOL nosentinel,Simpleloc *loc,
                         ArraySimpleloc *ll)
 {
-  Uint succdepth, succ, leafindex, distance, depth, headpos, 
+  Uint succdepth, succ, leafindex, distance, depth, headpos,
        remain, *succptr, *largeptr, *nodeptr;
   Simpleloc *llptr;
 
@@ -346,10 +349,10 @@ void succlocationsstree(Suffixtree *stree,BOOL nosentinel,Simpleloc *loc,
   CHECKARRAYSPACE(ll,Simpleloc,stree->alphasize+1);
   if(loc->remain > 0)
   {
-    if(nosentinel && loc->nextnode.toleaf && loc->remain <= UintConst(1))  
+    if(nosentinel && loc->nextnode.toleaf && loc->remain <= UintConst(1))
     {  // at the end of leaf edge: only a\$ remains
       return;
-    } 
+    }
     llptr = ll->spaceSimpleloc + ll->nextfreeSimpleloc++;
     llptr->textpos = loc->textpos + 1;
     llptr->remain = loc->remain - 1;

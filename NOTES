@@ -10,5 +10,32 @@ mapfile.c: memory mapping files
 multiseq.c: handling multiple sequences
 procopt.c: parsing options
 safescpy.c: a safe string copy
-seterror.c: handling error messages 
+seterror.c: handling error messages
 space.c: space allocation and keeping track of it
+
+
+FILES TO ITERATE THROUGH
+
+[] access.c
+[] addleafcount.c
+[] cleanMUMcand.c
+[] clock.c
+[] construct.c
+[] debug.c
+[] depthtab.c
+[] dfs.c
+[] ex2leav.c
+[] iterator.c
+[] linkloc.c
+[] loc.c
+[] mapfile.c
+[] multiseq.c
+[] overmax.c
+[] oversucc.c
+[] procopt.c
+[] safescpy.c
+[] scanpref.c
+[] seterror.c
+[] space.c
+[] stree.c
+[] streedbg.c
