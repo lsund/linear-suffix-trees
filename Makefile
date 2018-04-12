@@ -16,10 +16,11 @@ INCLUDEDIR=include
 #SIZEFLAG=-DSTREELARGE
 SIZEFLAG=-DSTREEHUGE
 
-override CFLAGS+=-I$(INCLUDEDIR) $(SIZEFLAG)
+override CFLAGS+=-I'include' $(SIZEFLAG)
 ##CFLAGS=${DEFINECFLAGS} -I$(INCLUDEDIR) $(SIZEFLAG)
 ##LDFLAGS=${DEFINELDFLAGS}
-SPLINTFLAGS=${SIZEFLAG} -I${INCLUDEDIR} -f ../Splintoptions -DDEBUG
+
+LDFLAGS+=-m64
 
 #-DSTARTFACTOR=0.5
 
@@ -38,25 +39,33 @@ PROTOFILES=  access.c\
              addleafcount.c\
              iterator.c
 
-OBJECTS=     construct.o\
-             access.o\
-             scanpref.o\
-             linkloc.o\
-             depthtab.o\
-             ex2leav.o\
-             dfs.o\
-             overmax.o\
-             oversucc.o\
-             addleafcount.o\
-             iterator.o
+OBJECTS=     obj/construct.o\
+             obj/access.o\
+             obj/space.o\
+             obj/clock.o\
+             obj/mapfile.o\
+             obj/seterror.o\
+             obj/scanpref.o\
+             obj/linkloc.o\
+             obj/depthtab.o\
+             obj/ex2leav.o\
+             obj/dfs.o\
+             obj/overmax.o\
+             obj/oversucc.o\
+             obj/addleafcount.o\
+             obj/stree.o\
+             obj/iterator.o
 
 .SUFFIXES: .o .a .x
 
-all: libs progs
+all: dirs mccreight
 
-libs: libstree.a
+dirs:
+	mkdir -p obj bin
 
-progs: stree.x loc.x
+# libs: libstree.a
+
+# progs: stree.x loc.x
 
 include Filegoals.mf
 
@@ -69,8 +78,15 @@ stree.x: stree.o libstree.a
 loc.x: loc.o libstree.a
 	$(LD) $(LDFLAGS) loc.o libstree.a $(LIBBASE) -o $@
 
+
+mccreight: ${OBJECTS}
+	${CC} ${CFLAGS} ${OBJECTS} -o bin/$@
+
+obj/%.o:src/%.c
+	$(LD) $(CFLAGS) -c src/$*.c -o $@
+
 .PHONY:clean
 clean:
-	rm -f *.[aox] *~
+	rm -rf obj bin
 
 include Dependencies.mf
