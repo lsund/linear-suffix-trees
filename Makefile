@@ -67,7 +67,6 @@ dirs:
 
 # progs: stree.x loc.x
 
-include Filegoals.mf
 
 libstree.a: $(OBJECTS)
 	ar sruv $@ $(OBJECTS)
