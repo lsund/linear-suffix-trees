@@ -87,5 +87,3 @@ obj/%.o:src/%.c
 .PHONY:clean
 clean:
 	rm -rf obj bin
-
-include Dependencies.mf
