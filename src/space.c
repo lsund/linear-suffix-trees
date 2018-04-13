@@ -49,8 +49,8 @@
 #define ALLOCVIAFATAL(M) \
         fprintf(stderr,"file \"%s\", line %lu: "\
                        " allocandusespaceviaptr(%lu,%lu) failed:%s\n",\
-                       file,(Showuint) line,(Showuint) size,\
-                       (Showuint) number,M);\
+                       file,(Ulong) line,(Ulong) size,\
+                       (Ulong) number,M);\
         exit(EXIT_FAILURE)
 
 typedef struct
@@ -149,7 +149,7 @@ static void subtractspace(Uint space)
   Uint i, blocknum;
 
   DEBUG2(2,"\n# allocandusespaceviaptr(file=%s,line=%lu)\n",file,
-                      (Showuint) line);
+                      (Ulong) line);
   if(nextfreeblock > 0)
   {
     NOTSUPPOSEDTOBENULL(blocks);
@@ -191,10 +191,10 @@ static void subtractspace(Uint space)
   subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
   addspace(size*number);
   DEBUG3(2,"# allocandusespaceviaptr:block %lu: %lu cells of size %lu\n",
-            (Showuint) blocknum,(Showuint) number,(Showuint) size);
+            (Ulong) blocknum,(Ulong) number,(Ulong) size);
   DEBUG2(2,"# previously allocated for this block (%lu,%lu)\n",
-            (Showuint) blocks[blocknum].numberofcells,
-            (Showuint) blocks[blocknum].sizeofcells);
+            (Ulong) blocks[blocknum].numberofcells,
+            (Ulong) blocks[blocknum].sizeofcells);
   blocks[blocknum].numberofcells = number;
   blocks[blocknum].sizeofcells = size;
   blocks[blocknum].fileallocated = file;
@@ -240,11 +240,11 @@ void freespaceviaptr(char *file,Uint line,void *ptr)
 {
   Uint blocknum;
 
-  DEBUG2(2,"\n# freespaceviaptr(file=%s,line=%lu):\n",file,(Showuint) line);
+  DEBUG2(2,"\n# freespaceviaptr(file=%s,line=%lu):\n",file,(Ulong) line);
   if(ptr == NULL)
   {
     fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): Cannot free NULL-ptr\n",
-                    file,(Showuint) line);
+                    file,(Ulong) line);
     exit(EXIT_SUCCESS);
   }
   NOTSUPPOSEDTOBENULL(blocks);
@@ -259,18 +259,18 @@ void freespaceviaptr(char *file,Uint line,void *ptr)
   {
     fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): "
                    " cannot find space block\n",
-            file,(Showuint) line);
+            file,(Ulong) line);
     exit(EXIT_FAILURE);
   }
   free(blocks[blocknum].spaceptr);
   subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
   DEBUG3(2,"# freespaceviaptr:block %lu: %lu cells of size %lu\n",
-            (Showuint) blocknum,
-            (Showuint) blocks[blocknum].numberofcells,
-            (Showuint) blocks[blocknum].sizeofcells);
+            (Ulong) blocknum,
+            (Ulong) blocks[blocknum].numberofcells,
+            (Ulong) blocks[blocknum].sizeofcells);
   DEBUG2(2,"# this block was allocated in file \"%s\", line %lu\n",
             blocks[blocknum].fileallocated,
-            (Showuint) blocks[blocknum].lineallocated);
+            (Ulong) blocks[blocknum].lineallocated);
   blocks[blocknum].numberofcells = 0;
   blocks[blocknum].sizeofcells = 0;
   blocks[blocknum].fileallocated = NULL;
@@ -301,9 +301,9 @@ void wrapspace(void)
     if(blocks[blocknum].spaceptr != NULL)
     {
       DEBUG3(2,"# free block %lu: %lu cells of size %lu\n",
-                (Showuint) blocknum,
-                (Showuint) blocks[blocknum].numberofcells,
-                (Showuint) blocks[blocknum].sizeofcells);
+                (Ulong) blocknum,
+                (Ulong) blocks[blocknum].numberofcells,
+                (Ulong) blocks[blocknum].sizeofcells);
       free(blocks[blocknum].spaceptr);
       blocks[blocknum].spaceptr = NULL;
     }
@@ -334,10 +334,10 @@ void activeblocks(void)
   {
     if(blocks[blocknum].spaceptr != NULL)
     {
-      fprintf(stderr,"# active block %lu: ",(Showuint) blocknum);
+      fprintf(stderr,"# active block %lu: ",(Ulong) blocknum);
       fprintf(stderr,"allocated in file \"%s\", line %lu\n",
               blocks[blocknum].fileallocated,
-              (Showuint) blocks[blocknum].lineallocated);
+              (Ulong) blocks[blocknum].lineallocated);
     }
   }
 }
@@ -360,10 +360,10 @@ void checkspaceleak(void)
     if(blocks[blocknum].spaceptr != NULL)
     {
       fprintf(stderr,"space leak: main memory for block %lu not freed\n",
-              (Showuint) blocknum);
+              (Ulong) blocknum);
       fprintf(stderr,"%lu cells of size %lu\n",
-              (Showuint) blocks[blocknum].numberofcells,
-              (Showuint) blocks[blocknum].sizeofcells);
+              (Ulong) blocks[blocknum].numberofcells,
+              (Ulong) blocks[blocknum].sizeofcells);
       fprintf(stderr,"allocated: ");
       if(blocks[blocknum].fileallocated == NULL)
       {
@@ -372,7 +372,7 @@ void checkspaceleak(void)
       {
         fprintf(stderr,"file \"%s\", line %lu\n",
                blocks[blocknum].fileallocated,
-               (Showuint) blocks[blocknum].lineallocated);
+               (Ulong) blocks[blocknum].lineallocated);
       }
       exit(EXIT_FAILURE);
     }
@@ -422,8 +422,8 @@ void showmemsize(void)
   Sint pagesize = (Sint) sysconf((Sysconfargtype) _SC_PAGESIZE);
   Sint physpages = (Sint) sysconf((Sysconfargtype) _SC_PHYS_PAGES);
 
-  DEBUG1(1,"# pagesize = %ld\n",(Showsint) pagesize);
-  DEBUG1(1,"# number of physical pages = %ld\n",(Showsint) physpages);
+  DEBUG1(1,"# pagesize = %ld\n",(Slong) pagesize);
+  DEBUG1(1,"# number of physical pages = %ld\n",(Slong) physpages);
   DEBUG1(1,"# memory size = %.0f MB\n",MEGABYTES(pagesize * physpages));
 }
 #endif

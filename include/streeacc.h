@@ -22,7 +22,7 @@
 #endif
 
 #ifdef DEBUG
-#define SHOWVAL(S)    fprintf(stderr,"#%s %lu\n",#S,(Showuint) S)
+#define SHOWVAL(S)    fprintf(stderr,"#%s %lu\n",#S,(Ulong) S)
 #define SETVAL(E,VAL) *(E) = VAL;\
                       if((E) > stree->maxset)\
                       {\
@@ -46,10 +46,10 @@
 //}
 
 /*
-  \texttt{GETBOTH} retrieves the \emph{depth} and the \emph{headposition} of 
+  \texttt{GETBOTH} retrieves the \emph{depth} and the \emph{headposition} of
   a branching node referred to by \texttt{PT}. In case, we need these values
-  for a node of the current chain, the distance is not set. So we compute 
-  it as the difference between the next free base address, and the base 
+  for a node of the current chain, the distance is not set. So we compute
+  it as the difference between the next free base address, and the base
   address of the node the chain starts with. Then we refer to the current depth
   and the number of the current leaf. In case, the node is large, we can
   directly look up the values. In case, the node is small, we determine
@@ -168,7 +168,7 @@
 /*
   The suffix link is always determined for the \emph{headnode}. If this
   is large, the we have to retrieve it from that node. Otherwise, the
-  suffix link refers to the next node. In both cases, the depth of the 
+  suffix link refers to the next node. In both cases, the depth of the
   \emph{headnode} is decremented.
 */
 
@@ -183,12 +183,12 @@
         stree->headnodedepth--
 
 /*
-  Whenever \emph{insertleaf} is called, \emph{onsuccpath} stores the 
+  Whenever \emph{insertleaf} is called, \emph{onsuccpath} stores the
   address of the new leaf.
-  Whenever \emph{insertbranch} is called, \emph{onsuccpath} stores the 
+  Whenever \emph{insertbranch} is called, \emph{onsuccpath} stores the
   address of the new branching node. Both nodes are a successor of the
   node, for which a suffix link is possible to be computed in the
-  next step. In case linear retrieval of suffix links is required, 
+  next step. In case linear retrieval of suffix links is required,
   it is possible to start at the node referenced by \emph{onsuccpath}.
 */
 
@@ -199,9 +199,9 @@
 #endif
 
 /*
-  The following three macros handle the setting of the suffix link in a 
-  nil reference. The \emph{RECALL}-macros store the address of the 
-  reference. In case the reference is a new leaf, this is marked. 
+  The following three macros handle the setting of the suffix link in a
+  nil reference. The \emph{RECALL}-macros store the address of the
+  reference. In case the reference is a new leaf, this is marked.
 */
 
 #define RECALLNEWLEAFADDRESS(A)   stree->setlink = A;\
@@ -254,15 +254,15 @@
           {\
             if(ISLEAF(NODE))\
             {\
-              DEBUG1(LEADLEVEL,"Leaf %lu",(Showuint) GETLEAFINDEX(NODE));\
+              DEBUG1(LEADLEVEL,"Leaf %lu",(Ulong) GETLEAFINDEX(NODE));\
             } else\
             {\
               if(ISLARGE(stree->branchtab[GETBRANCHINDEX(NODE)]))\
               {\
-                DEBUG1(LEADLEVEL,"Large %lu",(Showuint) GETBRANCHINDEX(NODE));\
+                DEBUG1(LEADLEVEL,"Large %lu",(Ulong) GETBRANCHINDEX(NODE));\
               } else\
               {\
-                DEBUG1(LEADLEVEL,"Small %lu",(Showuint) NODE);\
+                DEBUG1(LEADLEVEL,"Small %lu",(Ulong) NODE);\
               }\
             }\
           }\

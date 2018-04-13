@@ -33,7 +33,7 @@ void initoptions(OptionDescription *options,Uint numofoptions)
 {
   Uint i;
 
-  DEBUG1(3,"option[0...%lu] is undeclared\n",(Showuint) (numofoptions-1));
+  DEBUG1(3,"option[0...%lu] is undeclared\n",(Ulong) (numofoptions-1));
   for(i=0; i<numofoptions; i++)
   {
     options[i].declared = False;
@@ -57,17 +57,17 @@ Sint addoption(OptionDescription *options,Uint numofoptions,
 {
   Uint i;
 
-  DEBUG2(3,"add option number %ld: %s\n",(Showsint) optnum,optname);
+  DEBUG2(3,"add option number %ld: %s\n",(Slong) optnum,optname);
   if(optnum>=numofoptions)
   {
     ERROR2("option number %ld out of range [0,%lu]",
-            (Showsint) optnum,
-            (Showuint) (numofoptions-1));
+            (Slong) optnum,
+            (Ulong) (numofoptions-1));
     return -1;
   }
   if(optnum > 0 && options[optnum].declared)
   {
-    ERROR1("option %lu already declared",(Showuint) optnum);
+    ERROR1("option %lu already declared",(Ulong) optnum);
     return -2;
   }
   options[optnum].optname = optname;
@@ -75,14 +75,14 @@ Sint addoption(OptionDescription *options,Uint numofoptions,
   options[optnum].optval = optnum;
   options[optnum].isalreadyset = False;
   options[optnum].declared = True;
-  DEBUG1(3,"option %ld is declared\n",(Showsint) optnum);
+  DEBUG1(3,"option %ld is declared\n",(Slong) optnum);
   if(optnum == numofoptions-1)
   {
     for(i=0; i<numofoptions; i++)
     {
       if(!options[i].declared)
       {
-        ERROR1("option %lu not declared",(Showuint) i);
+        ERROR1("option %lu not declared",(Ulong) i);
         return -3;
       }
     }
@@ -218,9 +218,9 @@ void showoptions(FILE *outfp,char *program,OptionDescription *opt,
     {
       fprintf(stderr,"%s: optvalue %lu for option \"%s\" must be %lu\n",
                      program,
-                     (Showuint) opt[i].optval,
+                     (Ulong) opt[i].optval,
                      opt[i].optname,
-                     (Showuint) i);
+                     (Ulong) i);
       exit(EXIT_FAILURE);
     }
     fprintf(fp,"%-*s",(Fieldwidthtype) indentlevel,opt[i].optname);
@@ -259,9 +259,9 @@ void showoptionswithoutexclude(FILE *outfp,char *program,
       {
         fprintf(stderr,"%s: optvalue %lu for option \"%s\" must be %lu\n",
                        program,
-                       (Showuint) opt[i].optval,
+                       (Ulong) opt[i].optval,
                        opt[i].optname,
-                       (Showuint) i);
+                       (Ulong) i);
         exit(EXIT_FAILURE);
       }
       fprintf(fp,"%-*s",(Fieldwidthtype) indentlevel,opt[i].optname);

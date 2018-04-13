@@ -32,7 +32,7 @@
 {\
     ERROR2("suffix tree construction failed: "\
             "textlen=%lu larger than maximal textlen=%lu",\
-            (Showuint) textlen,(Showuint) MAXTEXTLEN);\
+            (Ulong) textlen,(Ulong) MAXTEXTLEN);\
     return -1;\
 }
 
@@ -111,9 +111,9 @@ static void spaceforbranchtab(Suffixtree *stree)
             extra = MULTBYSMALLINTS(MINEXTRA);
         }
         DEBUG1(2,"#all suffixes up to suffix %lu have been scanned\n",
-                (Showuint) stree->nextfreeleafnum);
+                (Ulong) stree->nextfreeleafnum);
         DEBUG1(2,"#current space peak %f\n",MEGABYTES(getspacepeak()));
-        DEBUG1(2,"#to get %lu extra space do ",(Showuint) extra);
+        DEBUG1(2,"#to get %lu extra space do ",(Ulong) extra);
         stree->currentbranchtabsize += extra;
         tmpheadnode = BRADDR2NUM(stree,stree->headnode);
         if(stree->chainstart != NULL)
@@ -159,9 +159,9 @@ static void setdepthheadposition(Suffixtree *stree,Uint depth,
 {
     DEBUG4(FUNCLEVEL,">%s(%lu)=(depth=%lu,headposition=%lu)\n",
             __func__,
-            (Showuint) stree->nextfreebranchnum,
-            (Showuint) depth,
-            (Showuint) headposition);
+            (Ulong) stree->nextfreebranchnum,
+            (Ulong) depth,
+            (Ulong) headposition);
     DEBUGCODE(1,stree->maxset = stree->nextfreebranch + 2);
     if(ISSMALLDEPTH(depth))
     {
@@ -182,8 +182,8 @@ static void setsuffixlink(Suffixtree *stree,Uint slink)
 {
     DEBUG3(FUNCLEVEL,">%s(%lu)=%lu\n",
             __func__,
-            (Showuint) stree->nextfreebranchnum,
-            (Showuint) slink);
+            (Ulong) stree->nextfreebranchnum,
+            (Ulong) slink);
     *(stree->setlink) = (*(stree->setlink) & (255 << 24)) | (slink | NILBIT);
     if(ISSMALLDEPTH(stree->currentdepth))
     {
@@ -207,7 +207,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 
     DEBUG2(FUNCLEVEL,">%s(%lu)\n",
             __func__,
-            (Showuint) BRADDR2NUM(stree,stree->headnode));
+            (Ulong) BRADDR2NUM(stree,stree->headnode));
 
     DEBUGCODE(1,stree->largelinks++);
     if(stree->headnodedepth == 1)
@@ -266,9 +266,9 @@ static void setdepthheadposition(Suffixtree *stree,Uint depth,
 {
     DEBUG4(FUNCLEVEL,">%s(%lu)=(depth=%lu,headposition=%lu)\n",
             __func__,
-            (Showuint) stree->nextfreebranchnum,
-            (Showuint) depth,
-            (Showuint) headposition);
+            (Ulong) stree->nextfreebranchnum,
+            (Ulong) depth,
+            (Ulong) headposition);
 
     if(ISSMALLDEPTH(depth))
     {
@@ -286,8 +286,8 @@ static void setsuffixlink(Suffixtree *stree,Uint slink)
 
     DEBUG3(FUNCLEVEL,">%s(%lu)=%lu\n",
             __func__,
-            (Showuint) stree->nextfreebranchnum,
-            (Showuint) slink);
+            (Ulong) stree->nextfreebranchnum,
+            (Ulong) slink);
     *(stree->setlink) = (*(stree->setlink) & EXTRAPATT) | (slink | NILBIT);
     if(ISSMALLDEPTH(stree->currentdepth))
     {
@@ -313,7 +313,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 
     DEBUG2(FUNCLEVEL,">%s(%lu)\n",
             __func__,
-            (Showuint) BRADDR2NUM(stree,stree->headnode));
+            (Ulong) BRADDR2NUM(stree,stree->headnode));
     DEBUGCODE(1,stree->largelinks++);
     if(stree->headnodedepth == 1)
     {
@@ -372,7 +372,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 
     DEBUG2(FUNCLEVEL,">%s(%lu)\n",
             __func__,
-            (Showuint) BRADDR2NUM(stree,stree->headnode));
+            (Ulong) BRADDR2NUM(stree,stree->headnode));
     if(stree->headnodedepth == 1)
     {
         return 0;        // link refers to root
@@ -416,7 +416,7 @@ static void insertleaf(Suffixtree *stree)
             stree->rootchildren[(Uint) *(stree->tailptr)] = newleaf;
             *(stree->nextfreeleafptr) = VALIDINIT;
             DEBUG2(4,"%c-edge from root points to leaf %lu\n",
-                    *(stree->tailptr),(Showuint) stree->nextfreeleafnum);
+                    *(stree->tailptr),(Ulong) stree->nextfreeleafnum);
         }
     } else
     {
@@ -465,7 +465,7 @@ static void insertbranchnode(Suffixtree *stree)
             = MAKEBRANCHADDR(stree->nextfreebranchnum);
         *(stree->nextfreebranch+1) = VALIDINIT;
         DEBUG2(4,"%c-edge from root points to branch node with address %lu\n",
-                *(stree->headstart),(Showuint) stree->nextfreebranchnum);
+                *(stree->headstart),(Ulong) stree->nextfreebranchnum);
     } else
     {
         if(stree->insertprev == UNDEFINEDREFERENCE)  // new branch = first child
@@ -860,9 +860,9 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
 
     DEBUG1(4,">%s\n",__func__);
     DEBUG1(2,"# MULTBYSMALLINTS(textlen+1)=%lu\n",
-            (Showuint) MULTBYSMALLINTS(textlen+1));
+            (Ulong) MULTBYSMALLINTS(textlen+1));
     DEBUG1(2,"# STARTFACTOR=%.2f\n",STARTFACTOR);
-    DEBUG1(2,"# MINEXTRA=%lu\n",(Showuint) MINEXTRA);
+    DEBUG1(2,"# MINEXTRA=%lu\n",(Ulong) MINEXTRA);
     stree->currentbranchtabsize
         = (Uint) (STARTFACTOR * MULTBYSMALLINTS(textlen+1));
     if(stree->currentbranchtabsize < MINEXTRA)
@@ -896,7 +896,7 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
     SETBRANCHNODEOFFSET;
     stree->rootchildren[(Uint) *text] = MAKELEAF(0);
     stree->leaftab[0] = VALIDINIT;
-    DEBUG2(4,"%c-edge from root points to leaf %lu\n",*text,(Showuint) 0);
+    DEBUG2(4,"%c-edge from root points to leaf %lu\n",*text,(Ulong) 0);
     stree->leafcounts = NULL;
     stree->nextfreeleafnum = 1;
     stree->nextfreeleafptr = stree->leaftab + 1;
@@ -984,14 +984,14 @@ void freestree(Suffixtree *stree)
 
 #define COMPLETELARGEFIRST\
     GETONLYHEADPOS(headposition,stree->headnode);\
-    DEBUG2(3,"j=%lu: slink->%lu\n",(Showuint) stree->nextfreeleafnum,\
-            (Showuint) headposition);\
+    DEBUG2(3,"j=%lu: slink->%lu\n",(Ulong) stree->nextfreeleafnum,\
+            (Ulong) headposition);\
             SETIBIT(stree->nonmaximal,headposition);\
             completelarge(stree);
 
 #define COMPLETELARGESECOND\
-    DEBUG2(3,"j=%lu: slink->%lu\n",(Showuint) stree->nextfreeleafnum,\
-            (Showuint) stree->nextfreeleafnum);\
+    DEBUG2(3,"j=%lu: slink->%lu\n",(Ulong) stree->nextfreeleafnum,\
+            (Ulong) stree->nextfreeleafnum);\
             SETIBIT(stree->nonmaximal,stree->nextfreeleafnum);\
             completelarge(stree)
 
@@ -1046,7 +1046,7 @@ void freestree(Suffixtree *stree)
     if(progress == NULL && textlen >= LEASTSHOWPROGRESS)\
 {\
     fprintf(stderr,"# process %lu characters per dot\n",\
-            (Showuint) textlen/NUMOFCALLS);\
+            (Ulong) textlen/NUMOFCALLS);\
 }
 
 #define COMPLETELARGEFIRST  completelarge(stree)

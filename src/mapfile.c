@@ -131,7 +131,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 /*@null@*/ void *creatememorymapforfiledesc(char *file,Uint line,Sint fd,
                                             BOOL writemap,Uint numofbytes)
 {
-  DEBUG1(2,"# creatememorymapforfiledesc %ld\n",(Showsint) fd);
+  DEBUG1(2,"# creatememorymapforfiledesc %ld\n",(Slong) fd);
   if(numofbytes == 0)
   {
     ERROR0("creatememorymap: file is empty");
@@ -139,22 +139,22 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
   }
   if(fd < 0)
   {
-    ERROR1("creatememorymap: filedescriptor %ld negative",(Showsint) fd);
+    ERROR1("creatememorymap: filedescriptor %ld negative",(Slong) fd);
     return NULL;
   }
   if(fd >= MAXMAPPEDFILES)
   {
-    ERROR1("creatememorymap: filedescriptor %ld is too large",(Showsint) fd);
+    ERROR1("creatememorymap: filedescriptor %ld is too large",(Slong) fd);
     return NULL;
   }
   if(memoryptr[fd] != NULL)
   {
-    ERROR1("creatememorymap: filedescriptor %ld already in use",(Showsint) fd);
+    ERROR1("creatememorymap: filedescriptor %ld already in use",(Slong) fd);
     return NULL;
   }
   mmaddspace(numofbytes);
-  DEBUG2(2,"# memorymap:fd=%ld: %lu bytes\n",(Showsint) fd,
-                                             (Showuint) numofbytes);
+  DEBUG2(2,"# memorymap:fd=%ld: %lu bytes\n",(Slong) fd,
+                                             (Ulong) numofbytes);
   mappedbytes[fd] = numofbytes;
   memoryptr[fd]
     = (void *) mmap(0,
@@ -165,7 +165,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
                     (off_t) 0);
   if(memoryptr[fd] == (void *) MAP_FAILED)
   {
-    ERROR1("memorymapping for filedescriptor %ld failed",(Showsint) fd);
+    ERROR1("memorymapping for filedescriptor %ld failed",(Slong) fd);
     return NULL;
   }
   filemapped[fd] = file;
@@ -184,7 +184,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
   Filedesctype fd;
 
   DEBUG3(2,"\n# creatememorymap(file=%s,line=%ld) for file %s:\n",
-              file,(Showsint) line,
+              file,(Slong) line,
               filename);
   fd = simplefileOpen(filename,numofbytes);
   if(fd < 0)
@@ -209,7 +209,7 @@ Sint deletememorymap(char *file,Uint line,void *mappedfile)
   if(mappedfile == NULL)
   {
     ERROR2("%s: l. %ld: deletememorymap: mappedfile is NULL",
-             file,(Showsint) line);
+             file,(Slong) line);
     return -1;
   }
   for(fd=0; fd<MAXMAPPEDFILES; fd++)
@@ -222,7 +222,7 @@ Sint deletememorymap(char *file,Uint line,void *mappedfile)
   if(fd == MAXMAPPEDFILES)
   {
     ERROR2("%s: l. %ld: deletememorymap: cannot find filedescriptor for given address",
-           file,(Showsint) line);
+           file,(Slong) line);
     return -2;
   }
   if(munmap(memoryptr[fd],(size_t) mappedbytes[fd]) != 0)
@@ -230,18 +230,18 @@ Sint deletememorymap(char *file,Uint line,void *mappedfile)
     ERROR4("%s: l. %ld: deletememorymap: munmap failed:"
            " mapped in file \"%s\",line %lu",
             file,
-            (Showsint) line,
+            (Slong) line,
             filemapped[fd],
-            (Showuint) linemapped[fd]);
+            (Ulong) linemapped[fd]);
     return -3;
   }
   DEBUG4(2,"# file \"%s\", line %ld: deletememorymap:fd=%ld (%lu) bytes:\n",
           file,
-          (Showsint) line,
-          (Showsint) fd,
-          (Showuint) mappedbytes[fd]);
+          (Slong) line,
+          (Slong) fd,
+          (Ulong) mappedbytes[fd]);
   DEBUG2(2,"# mapped in file \"%s\", line %lu\n",filemapped[fd],
-                                                 (Showuint) linemapped[fd]);
+                                                 (Ulong) linemapped[fd]);
   memoryptr[fd] = NULL;
   mmsubtractspace(mappedbytes[fd]);
   mappedbytes[fd] = 0;
@@ -270,10 +270,10 @@ void mmcheckspaceleak(void)
     if(memoryptr[fd] != NULL)
     {
       fprintf(stderr,"space leak: memory for filedescriptor %ld not freed\n",
-              (Showsint) fd);
+              (Slong) fd);
       fprintf(stderr,"mapped in file \"%s\", line %lu\n",
               filemapped[fd],
-              (Showuint) linemapped[fd]);
+              (Ulong) linemapped[fd]);
       exit(EXIT_FAILURE);
     }
   }
@@ -296,15 +296,15 @@ Sint mmwrapspace(void)
       {
         ERROR2("mmwrapspace: munmap failed: mapped in file \"%s\", line %lu",
                filemapped[fd],
-               (Showuint) linemapped[fd]);
+               (Ulong) linemapped[fd]);
         return -1;
       }
       memoryptr[fd] = NULL;
       DEBUG4(2,"# file \"%s\", line %ld: munmap:fd=%ld (%lu) bytes:\n",
-              __FILE__,(Showsint) __LINE__,(Showsint) fd,
-              (Showuint) mappedbytes[fd]);
+              __FILE__,(Slong) __LINE__,(Slong) fd,
+              (Ulong) mappedbytes[fd]);
       DEBUG2(2,"# mapped in file \"%s\", line %lu\n",filemapped[fd],
-                                                     (Showuint) linemapped[fd]);
+                                                     (Ulong) linemapped[fd]);
       if(close(fd) != 0)
       {
         ERROR1("cannot close file \"%s\"",filemapped[fd]);

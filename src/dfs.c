@@ -80,7 +80,7 @@ static Sint insertinleaflist(Uint leafindex,/*@unused@*/ Bref lcpnode,
 {
   ArrayUint *leaflist = (ArrayUint *) info;
 
-  DEBUG1(3,"insertinleaflist %lu\n",(Showuint) leafindex);
+  DEBUG1(3,"insertinleaflist %lu\n",(Ulong) leafindex);
   CHECKARRAYSPACE(leaflist,Uint,256);
   leaflist->spaceUint[leaflist->nextfreeUint++] = leafindex;
   return 0;

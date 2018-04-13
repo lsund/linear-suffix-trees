@@ -24,7 +24,7 @@
         if ((FP = fopen(FILENAME,MODE)) == NULL)\
         {\
           fprintf(stderr,"(%s,%lu): Cannot open file \"%s\"\n",\
-                  __FILE__,(Showuint) __LINE__,FILENAME);\
+                  __FILE__,(Ulong) __LINE__,FILENAME);\
           exit(EXIT_FAILURE);\
         }
 
@@ -32,7 +32,7 @@
         if(fwrite(BUF,SIZE,1,FP) != 1)\
         {\
           fprintf(stderr,"(%s,%lu): fwrite failed\n",__FILE__,\
-                  (Showuint) __LINE__);\
+                  (Ulong) __LINE__);\
           exit(EXIT_FAILURE);\
         }
 

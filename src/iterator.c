@@ -265,8 +265,8 @@ Reference *firstnodedfs(Suffixtree *stree,DFSstate *dfsstate,
     } else
     {
       STOREINARRAY(&dfsstate->stack,Bref,128,current->address);
-      DEBUG1(3,"#push[%lu]=",(Showuint) (dfsstate->stack.nextfreeBref-1));
-      DEBUG1(3,"%lu\n",(Showuint) BRADDR2NUM(stree,current->address));
+      DEBUG1(3,"#push[%lu]=",(Ulong) (dfsstate->stack.nextfreeBref-1));
+      DEBUG1(3,"%lu\n",(Ulong) BRADDR2NUM(stree,current->address));
       child = GETCHILD(current->address);
       SETCURRENT(child);
     }

@@ -22,7 +22,7 @@ void overallstree(Suffixtree *stree,BOOL skiproot,
     btptr = stree->branchtab + LARGEINTS;
   } else
   {
-    btptr = stree->branchtab; 
+    btptr = stree->branchtab;
   }
   while(btptr < stree->nextfreebranch)
   {
@@ -79,8 +79,8 @@ void overmaximalstree(Suffixtree *stree,
     }
     if(!ISIBITSET(stree->nonmaximal,headposition))
     {
-      DEBUG2(3,"processnode(%lu,%lu):",(Showuint) depth,
-                                       (Showuint) headposition);
+      DEBUG2(3,"processnode(%lu,%lu):",(Ulong) depth,
+                                       (Ulong) headposition);
       processnode(stree,btptr,depth,headposition,info);
     }
     btptr = nextptr;

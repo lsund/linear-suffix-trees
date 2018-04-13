@@ -38,14 +38,14 @@
         }
 
 /*
-  The root of the suffix tree is stored in the first elements of the 
+  The root of the suffix tree is stored in the first elements of the
   table \texttt{branchtab}.
 */
 
 #define ROOT(ST)            ((ST)->branchtab)
 
 /*
-  The following macro returns \texttt{True}, if and only if the given 
+  The following macro returns \texttt{True}, if and only if the given
   location refers to the root.
 */
 
@@ -68,21 +68,21 @@
         {\
           if(LEAFADDR2NUM(ST,(A).address) > (ST)->textlen)\
           {\
-            printf("%s,%lu:",__FILE__,(Showuint) __LINE__);\
+            printf("%s,%lu:",__FILE__,(Ulong) __LINE__);\
             printf("leafaddr = %lu invalid\n",\
-                    (Showuint) LEAFADDR2NUM(ST,(A).address));\
+                    (Ulong) LEAFADDR2NUM(ST,(A).address));\
             exit(EXIT_FAILURE);\
           }\
         } else\
         {\
           if(BRADDR2NUM(ST,(A).address) >= (ST)->nextfreebranchnum)\
           {\
-            printf("%s,%lu:",__FILE__,(Showuint) __LINE__);\
+            printf("%s,%lu:",__FILE__,(Ulong) __LINE__);\
             printf("branchaddr = %lu invalid\n",\
-                    (Showuint) BRADDR2NUM(ST,(A).address));\
+                    (Ulong) BRADDR2NUM(ST,(A).address));\
             exit(EXIT_FAILURE);\
           }\
-        } 
+        }
 #else
 #define CHECKADDR(ST,A) /* Nothing */
 #endif

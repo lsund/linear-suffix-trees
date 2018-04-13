@@ -1,153 +1,58 @@
 /*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
-*/
-
-//\IgnoreLatex{
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
 
 #ifndef TYPES_H
 #define TYPES_H
+
 #include <sys/types.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef MSWINDOWS
-typedef void * caddr_t;
-#endif
+// This is the assumptions about the types
+// size(Uint) >= 4
+// size(Sint) >= 4
+// size(Ushort) = 2
+// size(Sshort) = 2
 
-/*
-  Some rules about types:
-  - do not use Ulong, these are not portable.
-  - do not use the constants, UINT_MAX, INT_MAX and INT_MIN
-  The following are the assumptions about the types:
-  - size(Uint) >= 4
-  - size(Sint) >= 4
-  - size(Ushort) = 2
-  - size(Sshort) = 2
-  No other assumptions are to be made.
-*/
 
-//}
+// Primitives
+typedef unsigned char  Uchar;
+typedef unsigned short Ushort;
 
-/*
-  This file contains some basic type definition.
-*/
+typedef unsigned long  Uint;
+typedef signed   long  Sint;
 
-typedef unsigned char  Uchar;         // \Typedef{Uchar}
-typedef unsigned short Ushort;        // \Typedef{Ushort}
+typedef unsigned long  Ulong;
+typedef signed   long  Slong;
 
-#ifndef Bool
+#define LOGWORDSIZE    6
+#define UintConst(N)   (N##UL)
+#define SintConst(N)   (N##L)
+
 #define Bool unsigned char
-#endif
 
-#ifndef False
 #define False ((Bool) 0)
-#endif
 
-#ifndef True
 #define True ((Bool) 1)
-#endif
 
-/*
-  The following is the central case distinction to accomodate
-  code for 32 bit integers and 64 bit integers.
-*/
-
-#ifdef SIXTYFOURBITS
-
-typedef unsigned long  Uint;          // \Typedef{Uint}
-typedef signed   long  Sint;          // \Typedef{Sint}
-#define LOGWORDSIZE    6              // base 2 logarithm of wordsize
-#define UintConst(N)   (N##UL)        // unsigned integer constant
-
-#else
-
-typedef unsigned int  Uint;          // \Typedef{Uint}
-typedef signed   int  Sint;          // \Typedef{Sint}
-#define LOGWORDSIZE    5             // base 2 logarithm of wordsize
-#define UintConst(N)   (N##U)        // unsigned integer constant
-
-#endif
-
-/*
-  Type of unsigned integer in \texttt{printf}.
-*/
-
-typedef unsigned long Showuint;     // \Typedef{Showuint}
-
-/*
-  Type of signed integer in \texttt{printf}.
-*/
-
-typedef signed long Showsint;       // \Typedef{Showsint}
-
-/*
-  Type of integer in \texttt{scanf}.
-*/
-
-typedef signed long Scaninteger;    // \Typedef{Scaninteger}
-
-/*
-  Argument of a function from \texttt{ctype.h}.
-*/
 
 typedef int Ctypeargumenttype;      // \Typedef{Ctypeargumenttype}
 
-/*
-  Return type of \texttt{fgetc} and \texttt{getc}.
-*/
-
-typedef int Fgetcreturntype;        // \Typedef{Fgetcreturntype}
-
-/*
-  Type of first argument of \texttt{fputc}.
-*/
-
-typedef int Fputcfirstargtype;      // \Typedef{Fputsfirstargtype}
-
-/*
-  Return type of \texttt{strcmp}.
-*/
-
-typedef int Strcmpreturntype;       // \Typedef{Strcmpreturntype}
-
-/*
-  Type of a file descriptor.
-*/
-
 typedef int Filedesctype;           // \Typedef{Filedesctype}
-
-/*
-  Return type of \texttt{qsort} function.
-*/
 
 typedef int Qsortcomparereturntype; // \Typedef{Qsortcomparefunction}
 
-/*
-  Return type of \texttt{sprintf} function.
-*/
-
-typedef int Sprintfreturntype;     // \Typedef{Sprintfreturntype}
-
-/*
-  Type of fieldwidth in \texttt{printf} format string.
-*/
-
 typedef int Fieldwidthtype;         // \Typedef{Fieldwidthtype}
 
-/*
-  Type of \texttt{argc}-parameter in main.
-*/
-
 typedef int Argctype;               // \Typedef{Argctype}
-
-/*
-  Return type of \texttt{getrlimit}
-*/
 
 typedef int Getrlimitreturntype;    // \Typedef{Getrlimitreturntype}
 
@@ -155,17 +60,17 @@ typedef int Getrlimitreturntype;    // \Typedef{Getrlimitreturntype}
 typedef int Sysconfargtype;         // \Typedef{Sysconfargtype}
 #endif
 
-/*
-  The following macros define some basic division, multiplication,
-  and modulo operations on unsigned integers.
-*/
-
+// Fast division
 #define DIV2(N)      ((N) >> 1)
 #define DIV4(N)      ((N) >> 2)
 #define DIV8(N)      ((N) >> 3)
+
+// Fast multiplication
 #define MULT2(N)     ((N) << 1)
 #define MULT4(N)     ((N) << 2)
 #define MULT8(N)     ((N) << 3)
+
+// Fast modulu
 #define MOD2(N)      ((N) & 1)
 #define MOD4(N)      ((N) & 3)
 #define MOD8(N)      ((N) & 7)
@@ -176,17 +81,17 @@ typedef int Sysconfargtype;         // \Typedef{Sysconfargtype}
         if(sizeof(T) OP (S))\
         {\
           DEBUG4(1,"# sizeof(%s) %s (%ld bytes,%ld bits) as epected\n",\
-                  #T,#OP,(Showsint) sizeof(T),\
-                         (Showsint) (CHAR_BIT * sizeof(T)));\
+                  #T,#OP,(Slong) sizeof(T),\
+                         (Slong) (CHAR_BIT * sizeof(T)));\
         } else\
         {\
           fprintf(stderr,"typesize constraint\n");\
           fprintf(stderr,"  sizeof(%s) = (%ld bytes,%ld bits) %s %lu bytes\n",\
                   #T,\
-                  (Showsint) sizeof(T),\
-                  (Showsint) (CHAR_BIT * sizeof(T)),\
+                  (Slong) sizeof(T),\
+                  (Slong) (CHAR_BIT * sizeof(T)),\
                   #OP,\
-                  (Showuint) (S));\
+                  (Ulong) (S));\
           fprintf(stderr,"does not hold\n");\
           exit(EXIT_FAILURE);\
         }

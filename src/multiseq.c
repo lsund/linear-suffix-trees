@@ -160,8 +160,8 @@ Sint overallsequences(BOOL rcmode,Multiseq *multiseq,void *applyinfo,
       end = seq + multiseq->markpos.spaceUint[i];
     }
     DEBUG3(3,"overallsequences: i=%lu, start=%lu, end=%lu\n",
-              (Showuint) i,
-              (Showuint) (start-seq),(Showuint) (end-seq));
+              (Ulong) i,
+              (Ulong) (start-seq),(Ulong) (end-seq));
     if(apply(applyinfo,i,start,(Uint) (end - start)) != 0)
     {
       return -1;
@@ -201,22 +201,22 @@ Sint getrecordnum(Uint *recordseps,Uint numofrecords,Uint totalwidth,
     {
       return numofrecords - 1;
     }
-    ERROR1("cannot find position %lu",(Showuint) position);
+    ERROR1("cannot find position %lu",(Ulong) position);
     return -1;
   }
 
   DEBUG2(3,"getrecordnum for pos %lu in [0..%lu]\n",
-          (Showuint) position,
-          (Showuint) (numofrecords-2));
+          (Ulong) position,
+          (Ulong) (numofrecords-2));
   leftptr = recordseps;
   rightptr = recordseps + numofrecords - 2;
   while (leftptr<=rightptr)
   {
     len = (Uint) (rightptr-leftptr);
     midptr = leftptr + DIV2(len);
-    DEBUG1(3,"left=%lu,",(Showuint) (leftptr - recordseps));
-    DEBUG1(3,"mid=%lu,",(Showuint) (midptr - recordseps));
-    DEBUG1(3,"right=%lu,",(Showuint) (rightptr - recordseps));
+    DEBUG1(3,"left=%lu,",(Ulong) (leftptr - recordseps));
+    DEBUG1(3,"mid=%lu,",(Ulong) (midptr - recordseps));
+    DEBUG1(3,"right=%lu,",(Ulong) (rightptr - recordseps));
     if(*midptr < position)
     {
       if(position < *(midptr+1))
@@ -233,7 +233,7 @@ Sint getrecordnum(Uint *recordseps,Uint numofrecords,Uint totalwidth,
       rightptr = midptr-1;
     }
   }
-  ERROR1("cannot find position %lu",(Showuint) position);
+  ERROR1("cannot find position %lu",(Ulong) position);
   return -1;
 }
 

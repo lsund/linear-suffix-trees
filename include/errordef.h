@@ -29,14 +29,14 @@ Sint maxerrormsg(void);
 
 /*
   This file contains some macros to write error messages into a
-  buffer returned by the function \texttt{messagespace}. 
+  buffer returned by the function \texttt{messagespace}.
 */
 
 /*
   There is a generic macro \texttt{GENERROR} (definition
-  not given) that checks if the 
-  result of the computation \texttt{C} exceed the value returned 
-  by the function \texttt{maxerrormessage}. If so, then a 
+  not given) that checks if the
+  result of the computation \texttt{C} exceed the value returned
+  by the function \texttt{maxerrormessage}. If so, then a
   corresponding error message is written to stderr.
 */
 
@@ -45,7 +45,7 @@ Sint maxerrormsg(void);
 #ifdef DEBUG
 #define THROWERRORLINE\
         DEBUG2(1,"# throw error message in %s line %lu\n",__FILE__,\
-                                                (Showuint) __LINE__)
+                                                (Ulong) __LINE__)
 #else
 #define THROWERRORLINE /* Nothing */
 #endif
@@ -56,7 +56,7 @@ Sint maxerrormsg(void);
         {\
           fprintf(stderr,"file %s, line %lu: "\
                          "space for errormessage too small\n",\
-                  __FILE__,(Showuint) __LINE__);\
+                  __FILE__,(Ulong) __LINE__);\
           exit(EXIT_FAILURE);\
         }
 
@@ -118,11 +118,11 @@ Sint maxerrormsg(void);
 
 #define NOTSUPPOSED\
         fprintf(stderr,"%s: line %lu: This case is not supposed to occur\n",\
-                       __FILE__,(Showuint) __LINE__);\
+                       __FILE__,(Ulong) __LINE__);\
         exit(EXIT_FAILURE)
 
 /*
-  The following macro checks a ptr. If it is \texttt{NULL}, then the 
+  The following macro checks a ptr. If it is \texttt{NULL}, then the
   program terminates with an error.
 */
 

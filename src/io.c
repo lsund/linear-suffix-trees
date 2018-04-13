@@ -49,8 +49,8 @@ static Uint filedesc(
             fprintf(stderr,"file %s, line %lu: cannot open file: fd=%lu, "
                     "not enough file handles available\n",
                     file,
-                    (Showuint) line,
-                    (Showuint) fd);
+                    (Ulong) line,
+                    (Ulong) fd);
             exit(EXIT_FAILURE);
         } else {
             if (filehandle[fd].createfile == NULL)
@@ -58,8 +58,8 @@ static Uint filedesc(
                 fprintf(stderr,"file %s, line %lu: cannot open file: fd=%lu, "
                         "file handle not occurpied\n",
                         file,
-                        (Showuint) line,
-                        (Showuint) fd);
+                        (Ulong) line,
+                        (Ulong) fd);
                 exit(EXIT_FAILURE);
             }
         }

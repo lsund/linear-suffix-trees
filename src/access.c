@@ -262,20 +262,20 @@ void showsimplelocstree(Suffixtree *stree,Simpleloc *loc)
   }
   if(loc->remain > 0)
   {
-    printf("(%lu,",(Showuint) loc->remain);
+    printf("(%lu,",(Ulong) loc->remain);
   }
   if(loc->nextnode.toleaf)
   {
-    printf("Leaf %lu",(Showuint) LEAFADDR2NUM(stree,loc->nextnode.address));
+    printf("Leaf %lu",(Ulong) LEAFADDR2NUM(stree,loc->nextnode.address));
   } else
   {
     bnode = BRADDR2NUM(stree,loc->nextnode.address);
     if(ISLARGE(*(loc->nextnode.address)))
     {
-      printf("Large %lu",(Showuint) bnode);
+      printf("Large %lu",(Ulong) bnode);
     } else
     {
-      printf("Small %lu",(Showuint) bnode);
+      printf("Small %lu",(Ulong) bnode);
     }
   }
   if(loc->remain > 0)

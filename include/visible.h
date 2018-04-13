@@ -55,14 +55,14 @@
 
 /*
   The following macro prints a character to a file pointer.
-  If the character is not visible, then it is shown as the 
+  If the character is not visible, then it is shown as the
   corresponding ASCII-number with a prepended backslash.
 */
 
 #define SHOWCHARFP(FP,C)\
         if(INVISIBLE(C))\
         {\
-          fprintf(FP,"\\%lu",(Showuint) (C));\
+          fprintf(FP,"\\%lu",(Ulong) (C));\
         } else\
         {\
           (void) putc((Fputcfirstargtype) (C),FP);\

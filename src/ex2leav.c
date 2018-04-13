@@ -29,16 +29,16 @@ BOOL exactlytwoleavesstree(Suffixtree *stree,PairUint *twoleaves,Bref start)
           twoleaves->uint1 = twoleaves->uint0;
           twoleaves->uint0 = tmpval;
         }
-        DEBUG2(3,"has two leafs: %lu %lu\n",(Showuint) twoleaves->uint0,
-                                            (Showuint) twoleaves->uint1);
+        DEBUG2(3,"has two leafs: %lu %lu\n",(Ulong) twoleaves->uint0,
+                                            (Ulong) twoleaves->uint1);
         if(NILPTR(LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(node)])))
         {
           return True;
         }
         return False;
-      } 
+      }
       twoleaves->uint0 = GETLEAFINDEX(node);
-      DEBUG1(3,"first successor is leaf %lu\n",(Showuint) twoleaves->uint0);
+      DEBUG1(3,"first successor is leaf %lu\n",(Ulong) twoleaves->uint0);
       firstleaffound = True;
       node = LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(node)]);
     } else

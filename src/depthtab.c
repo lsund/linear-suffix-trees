@@ -25,7 +25,7 @@ void showdepthtab(ArrayUint *dt)
   {
     if(dt->spaceUint[i] > 0)
     {
-      printf("Depth %lu %lu\n",(Showuint) i,(Showuint) dt->spaceUint[i]);
+      printf("Depth %lu %lu\n",(Ulong) i,(Ulong) dt->spaceUint[i]);
     }
   }
 }
