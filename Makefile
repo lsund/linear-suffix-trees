@@ -19,13 +19,9 @@ SIZEFLAG=-DSTREEHUGE
 
 INCLUDE=-I'include'
 
-override CFLAGS+=$(INCLUDE) $(SIZEFLAG) -g
-##CFLAGS=${DEFINECFLAGS} -I$(INCLUDEDIR) $(SIZEFLAG)
-##LDFLAGS=${DEFINELDFLAGS}
+CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
 
 #-DSTARTFACTOR=0.5
-
-LD=${CC}
 
 PROTOFILES=  access.c\
              scanpref.c\
@@ -71,7 +67,7 @@ runtest: clean test
 	./bin/test
 
 test: dirs ${OBJ} ${TEST_OBJ}
-	${CC} ${CFLAGS} ${INCLUDE} ${OBJ} ${TEST_OBJ} test/test.c -o bin/test
+	${CC} ${CFLAGS} ${OBJ} ${TEST_OBJ} test/test.c -o bin/test
 
 mccreight: ${OBJ}
 	${CC} ${CFLAGS} ${OBJ} src/stree.c -o bin/$@
@@ -80,7 +76,7 @@ loc: ${OBJ}
 	${CC} ${CFLAGS} ${OBJ} src/loc.c -o bin/$@
 
 obj/%.o:src/%.c
-	$(LD) $(CFLAGS) -c src/$*.c -o $@
+	$(CC) $(CFLAGS) -c src/$*.c -o $@
 
 obj/test_%.o:test/test_%.c
 	$(CC) $(CFLAGS) -c test/test_$*.c -o $@

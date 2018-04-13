@@ -10,16 +10,17 @@
 #include "protodef.h"
 #include "debugdef.h"
 #include "streeacc.h"
+#include "streehuge.h"
 
 void rescanstree(Suffixtree *stree,Location *loc,
                  Bref btptr,SYMBOL *left,SYMBOL *right)
 {
-  Uint *nodeptr, *largeptr = NULL, leafindex, nodedepth, 
+  Uint *nodeptr, *largeptr = NULL, leafindex, nodedepth,
        node, distance = 0, prefixlen, headposition, tmpnodedepth;
   SYMBOL *lptr;
 
   lptr = left;
-  nodeptr = btptr; 
+  nodeptr = btptr;
   if(nodeptr == stree->branchtab)
   {
     nodedepth = 0;
@@ -55,7 +56,7 @@ void rescanstree(Suffixtree *stree,Location *loc,
         loc->locstring.start = leafindex;
         loc->locstring.length = prefixlen;
         return;
-      } 
+      }
       nodeptr = stree->branchtab + GETBRANCHINDEX(node);
       GETONLYHEADPOS(headposition,nodeptr);
       loc->firstptr = stree->text + headposition;
@@ -80,7 +81,7 @@ void rescanstree(Suffixtree *stree,Location *loc,
             loc->locstring.length = nodedepth + prefixlen;
             return;
           }
-          node = LEAFBROTHERVAL(stree->leaftab[leafindex]);  
+          node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
         } else   // successor is branch node
         {
           nodeptr = stree->branchtab + GETBRANCHINDEX(node);
@@ -89,7 +90,7 @@ void rescanstree(Suffixtree *stree,Location *loc,
           if(*(loc->firstptr) == *lptr) // correct edge found
           {
             /*@innerbreak@*/ break;
-          } 
+          }
           node = GETBROTHER(nodeptr);
         }
       }
@@ -106,7 +107,7 @@ void rescanstree(Suffixtree *stree,Location *loc,
     {
       loc->remain = loc->edgelen - prefixlen;
       return;
-    } 
+    }
     if(loc->edgelen == prefixlen)
     {
       loc->remain = 0;
@@ -142,7 +143,7 @@ void linklocstree(Suffixtree *stree,Location *outloc,Location *inloc)
                          inloc->previousnode);
       rescanstree(stree,outloc,branchinfo.suffixlink,inloc->firstptr,
              inloc->firstptr + (inloc->edgelen - inloc->remain) - 1);
-      
+
     }
-  } 
+  }
 }

@@ -43,7 +43,7 @@ static void showthesymbolstring(FILE *fp,SYMBOL *tlast,SYMBOL *left,
     {
       (void) putc('~',fp);
       return;
-    } 
+    }
     if(ptr > left + 10)
     {
       fprintf(fp,"...");
@@ -66,19 +66,19 @@ static char *showsymbol(SYMBOL c)
   }
   return outbuf;
 }
- 
+
  Uint getlargelinkstree(Suffixtree *stree,Uint *btptr,Uint depth);
 
 void showtable(Suffixtree *stree,BOOL final)
 {
   Uint *largeptr, *btptr, *succptr, *rcptr, i,
-       succdepth, distance, 
-       nodeaddress, succ, depth, child, brother, 
+       succdepth, distance,
+       nodeaddress, succ, depth, child, brother,
        headposition, suffixlink;
   Uint leafindex, edgelen;
   SYMBOL *leftpointer;
 
-  for(rcptr = stree->rootchildren; 
+  for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX;
       rcptr++)
   {
@@ -108,7 +108,7 @@ void showtable(Suffixtree *stree,BOOL final)
     (void) fflush(stdout);
   }
   printf(" Root:[");
-  for(rcptr = stree->rootchildren; 
+  for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX;
       rcptr++)
   {
@@ -169,7 +169,7 @@ void showtable(Suffixtree *stree,BOOL final)
     printf(")[");
     (void) fflush(stdout);
     succ = child;
-    do 
+    do
     {
       (void) putchar('(');
       if(ISLEAF(succ))
@@ -196,13 +196,13 @@ void showtable(Suffixtree *stree,BOOL final)
   }
 }
 
-/* 
+/*
    Check the following:
    (1) for each branching node there exist between 2 and 257 successors
    (2) for each branching node the list of successors is strictly ordered
        according to the first character of the edge label
    (3) there are no empty edge labels
-   (4) there are \(n+1\) leaves and for each leaf there is exactly one 
+   (4) there are \(n+1\) leaves and for each leaf there is exactly one
        incoming edge
    (5) for each branching node (except for the root) there is exactly one
        incomming edge.
@@ -213,24 +213,24 @@ void showtable(Suffixtree *stree,BOOL final)
 
 void checkstree(Suffixtree *stree)
 {
-  Uint *largeptr, *btptr, *succptr, *slinkptr, lastsmall = 0, succdepth, 
-       succheadposition, distance, succ, depth, leafindex, headposition, 
+  Uint *largeptr, *btptr, *succptr, *slinkptr, lastsmall = 0, succdepth,
+       succheadposition, distance, succ, depth, leafindex, headposition,
        edgelen, identitycount = 0, edgecount = 0,
        succcount, j, linkdepth, linkheadposition, *leafused, *branchused;
   Sint prevfirstchar, currentfirstchar;
 #ifdef STREELARGE
-  Uint largedepth = 0; 
+  Uint largedepth = 0;
 #endif
   INITBITTAB(leafused,stree->textlen+1);
   INITBITTAB(branchused,stree->textlen+1);
-  btptr = stree->branchtab; 
+  btptr = stree->branchtab;
   while(btptr < stree->nextfreebranch)
   {
     succcount = 0;
     prevfirstchar = -1;
     GETBOTH(depth,headposition,btptr);
     succ = GETCHILD(btptr);
-    do 
+    do
     {
       edgecount++;
       if(ISLEAF(succ))
@@ -310,7 +310,7 @@ void checkstree(Suffixtree *stree)
       exit(EXIT_FAILURE);
     }
   }
-  btptr = stree->branchtab + LARGEINTS; 
+  btptr = stree->branchtab + LARGEINTS;
   while(btptr < stree->nextfreebranch)
   {
     GETBOTH(depth,headposition,btptr);
@@ -384,18 +384,18 @@ void checkstree(Suffixtree *stree)
 
 static void showsubtree(Suffixtree *stree,Uint indent,Uint *btptr)
 {
-  Uint *largeptr, *succptr, leafindex, succdepth, edgelen, succ, distance, 
-       depth, headposition; 
+  Uint *largeptr, *succptr, leafindex, succdepth, edgelen, succ, distance,
+       depth, headposition;
   SYMBOL *leftpointer;
 
   GETBOTH(depth,headposition,btptr);
   succ = GETCHILD(btptr);
-  do 
+  do
   {
     printf("%*.*s",(Fieldwidthtype) indent,(Fieldwidthtype) indent,"");
 #ifdef SHOWLEAD
     SHOWINDEX(succ);
-#endif 
+#endif
     if(ISLEAF(succ))
     {
       leafindex = GETLEAFINDEX(succ);
@@ -413,7 +413,7 @@ static void showsubtree(Suffixtree *stree,Uint indent,Uint *btptr)
       (void) putchar('\n');
       showsubtree(stree,indent+6,succptr);
       succ = GETBROTHER(succptr);
-    } 
+    }
   } while(!NILPTR(succ));
 }
 
@@ -422,7 +422,7 @@ void showstree(Suffixtree *stree)
   Uint *btptr, *rcptr, *largeptr, distance, headposition, succdepth;
   SYMBOL *leftpointer;
 
-  for(rcptr = stree->rootchildren; 
+  for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX;
       rcptr++)
   {
@@ -556,7 +556,7 @@ void showlocation(FILE *fp,Suffixtree *stree,Location *loc)
                                  loc->firstptr+loc->edgelen-1);
     }
     fprintf(fp,",");
-  } 
+  }
   if(loc->nextnode.toleaf)
   {
     fprintf(fp,"Leaf %lu",
@@ -632,21 +632,23 @@ void checklocation(Suffixtree *stree,Location *loc)
 
   loc2stringstree(stree,&lstr,loc);
 
-  for(rescanlength = 0; rescanlength <= lstr.length; rescanlength++)
-  {
-    rest = scanprefixfromnodestree(stree,&scanprefixloc,stree->branchtab,
-                                   stree->text+lstr.start,
-                                   stree->text+lstr.start+lstr.length-1,
-                                   rescanlength);
-    if(rest != NULL)
-    {
+  for(rescanlength = 0; rescanlength <= lstr.length; rescanlength++) {
+    rest = scanprefixfromnodestree(
+            stree,&scanprefixloc,
+            stree->branchtab,
+            stree->text+lstr.start,
+            stree->text+lstr.start+lstr.length-1,
+            rescanlength
+        );
+
+    if(rest != NULL) {
       fprintf(stderr,"string of location ");
       showlocation(stderr,stree,loc);
       fprintf(stderr,"\nscanned = ");
-      showlocation(stderr,stree,&scanprefixloc);
+      showlocation(stderr,stree, &scanprefixloc);
       fprintf(stderr,"\nnot found\n");
       exit(EXIT_FAILURE);
-    } 
+    }
     if(comparelocs(stree,loc,&scanprefixloc) == -1)
     {
       fprintf(stderr,"compare loc and scanprefixloc for string \"");
@@ -662,8 +664,7 @@ void checklocation(Suffixtree *stree,Location *loc)
   }
   rescanstree(stree,&rescanloc,stree->branchtab,stree->text+lstr.start,
               stree->text+lstr.start+lstr.length-1);
-  if(comparelocs(stree,loc,&rescanloc) == -1)
-  {
+  if(comparelocs(stree,loc,&rescanloc) == -1) {
     fprintf(stderr,"compare loc and rescanloc for string \"");
     (void) fwrite(stree->text+lstr.start,sizeof(SYMBOL),
                   (size_t) lstr.length,stderr);
@@ -678,7 +679,7 @@ void checklocation(Suffixtree *stree,Location *loc)
   {
     linklocstree(stree,&linklocloc,loc);
     loc2stringstree(stree,&llstr,&linklocloc);
-    if(llstr.length + 1 != lstr.length || 
+    if(llstr.length + 1 != lstr.length ||
        memcmp(stree->text+lstr.start+1,stree->text+llstr.start,
               (size_t) llstr.length) != 0)
     {
@@ -700,17 +701,17 @@ static void enumlocationssubtree(Suffixtree *stree,Uint *btptr,
                                                     Location *))
 {
   Location loc;
-  Uint leafindex, succ, *largeptr, distance, depth, headposition; 
+  Uint leafindex, succ, *largeptr, distance, depth, headposition;
   Branchinfo branchinfo;
   Sint r;
 
   GETBOTH(depth,headposition,btptr);
   succ = GETCHILD(btptr);
-  do 
+  do
   {
 #ifdef SHOWLEAD
     SHOWINDEX(succ);
-#endif 
+#endif
     if(ISLEAF(succ))
     {
       leafindex = GETLEAFINDEX(succ);
@@ -735,7 +736,7 @@ static void enumlocationssubtree(Suffixtree *stree,Uint *btptr,
       PROCESSALL(0,depth);
       enumlocationssubtree(stree,loc.nextnode.address,processloc);
       succ = GETBROTHER(loc.nextnode.address);
-    } 
+    }
   } while(!NILPTR(succ));
 }
 
@@ -754,7 +755,7 @@ void enumlocations(Suffixtree *stree,
   DEBUGCODE(3,showlocation(stdout,stree,&loc));
   DEBUG0(3,"\n");
   processloc(stree,&loc);
-  for(rcptr = stree->rootchildren; 
+  for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX;
       rcptr++)
   {

@@ -20,7 +20,7 @@
 #include "intbits.h"
 
 /*
-  This header file defines the constants and macros for 
+  This header file defines the constants and macros for
   a linked list implementation technique for suffix trees as described
   in \cite{KUR:1999}. The implementation technique requires
   one integer for each leaf, three integers for each small node and

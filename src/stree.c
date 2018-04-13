@@ -51,8 +51,7 @@ int main(Argctype argc, char *argv[])
             (Showuint) textlen);
     fprintf(stderr,"# (maximal input length is %lu)\n",
             (Showuint) getmaxtextlenstree());
-    if(constructprogressstree(&stree,text,textlen,NULL,NULL,NULL) != 0)
-    {
+    if(constructprogressstree(&stree,text,textlen,NULL,NULL,NULL) != 0) {
         fprintf(stderr,"%s %s: %s\n",argv[0],filename,messagespace());
         return EXIT_FAILURE;
     }

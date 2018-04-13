@@ -1,3 +1,12 @@
+# for scanning prefixes
+
+`SYMBOL *scanprefixfromnodestree` Starts at some specific node
+
+`SYMBOL *scanprefixstree`
+
+`SYMBOL *findprefixpathstree`
+
+# Modules
 
 This directory contains basic functions which are useful for other
 software. That is why I have put it in a seperate directory.
@@ -14,7 +23,7 @@ seterror.c: handling error messages
 space.c: space allocation and keeping track of it
 
 
-FILES TO ITERATE THROUGH
+# Files to iterate through
 
 [] access.c
 [] addleafcount.c
