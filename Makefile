@@ -35,6 +35,7 @@ PROTOFILES=  access.c\
              iterator.c
 
 OBJECTS=     obj/construct.o\
+             obj/boyermoore.o\
              obj/access.o\
              obj/space.o\
              obj/clock.o\
@@ -48,31 +49,24 @@ OBJECTS=     obj/construct.o\
              obj/overmax.o\
              obj/oversucc.o\
              obj/addleafcount.o\
-             obj/stree.o\
              obj/iterator.o
 
-.SUFFIXES: .o .a .x
-
-all: dirs mccreight
-
-run: clean all
-	./bin/mccreight data/data.xml
+TEST_OBJ = obj/test_search.o
 
 dirs:
 	mkdir -p obj bin
 
-libstree.a: $(OBJECTS)
-	ar sruv $@ $(OBJECTS)
+stats: clean dirs mccreight
+	./bin/mccreight data/data.xml
 
-stree.x: stree.o libstree.a
-	$(LD) $(LDFLAGS) stree.o libstree.a $(LIBBASE) -o $@
-
-loc.x: loc.o libstree.a
-	$(LD) $(LDFLAGS) loc.o libstree.a $(LIBBASE) -o $@
-
+plain: clean dirs loc
+	./bin/loc data/data.xml
 
 mccreight: ${OBJECTS}
-	${CC} ${CFLAGS} ${OBJECTS} -o bin/$@
+	${CC} ${CFLAGS} ${OBJECTS} src/stree.c -o bin/$@
+
+loc: ${OBJECTS}
+	${CC} ${CFLAGS} ${OBJECTS} src/loc.c -o bin/$@
 
 obj/%.o:src/%.c
 	$(LD) $(CFLAGS) -c src/$*.c -o $@

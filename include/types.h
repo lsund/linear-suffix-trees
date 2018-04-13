@@ -40,6 +40,18 @@ typedef void * caddr_t;
 typedef unsigned char  Uchar;         // \Typedef{Uchar}
 typedef unsigned short Ushort;        // \Typedef{Ushort}
 
+#ifndef Bool
+#define Bool unsigned char
+#endif
+
+#ifndef False
+#define False ((Bool) 0)
+#endif
+
+#ifndef True
+#define True ((Bool) 1)
+#endif
+
 /*
   The following is the central case distinction to accomodate
   code for 32 bit integers and 64 bit integers.

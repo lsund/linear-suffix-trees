@@ -18,7 +18,7 @@
 #include "errordef.h"
 #include "spacedef.h"
 
-MAINFUNCTION
+int main(Argctype argc, char *argv[])
 {
   Uchar *text;
   Uint textlen;
