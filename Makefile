@@ -1,8 +1,3 @@
-#-- Imported variables from top level makefile
-# BIN_DIR AUX_BIN_DIR CXX CC CFLAGS CXXFLAGS LDFLAGS
-
-##include ../Makedef
-
 LIBBASEDIR=include
 INCLUDEDIR=include
 
@@ -60,13 +55,11 @@ OBJECTS=     obj/construct.o\
 
 all: dirs mccreight
 
+run: clean all
+	./bin/mccreight data/data.xml
+
 dirs:
 	mkdir -p obj bin
-
-# libs: libstree.a
-
-# progs: stree.x loc.x
-
 
 libstree.a: $(OBJECTS)
 	ar sruv $@ $(OBJECTS)

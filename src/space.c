@@ -26,9 +26,9 @@
   spaceblocks, and to maintain the number of cells and their size in
   each block. The arguments \texttt{file} and \texttt{line} (if they occur)
   are always the filename and the linenumber the function is called from.
-  To supply these arguments, we recommend to call the corresponding 
-  functions via some useful macros, as defined in the file 
-  \texttt{spacedef.h}. 
+  To supply these arguments, we recommend to call the corresponding
+  functions via some useful macros, as defined in the file
+  \texttt{spacedef.h}.
   \begin{enumerate}
   \item
   The function \texttt{allocspaceviaptr} should be called
@@ -78,7 +78,7 @@ static Uint numberofblocks = 0, // numberofblocks
   The following function sets the soft limit on the data size to the hard
   limit, if it is not already identical to this.
   This is necessary for the DEC alpha platform, where the soft limit
-  is too small. \texttt{setmaxspace} is called for the first time, 
+  is too small. \texttt{setmaxspace} is called for the first time,
   space is allocated.
 */
 
@@ -109,7 +109,7 @@ static void setmaxspace(void)
 }
 
 /*
-  The following two functions \texttt{addspace} and \texttt{subtractspace} 
+  The following two functions \texttt{addspace} and \texttt{subtractspace}
   maintain the variables \texttt{currentspace} and \texttt{spacepeak}.
 */
 
@@ -137,12 +137,12 @@ static void subtractspace(Uint space)
 
 /*EE
   The following function allocates \texttt{number} cells of \texttt{size}
-  for a given pointer \texttt{ptr}. If this is \texttt{NULL}, then the next 
-  free block is used. Otherwise, we look for the block number corresponding 
-  to \texttt{ptr}. If there is none, then the program exits with exit code 1. 
+  for a given pointer \texttt{ptr}. If this is \texttt{NULL}, then the next
+  free block is used. Otherwise, we look for the block number corresponding
+  to \texttt{ptr}. If there is none, then the program exits with exit code 1.
 */
 
-/*@notnull@*/ void *allocandusespaceviaptr(char *file,Uint line, 
+/*@notnull@*/ void *allocandusespaceviaptr(char *file,Uint line,
                                            /*@null@*/ void *ptr,
                                            Uint size,Uint number)
 {
@@ -170,7 +170,7 @@ static void subtractspace(Uint space)
     {
       nextfreeblock += 64;
       blocks = (Blockdescription *) realloc(blocks,
-                                            (size_t) (sizeof(Blockdescription)* 
+                                            (size_t) (sizeof(Blockdescription)*
                                                       nextfreeblock));
       if(blocks == NULL)
       {
@@ -203,7 +203,7 @@ static void subtractspace(Uint space)
   {
     numberofblocks++;
   }
-  if((blocks[blocknum].spaceptr 
+  if((blocks[blocknum].spaceptr
       = realloc(blocks[blocknum].spaceptr,(size_t) (size*number))) == NULL)
   {
     ALLOCVIAFATAL("not enough memory");
@@ -214,8 +214,8 @@ static void subtractspace(Uint space)
 }
 
 /*EE
-  The following function makes a copy of a 0-terminated string pointed to by 
-  \texttt{source}. 
+  The following function makes a copy of a 0-terminated string pointed to by
+  \texttt{source}.
 */
 
 /*@notnull@*/ char *dynamicstrdup(char *file,Uint line,char *source)
@@ -232,8 +232,8 @@ static void subtractspace(Uint space)
 }
 
 /*EE
-  The following function frees the space for the given pointer 
-  \texttt{ptr}. This cannot be \texttt{NULL}. 
+  The following function frees the space for the given pointer
+  \texttt{ptr}. This cannot be \texttt{NULL}.
 */
 
 void freespaceviaptr(char *file,Uint line,void *ptr)
@@ -307,7 +307,7 @@ void wrapspace(void)
       free(blocks[blocknum].spaceptr);
       blocks[blocknum].spaceptr = NULL;
     }
-    subtractspace(blocks[blocknum].sizeofcells * 
+    subtractspace(blocks[blocknum].sizeofcells *
                   blocks[blocknum].numberofcells);
     blocks[blocknum].sizeofcells = 0;
     blocks[blocknum].numberofcells = 0;
@@ -319,9 +319,9 @@ void wrapspace(void)
 //}
 
 /*EE
-  The following function prints a list of block numbers 
+  The following function prints a list of block numbers
   which have not been freed. For each block number the filename
-  and line number in which the call appears allocating which 
+  and line number in which the call appears allocating which
   allocated this block.
 */
 
@@ -343,10 +343,10 @@ void activeblocks(void)
 }
 
 /*EE
-  The following function checks if all blocks previously allocated, have 
-  explicitely been freed. If there is a block that was not freed, then 
+  The following function checks if all blocks previously allocated, have
+  explicitely been freed. If there is a block that was not freed, then
   an error is reported accordingly. We recommend to call this function
-  before the program terminates. This easily allows to discover 
+  before the program terminates. This easily allows to discover
   space leaks.
 */
 
@@ -381,7 +381,7 @@ void checkspaceleak(void)
   {
     fprintf(stderr,"space leak: number of blocks = %u\n",numberofblocks);
     exit(EXIT_FAILURE);
-  } 
+  }
   free(blocks);
   blocks = NULL;
   numberofblocks = 0;
@@ -409,7 +409,7 @@ Uint getspacepeak(void)
 }
 
 /*EE
-  The following function delivers the space limit of the machine 
+  The following function delivers the space limit of the machine
   in megabytes. This only works if the variable
   \texttt{WITHSYSCONF} is defined. This is currently the case for
   Linux and Solaris.

@@ -7,7 +7,7 @@
 */
 
 //\Ignore{
-  
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -26,12 +26,12 @@
 //}
 
 /*EE
-  This file contains functions to map files to memory, to store pointers to 
+  This file contains functions to map files to memory, to store pointers to
   the corresponding secondary memory, and to maintain the size of the mapped
   memory. The arguments \texttt{file} and \texttt{line} (if they occur)
   are always the filename and the linenumber the function is called from.
-  To supply the arguments, we recommend to call the corresponding functions 
-  via some useful macros, as defined in the file \texttt{spacedef.h}. 
+  To supply the arguments, we recommend to call the corresponding functions
+  via some useful macros, as defined in the file \texttt{spacedef.h}.
   \begin{enumerate}
   \item
   The function \texttt{creatememorymap} should be called
@@ -62,16 +62,16 @@ static Uint currentspace = 0,              // currently mapped num of bytes
   file where the mmap was created
 */
 
-static char *filemapped[MAXMAPPEDFILES] = {NULL};  
+static char *filemapped[MAXMAPPEDFILES] = {NULL};
 
 /*
   line where the mmap was created
 */
 
-static Uint linemapped[MAXMAPPEDFILES] = {0};       
+static Uint linemapped[MAXMAPPEDFILES] = {0};
 
 /*
-  The following two functions \texttt{mmaddspace} and \texttt{mmsubtractspace} 
+  The following two functions \texttt{mmaddspace} and \texttt{mmsubtractspace}
   maintain the variables \texttt{currentspace} and \texttt{spacepeak}.
 */
 
@@ -124,7 +124,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 /*EE
   The following function creates a memory map for a given file
   descriptor \texttt{fd}. \texttt{writemap} is true iff the map
-  should be writable, and \texttt{numofbytes} is the 
+  should be writable, and \texttt{numofbytes} is the
   size of the file to be mapped.
 */
 
@@ -156,7 +156,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
   DEBUG2(2,"# memorymap:fd=%ld: %lu bytes\n",(Showsint) fd,
                                              (Showuint) numofbytes);
   mappedbytes[fd] = numofbytes;
-  memoryptr[fd] 
+  memoryptr[fd]
     = (void *) mmap(0,
                     (size_t) numofbytes,
                     writemap ? (PROT_READ | PROT_WRITE) : PROT_READ,
@@ -196,7 +196,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 
 /*EE
   The following function unmaps the memorymap referenced by
-  \texttt{mappedfile}. It returns a negative value if the 
+  \texttt{mappedfile}. It returns a negative value if the
   \texttt{mappedfile} is \texttt{NULL}, or the corresponding
   filedescriptor cannot be found, or the \texttt{munmap} operation
   fails.
@@ -254,10 +254,10 @@ Sint deletememorymap(char *file,Uint line,void *mappedfile)
 }
 
 /*EE
-  The following function checks if all files previously mapped, have 
-  been unmapped. If there is a file that was not unmapped, then 
+  The following function checks if all files previously mapped, have
+  been unmapped. If there is a file that was not unmapped, then
   an error is reported accordingly. We recommend to call this function
-  before the program terminates. This easily allows to discover 
+  before the program terminates. This easily allows to discover
   space leaks.
 */
 
