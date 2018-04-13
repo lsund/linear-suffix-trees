@@ -23,7 +23,7 @@
 #include "mapfile.h"
 
 // This constructs a suffix tree
-int main(Argctype argc, char *argv[])
+int main(int argc, char *argv[])
 {
     Uchar *text;
     Uint textlen;

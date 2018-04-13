@@ -180,7 +180,7 @@ static void showoptdesc(FILE *fp,Uint indentlevel,char *desc)
   {
     if(desc[j] == '\n')
     {
-      fprintf(fp,"\n%-*s",(Fieldwidthtype) indentlevel," ");
+      fprintf(fp,"\n%-*s",(int) indentlevel," ");
     } else
     {
       (void) putc(desc[j],fp);
@@ -223,7 +223,7 @@ void showoptions(FILE *outfp,char *program,OptionDescription *opt,
                      (Ulong) i);
       exit(EXIT_FAILURE);
     }
-    fprintf(fp,"%-*s",(Fieldwidthtype) indentlevel,opt[i].optname);
+    fprintf(fp,"%-*s",(int) indentlevel,opt[i].optname);
     showoptdesc(fp,indentlevel,opt[i].description);
   }
 }
@@ -264,7 +264,7 @@ void showoptionswithoutexclude(FILE *outfp,char *program,
                        (Ulong) i);
         exit(EXIT_FAILURE);
       }
-      fprintf(fp,"%-*s",(Fieldwidthtype) indentlevel,opt[i].optname);
+      fprintf(fp,"%-*s",(int) indentlevel,opt[i].optname);
       showoptdesc(fp,indentlevel,opt[i].description);
     }
   }

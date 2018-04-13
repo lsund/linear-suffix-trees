@@ -84,7 +84,7 @@ static Uint numberofblocks = 0, // numberofblocks
 
 static void setmaxspace(void)
 {
-  Getrlimitreturntype rc;
+  int rc;
   struct rlimit rls;
 
   /*@ignore@*/

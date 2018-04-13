@@ -392,7 +392,7 @@ static void showsubtree(Suffixtree *stree,Uint indent,Uint *btptr)
   succ = GETCHILD(btptr);
   do
   {
-    printf("%*.*s",(Fieldwidthtype) indent,(Fieldwidthtype) indent,"");
+    printf("%*.*s",(int) indent,(int) indent,"");
 #ifdef SHOWLEAD
     SHOWINDEX(succ);
 #endif

@@ -18,7 +18,7 @@
 #include "errordef.h"
 #include "spaceman.h"
 
-int main(Argctype argc, char *argv[])
+int main(int argc, char *argv[])
 {
   Uchar *text;
   Uint textlen;

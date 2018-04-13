@@ -43,19 +43,6 @@ typedef signed   long  Slong;
 
 #define True ((Bool) 1)
 
-
-typedef int Ctypeargumenttype;      // \Typedef{Ctypeargumenttype}
-
-typedef int Filedesctype;           // \Typedef{Filedesctype}
-
-typedef int Qsortcomparereturntype; // \Typedef{Qsortcomparefunction}
-
-typedef int Fieldwidthtype;         // \Typedef{Fieldwidthtype}
-
-typedef int Argctype;               // \Typedef{Argctype}
-
-typedef int Getrlimitreturntype;    // \Typedef{Getrlimitreturntype}
-
 #ifdef WITHSYSCONF
 typedef int Sysconfargtype;         // \Typedef{Sysconfargtype}
 #endif

@@ -69,7 +69,7 @@ void setdebuglevel(void)
   if((envstring = getenv("DEBUGLEVEL")) != NULL)
   {
     if(!(strlen(envstring) == (size_t) 1 &&
-       isdigit((Ctypeargumenttype) *envstring)))
+       isdigit((int) *envstring)))
     {
       fprintf(stderr,"environment variable DEBUGLEVEL=%s, ",envstring);
       fprintf(stderr,"it must be a digit between 0 and %lu\n",

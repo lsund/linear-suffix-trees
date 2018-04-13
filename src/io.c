@@ -38,7 +38,7 @@ static Uint filedesc(
     )
 {
 
-    Filedesctype fd;
+    int fd;
     fd = fileno(fp);
     if (fd == -1) {
         fprintf(stderr,"cannot find filedescriptor: %s\n", strerror(errno));

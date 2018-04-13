@@ -98,7 +98,7 @@ static void mmsubtractspace(Uint space)
 
 Sint simplefileOpen(char *filename,Uint *numofbytes)
 {
-  Filedesctype fd;
+  int fd;
   struct stat buf;
 
   if((fd = open(filename,O_RDONLY)) == -1)
@@ -181,7 +181,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 /*@null@*/ void *creatememorymap(char *file,Uint line,char *filename,
                                  BOOL writemap,Uint *numofbytes)
 {
-  Filedesctype fd;
+  int fd;
 
   DEBUG3(2,"\n# creatememorymap(file=%s,line=%ld) for file %s:\n",
               file,(Slong) line,
@@ -204,7 +204,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 
 Sint deletememorymap(char *file,Uint line,void *mappedfile)
 {
-  Filedesctype fd;
+  int fd;
 
   if(mappedfile == NULL)
   {
@@ -263,7 +263,7 @@ Sint deletememorymap(char *file,Uint line,void *mappedfile)
 
 void mmcheckspaceleak(void)
 {
-  Filedesctype fd;
+  int fd;
 
   for(fd=0; fd<MAXMAPPEDFILES; fd++)
   {
@@ -286,7 +286,7 @@ void mmcheckspaceleak(void)
 
 Sint mmwrapspace(void)
 {
-  Filedesctype fd;
+  int fd;
 
   for(fd=0; fd<MAXMAPPEDFILES; fd++)
   {
