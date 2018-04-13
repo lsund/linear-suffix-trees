@@ -2,23 +2,23 @@
 
 char *utest_search()
 {
-    /* Uint textlen; */
-    /* Uchar *text = (Uchar *) file2String("data/dataset/005.txt", &textlen); */
+    Uint textlen;
+    Uchar *text = (Uchar *) file2String("data/data.xml", &textlen);
 
-    /* Uint patternslen; */
-    /* Uint size = 1001; */
-    /* char *patternfile = "data/random-patterns.txt"; */
-    /* char **patterns = (char **) malloc(sizeof(Uchar *) * size); */
-    /* Uint npatterns   = file2Array(patternfile, &patternslen, size, &patterns); */
-    /* for (Uint j = 0; j < 100; j++) { */
+    Uint patternslen;
+    Uint size = 1001;
+    char *patternfile = "data/random-patterns.txt";
+    char **patterns = (char **) malloc(sizeof(Uchar *) * size);
+    Uint npatterns   = file2Array(patternfile, &patternslen, size, &patterns);
+    for (Uint j = 0; j < 100; j++) {
 
-    /*     char *current_pattern = patterns[j]; */
-    /*     Uint patternlen = strlen(current_pattern); */
-    /*     Bool exists = naive_search(text, textlen, (Uchar *) current_pattern, */
-    /*                                 ((Uchar *) current_pattern) + patternlen); */
+        char *current_pattern = patterns[j];
+        Uint patternlen = strlen(current_pattern);
+        Bool exists = naive_search(text, textlen, (Uchar *) current_pattern,
+                                    ((Uchar *) current_pattern) + patternlen);
 
-    /*     printf("%d\n", exists); */
-    /* } */
+        printf("%d\n", exists);
+    }
 
     return NULL;
 }

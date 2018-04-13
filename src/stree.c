@@ -17,7 +17,7 @@
 #include "protodef.h"
 #include "errordef.h"
 #include "streedef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "megabytes.h"
 #include "clock.h"
 #include "mapfile.h"

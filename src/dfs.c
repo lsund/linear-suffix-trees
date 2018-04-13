@@ -7,7 +7,7 @@
 */
 
 #include "arraydef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "debugdef.h"
 #include "streedef.h"
 #include "streeacc.h"

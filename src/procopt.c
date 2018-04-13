@@ -15,7 +15,7 @@
 #include "errordef.h"
 #include "debugdef.h"
 #include "protodef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 
 //}
 
@@ -41,12 +41,12 @@ void initoptions(OptionDescription *options,Uint numofoptions)
 }
 
 /*EE
-  The following function adds an option to table 
+  The following function adds an option to table
   \texttt{options}. \texttt{numofoptions} is the number of options.
   \texttt{optnum} is the number of the option declared. \texttt{optname}
   is the option string to be used when calling the program. Finally,
   \texttt{optdesc} is the option description, i.e.\ a short explanation of
-  the option. The function returns 0 if everything went fine. In 
+  the option. The function returns 0 if everything went fine. In
   case of an error, a negative error code is returned. The
   function should be called via the macro \texttt{ADDOPTION} as defined
   in \texttt{optdesc.h}.
@@ -93,13 +93,13 @@ Sint addoption(OptionDescription *options,Uint numofoptions,
 /*EE
   The following function looks up a string \texttt{optstring} in a table of
   option descriptions. If it has found an option description whose
-  \texttt{optname} is identical to \texttt{optstring}, it is checked if 
-  this option has already been set. If so, then an error message is 
+  \texttt{optname} is identical to \texttt{optstring}, it is checked if
+  this option has already been set. If so, then an error message is
   thrown and the function returns with an error code.
-  If the option was not set before, then the index of the option is returned. 
-  If optstring is not found in the table, then this is an error and 
+  If the option was not set before, then the index of the option is returned.
+  If optstring is not found in the table, then this is an error and
   the program throws an error message and returns with an exit code.
-*/ 
+*/
 
 Sint procoption(OptionDescription *opt,Uint numofopt,char *optstring)
 {
@@ -309,12 +309,12 @@ Sint checkdoubleexclude(Uint numofopts,OptionDescription *opt,
 
 /*EE
   To specify pairs of options which exclude each other we
-  use an exclude table. An exclude table is just an array of 
-  signed integers. Each block of this table consists of a maximal 
-  subsequence not beginning with \texttt{-1}, but ending with 
+  use an exclude table. An exclude table is just an array of
+  signed integers. Each block of this table consists of a maximal
+  subsequence not beginning with \texttt{-1}, but ending with
   \texttt{-1}. Let \(i_{0}, i_{1}, \ldots, l_{r}\) be a block.
   Each number is an option number.
-  For \(j\in[1,r]\), option number \(i_{0}\) and option number 
+  For \(j\in[1,r]\), option number \(i_{0}\) and option number
   \(i_{j}\) exclude each other.
 
   The following function takes a table of option descriptions and an

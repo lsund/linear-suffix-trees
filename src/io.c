@@ -28,7 +28,6 @@ static Uint allocatedFilehandle = 0;
 // Number of open files
 static Uint currentopen = 0;
 
-
 // The following three tables store important information to
 // generate meaningfull error messages.
 static Uint filedesc(
@@ -38,8 +37,6 @@ static Uint filedesc(
         FILE *fp
     )
 {
-
-    FUNCTIONCALL;
 
     Filedesctype fd;
     fd = fileno(fp);
@@ -69,68 +66,6 @@ static Uint filedesc(
     }
     return (Uint) fd;
 }
-
-static void setinfo(char *file, Uint line, Uint fd, char *path, char *mode)
-{
-  while (fd >= allocatedFilehandle) {
-    Uint i;
-
-    ALLOC(
-        filehandle,
-        filehandle,
-        Filehandle,
-        allocatedFilehandle + INCFILEHANDLES
-    );
-
-    for (i=allocatedFilehandle; i<allocatedFilehandle+INCFILEHANDLES; i++) {
-      filehandle[i].createfile = NULL;
-    }
-
-    allocatedFilehandle += INCFILEHANDLES;
-
-  }
-
-  NOTSUPPOSEDTOBENULL(filehandle);
-
-  if (filehandle[fd].createfile != NULL) {
-    fprintf(stderr,"file %s, line %lu: open file \"%s\" with mode \"%s\": "
-                   "handle %lu already occupied\n",
-           file,(Showuint) line,path,mode,(Showuint) fd);
-    exit(EXIT_FAILURE);
-  }
-  strcpy(filehandle[fd].createmode,mode);
-  if (strlen(path) > PATH_MAX) {
-    fprintf(stderr,"file %s, line %lu: cannot open file \"%s\": "
-                   "path is too long\n",file,(Showuint) line,path);
-    exit(EXIT_FAILURE);
-  }
-  strcpy(filehandle[fd].path,path);
-
-  filehandle[fd].createfile = file;
-  filehandle[fd].createline = line;
-
-  currentopen++;
-}
-
-
-// Create a filehandle for the relevant file information
-FILE *createfilehandle(char *file, Uint line, char *path, char *mode)
-{
-    FILE *fp;
-
-    FUNCTIONCALL;
-    fp = fopen(path, mode);
-
-    if (fp == NULL) {
-        ERROR2("cannot open file \"%s\": %s", path, strerror(errno));
-        return NULL;
-    }
-
-    setinfo(file, line, filedesc(file,line,False,fp), path, mode);
-
-    return fp;
-}
-
 
 // Open file in readmode, return file descriptor. The length of the file is
 // stored in `textlen`. If `writefile` is true if the file should also be

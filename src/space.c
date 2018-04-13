@@ -28,7 +28,7 @@
   are always the filename and the linenumber the function is called from.
   To supply these arguments, we recommend to call the corresponding
   functions via some useful macros, as defined in the file
-  \texttt{spacedef.h}.
+  \texttt{spaceman.h}.
   \begin{enumerate}
   \item
   The function \texttt{allocspaceviaptr} should be called

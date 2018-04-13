@@ -13,7 +13,7 @@
 //\Ignore{
 
 #include "intbits.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "megabytes.h"
 #include "debugdef.h"
 #include "streedef.h"
@@ -56,19 +56,19 @@ static void showvalues(void)
 
 /*
  This file contains code for the improved linked list implementation,
- as described in \cite{KUR:1998,KUR:BAL:1999}. It can be 
- compiled with two options: 
+ as described in \cite{KUR:1998,KUR:BAL:1999}. It can be
+ compiled with two options:
  \begin{itemize}
  \item
- for short strings of length \(\leq 2^{21}-1=2\) megabytes, 
- we recommend the option 
- \texttt{STREESMALL}. This results in a representation which requires 
+ for short strings of length \(\leq 2^{21}-1=2\) megabytes,
+ we recommend the option
+ \texttt{STREESMALL}. This results in a representation which requires
  \(2\) integers for each small node, and three integers for each large node.
  See also the header file \texttt{streesmall.h}.
  \item
- for long strings of length \(\leq 2^{27}-1=12\) megabytes, we 
- recommend the option 
- \texttt{STREELARGE}. This results in a representation which requires 
+ for long strings of length \(\leq 2^{27}-1=12\) megabytes, we
+ recommend the option
+ \texttt{STREELARGE}. This results in a representation which requires
  \(2\) integers for each small node, and four integers for each large node.
  See also the header file \texttt{streelarge.h}.
  \end{itemize}
@@ -79,9 +79,9 @@ static void showvalues(void)
 /*
  For a string of length \(n\) we initially allocate space for
  \(\texttt{STARTFACTOR}\cdot\texttt{SMALLINTS}\cdot n\) integers to store
- the branching nodes. This usually suffices for most cases. In case we need 
- more integers, we allocate space for \(\texttt{ADDFACTOR}\cdot n\) 
- (at least 16) extra branching nodes. 
+ the branching nodes. This usually suffices for most cases. In case we need
+ more integers, we allocate space for \(\texttt{ADDFACTOR}\cdot n\)
+ (at least 16) extra branching nodes.
 */
 
 #ifndef STARTFACTOR
@@ -103,8 +103,8 @@ static void spaceforbranchtab(Suffixtree *stree)
 
   if(stree->nextfreebranch >= stree->firstnotallocated)
   {
-    Uint tmpheadnode, 
-         tmpchainstart = 0, 
+    Uint tmpheadnode,
+         tmpchainstart = 0,
          extra = (Uint) (ADDFACTOR * (MULTBYSMALLINTS(stree->textlen+1)));
     if(extra < MINEXTRA)
     {
@@ -121,7 +121,7 @@ static void spaceforbranchtab(Suffixtree *stree)
       tmpchainstart = BRADDR2NUM(stree,stree->chainstart);
     }
 
-    stree->branchtab 
+    stree->branchtab
      = ALLOCSPACE(stree->branchtab,Uint,stree->currentbranchtabsize);
     stree->nextfreebranch = stree->branchtab + stree->nextfreebranchnum;
     stree->headnode = stree->branchtab + tmpheadnode;
@@ -129,7 +129,7 @@ static void spaceforbranchtab(Suffixtree *stree)
     {
       stree->chainstart = stree->branchtab + tmpchainstart;
     }
-    stree->firstnotallocated 
+    stree->firstnotallocated
        = stree->branchtab + stree->currentbranchtabsize - LARGEINTS;
   }
 }
@@ -141,13 +141,13 @@ static void spaceforbranchtab(Suffixtree *stree)
  suffix links. The implementation depends on the bit layout.
  \begin{enumerate}
  \item
- The function \emph{setdepthnum} stores the \emph{depth} and the 
+ The function \emph{setdepthnum} stores the \emph{depth} and the
  \emph{head position} of a new large node.
  \item
- The function \emph{setsuffixlink} stores the \emph{suffixlink} 
+ The function \emph{setsuffixlink} stores the \emph{suffixlink}
  of a new large node.
  \item
- The function \emph{getlargelinkconstruction} retrieves the \emph{suffixlink} 
+ The function \emph{getlargelinkconstruction} retrieves the \emph{suffixlink}
  of a large node, which is referenced by \emph{headposition}.
  \end{enumerate}
 */
@@ -169,9 +169,9 @@ static void setdepthheadposition(Suffixtree *stree,Uint depth,
   } else
   {
     *(stree->nextfreebranch)
-     = (*(stree->nextfreebranch) & (MAXINDEX | LARGEBIT)) | 
+     = (*(stree->nextfreebranch) & (MAXINDEX | LARGEBIT)) |
        ((depth << 11) & (7 << 29));
-    *(stree->nextfreebranch+1) 
+    *(stree->nextfreebranch+1)
      = (*(stree->nextfreebranch+1) & (MAXINDEX | NILBIT)) |
        ((depth << 14) & (127 << 25));
   }
@@ -186,18 +186,18 @@ static void setsuffixlink(Suffixtree *stree,Uint slink)
                     (Showuint) slink);
   *(stree->setlink) = (*(stree->setlink) & (255 << 24)) | (slink | NILBIT);
   if(ISSMALLDEPTH(stree->currentdepth))
-  { 
+  {
     *(stree->nextfreebranch+1) |= (slink << 25);
     if(stree->nextfreebranchnum & (~((1 << 7) - 1)))
     {
       *(stree->nextfreebranch) |= ((slink << 17) & (255 << 24));
       if(stree->nextfreebranchnum & (~((1 << 15) - 1)))
       {
-        stree->leaftab[stree->nextfreeleafnum-1] |= 
+        stree->leaftab[stree->nextfreeleafnum-1] |=
           ((slink << 9) & (255 << 24));
       }
     }
-  } 
+  }
 }
 
 static Uint getlargelinkconstruction(Suffixtree *stree)
@@ -216,7 +216,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
   }
   if(stree->headnodedepth == 2)   // determine second character of edge
   {
-    if(stree->headend == NULL)   
+    if(stree->headend == NULL)
     {
       secondchar = *(stree->tailptr-1);
     } else
@@ -235,7 +235,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
       slink |= ((*(stree->headnode) & (255 << 24)) >> 17);
       if(headnodenum & (~((1 << 15) - 1)))
       {
-        slink |= ((stree->leaftab[GETHEADPOS(stree->headnode)] 
+        slink |= ((stree->leaftab[GETHEADPOS(stree->headnode)]
                    & (255 << 24)) >> 9);
       }
     }
@@ -252,7 +252,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
     } else
     {
       succ = GETBROTHER(stree->branchtab + GETBRANCHINDEX(succ));
-    } 
+    }
     DEBUGCODE(1,stree->largelinkwork++);
   }
   return succ & MAXINDEX;   // get only the index
@@ -290,20 +290,20 @@ static void setsuffixlink(Suffixtree *stree,Uint slink)
                     (Showuint) slink);
   *(stree->setlink) = (*(stree->setlink) & EXTRAPATT) | (slink | NILBIT);
   if(ISSMALLDEPTH(stree->currentdepth))
-  { 
-    *(stree->nextfreebranch+2) 
+  {
+    *(stree->nextfreebranch+2)
       |= ((slinkhalf << SMALLDEPTHBITS) & LOWERLINKPATT);
     if(stree->nextfreebranchnum & (~LOWERLINKSIZE))
     {
-      *(stree->nextfreebranch+3) 
+      *(stree->nextfreebranch+3)
         |= ((slinkhalf << SHIFTMIDDLE) & MIDDLELINKPATT);
       if(stree->nextfreebranchnum & HIGHERSIZE)
       {
-        stree->leaftab[stree->nextfreeleafnum-1] |= 
+        stree->leaftab[stree->nextfreeleafnum-1] |=
               ((slinkhalf << SHIFTHIGHER) & EXTRAPATT);
       }
     }
-  } 
+  }
 }
 
 static Uint getlargelinkconstruction(Suffixtree *stree)
@@ -328,7 +328,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
     {
       secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
     }
-    return stree->rootchildren[(Uint) secondchar]; 
+    return stree->rootchildren[(Uint) secondchar];
   }
   if(ISSMALLDEPTH(stree->headnodedepth))  // retrieve link in constant time
   {
@@ -339,8 +339,8 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
       slinkhalf |= ((*(stree->headnode+3) & MIDDLELINKPATT) >> SHIFTMIDDLE);
       if(headnodenum & HIGHERSIZE)
       {
-        slinkhalf 
-          |= ((stree->leaftab[GETHEADPOS(stree->headnode)] & EXTRAPATT) 
+        slinkhalf
+          |= ((stree->leaftab[GETHEADPOS(stree->headnode)] & EXTRAPATT)
              >> SHIFTHIGHER);
       }
     }
@@ -357,7 +357,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
     } else
     {
       succ = GETBROTHER(stree->branchtab + GETBRANCHINDEX(succ));
-    } 
+    }
     DEBUGCODE(1,stree->largelinkwork++);
   }
   return succ & MAXINDEX;   // get only the index
@@ -386,7 +386,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
     {
       secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
     }
-    return stree->rootchildren[(Uint) secondchar]; 
+    return stree->rootchildren[(Uint) secondchar];
   }
   return *(stree->headnode+4);
 }
@@ -396,9 +396,9 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 
 /*
   The function \emph{insertleaf} inserts a leaf and a corresponding leaf
-  edge outgoing from the current \emph{headnode}. 
+  edge outgoing from the current \emph{headnode}.
   \emph{insertprev} refers to the node to the left of the leaf to be inserted.
-  If the leaf is the first child, then \emph{insertprev} is 
+  If the leaf is the first child, then \emph{insertprev} is
   \texttt{UNDEFINEDREFERENCE}.
 */
 
@@ -448,20 +448,20 @@ static void insertleaf(Suffixtree *stree)
   The function \emph{insertbranch} inserts a branching node and splits
   the appropriate edges, according to the canonical location of the current
   head. \emph{insertprev} refers to the node to the left of the branching
-  node to be inserted. If the branching node is the first child, then 
+  node to be inserted. If the branching node is the first child, then
   \emph{insertprev} is \texttt{UNDEFINEDREFERENCE}. The edge to be split ends
   in the node referred to by \emph{insertnode}.
 */
 
 static void insertbranchnode(Suffixtree *stree)
 {
-  Uint *ptr, *insertnodeptr, *insertleafptr, insertnodeptrbrother; 
+  Uint *ptr, *insertnodeptr, *insertleafptr, insertnodeptrbrother;
 
   DEBUGDEFAULT;
   spaceforbranchtab(stree);
   if(stree->headnodedepth == 0)      // head is the root
   {
-    stree->rootchildren[(Uint) *(stree->headstart)] 
+    stree->rootchildren[(Uint) *(stree->headstart)]
       = MAKEBRANCHADDR(stree->nextfreebranchnum);
     *(stree->nextfreebranch+1) = VALIDINIT;
     DEBUG2(4,"%c-edge from root points to branch node with address %lu\n",
@@ -488,8 +488,8 @@ static void insertbranchnode(Suffixtree *stree)
   {
     DEBUGCODE(1,stree->splitleafedge++);
     insertleafptr = stree->leaftab + GETLEAFINDEX(stree->insertnode);
-    if (stree->tailptr == stree->sentinel || 
-        *(stree->headend+1) < *(stree->tailptr)) 
+    if (stree->tailptr == stree->sentinel ||
+        *(stree->headend+1) < *(stree->tailptr))
     {
       SETNEWCHILDBROTHER(MAKELARGE(stree->insertnode),  // first child=oldleaf
                          LEAFBROTHERVAL(*insertleafptr));  // inherit brother
@@ -508,8 +508,8 @@ static void insertbranchnode(Suffixtree *stree)
     DEBUGCODE(1,stree->splitinternaledge++);
     insertnodeptr = stree->branchtab + GETBRANCHINDEX(stree->insertnode);
     insertnodeptrbrother = GETBROTHER(insertnodeptr);
-    if (stree->tailptr == stree->sentinel || 
-        *(stree->headend+1) < *(stree->tailptr)) 
+    if (stree->tailptr == stree->sentinel ||
+        *(stree->headend+1) < *(stree->tailptr))
     {
       SETNEWCHILDBROTHER(MAKELARGE(stree->insertnode), // first child new branch
                          insertnodeptrbrother);        // inherit right brother
@@ -537,13 +537,13 @@ static void insertbranchnode(Suffixtree *stree)
 
 /*
   The function \emph{rescan} finds the location of the current head.
-  In order to scan down the tree, it suffices to look at the first 
+  In order to scan down the tree, it suffices to look at the first
   character of each edge.
 */
 
 static void rescan (Suffixtree *stree)
 {
-  Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode, 
+  Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode,
        nodedepth, edgelen, wlen, leafindex, headposition;
   SYMBOL headchar, edgechar;
 
@@ -556,7 +556,7 @@ static void rescan (Suffixtree *stree)
     {
       stree->insertnode = node;
       return;
-    } 
+    }
     nodeptr = stree->branchtab + GETBRANCHINDEX(node);
     GETONLYDEPTH(nodedepth,nodeptr);
     wlen = (Uint) (stree->headend - stree->headstart + 1);
@@ -592,7 +592,7 @@ static void rescan (Suffixtree *stree)
           return;
         }
         prevnode = node;
-        node = LEAFBROTHERVAL(stree->leaftab[leafindex]);  
+        node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
       } else   // successor is branch node
       {
         nodeptr = stree->branchtab + GETBRANCHINDEX(node);
@@ -601,7 +601,7 @@ static void rescan (Suffixtree *stree)
         if(edgechar == headchar) // correct edge found
         {
           break;
-        } 
+        }
         prevnode = node;
         node = GETBROTHER(nodeptr);
       }
@@ -629,7 +629,7 @@ static void rescan (Suffixtree *stree)
 
 /*
   The function \emph{taillcp} computes the length of the longest common prefix
-  of two strings. The first string is between pointers \emph{start1} and 
+  of two strings. The first string is between pointers \emph{start1} and
   \emph{end1}. The second string is the current tail, which is between  the
   pointers \emph{tailptr} and \emph{sentinel}.
 */
@@ -646,13 +646,13 @@ static Uint taillcp(Suffixtree *stree,SYMBOL *start1, SYMBOL *end1)
 }
 
 /*
- The function \emph{scanprefix} scans a prefix of the current tail 
+ The function \emph{scanprefix} scans a prefix of the current tail
  down from a given node.
 */
 
 static void scanprefix(Suffixtree *stree)
 {
-  Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node, 
+  Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node,
        distance = 0, prevnode, prefixlen, headposition;
   SYMBOL *leftborder = (SYMBOL *) NULL, tailchar, edgechar = 0;
 
@@ -667,7 +667,7 @@ static void scanprefix(Suffixtree *stree)
     tailchar = *(stree->tailptr);
     if((node = stree->rootchildren[(Uint) tailchar]) == UNDEFINEDREFERENCE)
     {
-      stree->headend = NULL;   
+      stree->headend = NULL;
       return;
     }
     if(ISLEAF(node)) // successor edge is leaf, compare tail and leaf edge label
@@ -703,7 +703,7 @@ static void scanprefix(Suffixtree *stree)
     {
       do // there is no \$-edge, so find last successor, of which it becomes right brother
       {
-        prevnode = node; 
+        prevnode = node;
         if(ISLEAF(node))
         {
           node = LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(node)]);
@@ -716,7 +716,7 @@ static void scanprefix(Suffixtree *stree)
       stree->insertprev = prevnode;
       stree->headend = NULL;
       return;
-    } 
+    }
     tailchar = *(stree->tailptr);
 
     do // find successor edge with firstchar = tailchar
@@ -749,7 +749,7 @@ static void scanprefix(Suffixtree *stree)
       stree->insertprev = prevnode;   // new edge will become brother of this
       stree->headend = NULL;
       return;
-    } 
+    }
     if(ISLEAF(node))  // correct edge is leaf edge, compare its label with tail
     {
       prefixlen = 1 + taillcp(stree,leftborder+1,stree->sentinel-1);
@@ -771,7 +771,7 @@ static void scanprefix(Suffixtree *stree)
       stree->insertnode = node;
       stree->insertprev = prevnode;
       return;
-    } 
+    }
     stree->headnode = nodeptr;
     stree->headnodedepth = nodedepth;
   }
@@ -780,7 +780,7 @@ static void scanprefix(Suffixtree *stree)
 //\subsection{Completion and Initialization}
 
 /*
-  The function \emph{completelarge} is called whenever a large node 
+  The function \emph{completelarge} is called whenever a large node
   is inserted. It basically sets the appropriate distance values of the small
   nodes of the current chain.
 */
@@ -818,7 +818,7 @@ static void linkrootchildren(Suffixtree *stree)
 
   DEBUGDEFAULT;
   stree->alphasize = 0;
-  for(rcptr = stree->rootchildren; 
+  for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX; rcptr++)
   {
     if(*rcptr != UNDEFINEDREFERENCE)
@@ -854,7 +854,7 @@ static void linkrootchildren(Suffixtree *stree)
 
 /*
   \newpage
-  \emph{initSuffixtree} allocates and initializes the data structures for 
+  \emph{initSuffixtree} allocates and initializes the data structures for
   McCreight's Algorithm.
 */
 
@@ -867,7 +867,7 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
            (Showuint) MULTBYSMALLINTS(textlen+1));
   DEBUG1(2,"# STARTFACTOR=%.2f\n",STARTFACTOR);
   DEBUG1(2,"# MINEXTRA=%lu\n",(Showuint) MINEXTRA);
-  stree->currentbranchtabsize 
+  stree->currentbranchtabsize
     = (Uint) (STARTFACTOR * MULTBYSMALLINTS(textlen+1));
   if(stree->currentbranchtabsize < MINEXTRA)
   {
@@ -880,7 +880,7 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
   stree->text = stree->tailptr = text;
   stree->textlen = textlen;
   stree->sentinel = text + textlen;
-  stree->firstnotallocated 
+  stree->firstnotallocated
     = stree->branchtab + stree->currentbranchtabsize - LARGEINTS;
   stree->headnode = stree->nextfreebranch = stree->branchtab;
   stree->headend = NULL;
@@ -917,9 +917,9 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
   stree->showsymbolstree = NULL;
   stree->alphabet = NULL;
   stree->nodecount = 1;
-  stree->splitleafedge = 
-  stree->splitinternaledge = 
-  stree->artificial = 
+  stree->splitleafedge =
+  stree->splitinternaledge =
+  stree->artificial =
   stree->multiplications = 0;
   stree->insertleafcalls = 1;
   stree->maxset = stree->branchtab + LARGEINTS - 1;
@@ -948,9 +948,9 @@ void freestree(Suffixtree *stree)
 //\subsection{Computing the Suffix Tree}
 
 /*
-  \emph{constructstree} implements McCreight Algorithm to compute the suffix 
+  \emph{constructstree} implements McCreight Algorithm to compute the suffix
   tree for a \texttt{text} of length \texttt{textlen}. For explanations, see
-  \cite{KUR:1998}. The number \((i)\) refers to the cases of Section 6 in 
+  \cite{KUR:1998}. The number \((i)\) refers to the cases of Section 6 in
   \cite{KUR:1998}.
 */
 
@@ -968,7 +968,7 @@ void freestree(Suffixtree *stree)
 #undef DECLAREEXTRA
 #undef COMPLETELARGEFIRST
 #undef COMPLETELARGESECOND
-#undef PROCESSHEAD 
+#undef PROCESSHEAD
 #undef CHECKSTEP
 #undef FINALPROGRESS
 
@@ -1009,7 +1009,7 @@ void freestree(Suffixtree *stree)
 #undef DECLAREEXTRA
 #undef COMPLETELARGEFIRST
 #undef COMPLETELARGESECOND
-#undef PROCESSHEAD 
+#undef PROCESSHEAD
 #undef CHECKSTEP
 #undef FINALPROGRESS
 
@@ -1032,7 +1032,7 @@ void freestree(Suffixtree *stree)
 #undef DECLAREEXTRA
 #undef COMPLETELARGEFIRST
 #undef COMPLETELARGESECOND
-#undef PROCESSHEAD 
+#undef PROCESSHEAD
 #undef CHECKSTEP
 #undef FINALPROGRESS
 
@@ -1092,6 +1092,6 @@ void freestree(Suffixtree *stree)
 #undef DECLAREEXTRA
 #undef COMPLETELARGEFIRST
 #undef COMPLETELARGESECOND
-#undef PROCESSHEAD 
+#undef PROCESSHEAD
 #undef CHECKSTEP
 #undef FINALPROGRESS

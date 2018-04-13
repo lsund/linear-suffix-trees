@@ -10,7 +10,7 @@
 #include "protodef.h"
 #include "debugdef.h"
 #include "streedef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "arraydef.h"
 
 typedef struct
@@ -67,12 +67,12 @@ static Sint processbranch2(Bref nodeptr,void *info)
   return 0;
 }
 
-/* 
+/*
    depth first traversal of the tree.
    push branch node on stack when visited first.
    suppose there is an edge \(father -> son\) such that son is the root of
-   a subtree which has been processed. 
-   If son is leaf then call processleaf(father,son). 
+   a subtree which has been processed.
+   If son is leaf then call processleaf(father,son).
    If son is not a leaf, then call processbranch(father,son)
 */
 
@@ -110,7 +110,7 @@ static void checkleafcount(Suffixtree *stree,
 {
   Reference ref;
   Uint lc = 0;
-  
+
   DEBUG1(3,"checkleafcount of %lu\n",(Showuint) BRADDR2NUM(stree,nodeptr));
   ref.toleaf = False;
   ref.address = nodeptr;

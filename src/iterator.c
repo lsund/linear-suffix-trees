@@ -7,7 +7,7 @@
 */
 
 #include "arraydef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "debugdef.h"
 #include "streedef.h"
 #include "streeacc.h"
@@ -34,13 +34,13 @@
   if(stree->branchtab >= stree->nextfreebranch)
   {
     return NULL;
-  } 
+  }
   return stree->branchtab;
 }
 
 /*
   Given branching node \emph{bptr}, compute the branching node following
-  \emph{bptr} in table \emph{branchtab}. If \emph{bptr} is 
+  \emph{bptr} in table \emph{branchtab}. If \emph{bptr} is
   the last branching node, then return \texttt{NULL}.
 */
 
@@ -62,7 +62,7 @@
   if(nodeptr >= stree->nextfreebranch)
   {
     return NULL;
-  } 
+  }
   return nodeptr;
 }
 
@@ -76,7 +76,7 @@ Lref firstleaf(Suffixtree *stree)
 }
 
 /*
-  Given leaf \emph{lptr}, compute the leaf following 
+  Given leaf \emph{lptr}, compute the leaf following
   \emph{lptr} in table \emph{branchtab}. If \emph{lptr} is the last
   leaf, then return \texttt{NULL}.
 */
@@ -100,7 +100,7 @@ Lref firstleaf(Suffixtree *stree)
   if(stree->branchtab >= stree->nextfreebranch)
   {
     return NULL;
-  } 
+  }
   refspace->toleaf = False;
   refspace->address = stree->branchtab;
   return refspace;
@@ -155,7 +155,7 @@ static void int2ref(Suffixtree *stree,Reference *ref,Uint i)
 }
 
 /*
-  Compute the first successor of a given branching node. 
+  Compute the first successor of a given branching node.
 */
 
 /*@null@*/ Reference *firstsucc(Suffixtree *stree,Bref bptr,
@@ -188,7 +188,7 @@ static void int2ref(Suffixtree *stree,Reference *ref,Uint i)
   if(NILPTR(brotherval))
   {
     return NULL;
-  }  
+  }
   int2ref(stree,node,brotherval);
   return node;
 }
@@ -206,7 +206,7 @@ Reference *firstnodedfs(Suffixtree *stree,DFSstate *dfsstate,
     INITARRAY(&(dfsstate->stack),Bref);
     STOREINARRAY(&(dfsstate->stack),Bref,128,current->address);
     SETCURRENT(GETCHILD(current->address));
-  } 
+  }
   return current;
 }
 

@@ -19,11 +19,9 @@ SIZEFLAG=-DSTREEHUGE
 
 INCLUDE=-I'include'
 
-override CFLAGS+=$(INCLUDE) $(SIZEFLAG)
+override CFLAGS+=$(INCLUDE) $(SIZEFLAG) -g
 ##CFLAGS=${DEFINECFLAGS} -I$(INCLUDEDIR) $(SIZEFLAG)
 ##LDFLAGS=${DEFINELDFLAGS}
-
-LDFLAGS+=-m64
 
 #-DSTARTFACTOR=0.5
 
@@ -40,10 +38,11 @@ PROTOFILES=  access.c\
              addleafcount.c\
              iterator.c
 
-OBJECTS=     obj/construct.o\
+OBJ=         obj/construct.o\
              obj/boyermoore.o\
              obj/access.o\
              obj/space.o\
+             obj/io.o\
              obj/clock.o\
              obj/mapfile.o\
              obj/seterror.o\
@@ -72,13 +71,13 @@ runtest: clean test
 	./bin/test
 
 test: dirs ${OBJ} ${TEST_OBJ}
-	${CC} ${LDFLAGS} ${INCLUDE} ${OBJ} ${TEST_OBJ} test/test.c -o bin/test
+	${CC} ${CFLAGS} ${INCLUDE} ${OBJ} ${TEST_OBJ} test/test.c -o bin/test
 
-mccreight: ${OBJECTS}
-	${CC} ${CFLAGS} ${OBJECTS} src/stree.c -o bin/$@
+mccreight: ${OBJ}
+	${CC} ${CFLAGS} ${OBJ} src/stree.c -o bin/$@
 
-loc: ${OBJECTS}
-	${CC} ${CFLAGS} ${OBJECTS} src/loc.c -o bin/$@
+loc: ${OBJ}
+	${CC} ${CFLAGS} ${OBJ} src/loc.c -o bin/$@
 
 obj/%.o:src/%.c
 	$(LD) $(CFLAGS) -c src/$*.c -o $@

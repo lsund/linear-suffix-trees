@@ -1,18 +1,22 @@
 /*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
+  Copyright by Stefan Kurtz (C) 1997-2003
+  =====================================
+  You may use, copy and distribute this file freely as long as you
+   - do not change the file,
+   - leave this copyright notice in the file,
+   - do not make any profit with the distribution of this file
+   - give credit where credit is due
+  You are not allowed to copy or distribute this file otherwise
+  The commercial usage and distribution of this file is prohibited
+  Please report bugs and suggestions to <kurtz@zbh.uni-hamburg.de>
 */
 
-//\Ignore{
+//\IgnoreLatex{
 
-#ifndef INTBITS_H
-#define INTBITS_H
+#ifndef BITVECTOR_H
+#define BITVECTOR_H
 #include <limits.h>
 #include "types.h"
-#include "errordef.h"
 #include "spaceman.h"
 
 //}
@@ -26,7 +30,7 @@
 #define INTWORDSIZE\
         (UintConst(1) << LOGWORDSIZE)     // # of bits in Uint = w
 #define FIRSTBIT\
-        (UintConst(1) << (INTWORDSIZE-1)) // \(10^{w-1}\)
+        (UintConst(1) << (INTWORDSIZE - 1)) // \(10^{w-1}\)
 #define ISBITSET(S,I)\
         (((S) << (I)) & FIRSTBIT)         // is \(i\)th bit set?
 #define ITHBIT(I)\
@@ -35,6 +39,10 @@
         (FIRSTBIT >> 1)                   // \(010^{w-2}\)
 #define THIRDBIT\
         (FIRSTBIT >> 2)                   // \(0010^{w-3}\)
+#define FOURTHBIT\
+        (FIRSTBIT >> 3)                   // \(00010^{w-4}\)
+#define FIFTHBIT\
+        (FIRSTBIT >> 4)                   // \(000010^{w-3}\)
 #define FIRSTTWOBITS\
         (UintConst(3) << (INTWORDSIZE-2)) // \(11^{w-2}\)
 #define EXCEPTFIRSTBIT\
@@ -43,6 +51,8 @@
         (EXCEPTFIRSTBIT >> 1)             // \(001^{w-2}\)
 #define EXCEPTFIRSTTHREEBITS\
         (EXCEPTFIRSTBIT >> 2)             // \(0001^{w-3}\)
+#define EXCEPTFIRSTFOURBITS\
+        (EXCEPTFIRSTBIT >> 3)             // \(00001^{w-4}\)
 #define DIVWORDSIZE(I)\
         ((I) >> LOGWORDSIZE)              // \((I) div w\)
 #define MODWORDSIZE(I)\
@@ -51,28 +61,46 @@
         ((I) << LOGWORDSIZE)              // \((I) * w\)
 
 /*
+  The following defines the maximal value which can be represented by
+  a given number of bits.
+*/
+
+#define MAXVALUEWITHBITS(BITNUM)       ((UintConst(1) << (BITNUM)) - 1)
+
+/*
+  The following defines the number of integers for a bitvector with N bits.
+*/
+
+#define NUMOFINTSFORBITS(N)\
+        ((DIVWORDSIZE(N) == 0)\
+           ? UintConst(1) \
+           : (UintConst(1) + DIVWORDSIZE((N) - UintConst(1))))
+
+/*
   The following macro allocates a bitarray of \texttt{N} bits. All bits
   are off.
 */
 
-#define INITBITTAB(TAB,N)\
+#define INITBITTABGENERIC(TAB,OLDTAB,NUMOFBITS)\
         {\
-          Uint *tabptr, tabsize = 1 + DIVWORDSIZE(N);\
-          TAB = ALLOCSPACE(NULL,Uint,tabsize);\
+          Uint *tabptr, tabsize = NUMOFINTSFORBITS(NUMOFBITS);\
+          ALLOC(TAB,OLDTAB,Uint,tabsize);\
           for(tabptr = TAB; tabptr < (TAB) + tabsize; tabptr++)\
           {\
             *tabptr = 0;\
           }\
         }
 
+#define INITBITTAB(TAB,N) INITBITTABGENERIC(TAB,NULL,N)
+
 /*
-  The following macro inititalizes a bitarray such tha all bits
+  The following macro inititalizes a bitarray such that all bits
   are off.
 */
 
 #define CLEARBITTAB(TAB,N)\
         {\
-          Uint *tabptr, tabsize = 1 + DIVWORDSIZE(N);\
+          Uint *tabptr, tabsize = NUMOFINTSFORBITS(N);\
           for(tabptr = TAB; tabptr < TAB + tabsize; tabptr++)\
           {\
             *tabptr = 0;\
@@ -101,7 +129,7 @@
 
 #define ISIBITSET(TAB,I)  ((TAB)[DIVWORDSIZE(I)] & ITHBIT(MODWORDSIZE(I)))
 
-//\Ignore{
+//\IgnoreLatex{
 
 #ifdef __cplusplus
   extern "C" {

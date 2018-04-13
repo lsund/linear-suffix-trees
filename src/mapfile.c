@@ -31,7 +31,7 @@
   memory. The arguments \texttt{file} and \texttt{line} (if they occur)
   are always the filename and the linenumber the function is called from.
   To supply the arguments, we recommend to call the corresponding functions
-  via some useful macros, as defined in the file \texttt{spacedef.h}.
+  via some useful macros, as defined in the file \texttt{spaceman.h}.
   \begin{enumerate}
   \item
   The function \texttt{creatememorymap} should be called

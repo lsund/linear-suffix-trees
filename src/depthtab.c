@@ -12,7 +12,7 @@
 #include "types.h"
 #include "streedef.h"
 #include "streeacc.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "protodef.h"
 
 #define ADDAMOUNT 128
@@ -36,14 +36,14 @@ static void setdepthtab(ArrayUint *depthtab,Uint depth)
 
   if(depth >= depthtab->allocatedUint)
   {
-    depthtab->spaceUint 
+    depthtab->spaceUint
       = ALLOCSPACE(depthtab->spaceUint,Uint,depth+ADDAMOUNT);
     for(i= depthtab->allocatedUint; i<depth+ADDAMOUNT; i++)
     {
-      depthtab->spaceUint[i] = 0; 
+      depthtab->spaceUint[i] = 0;
     }
     depthtab->allocatedUint = depth+ADDAMOUNT;
-  } 
+  }
   if(depth + 1 > depthtab->nextfreeUint)
   {
     depthtab->nextfreeUint = depth+1;
@@ -56,7 +56,7 @@ void makedepthtabstree(ArrayUint *depthtab,Suffixtree *stree)
   Uint depth, *btptr, *largeptr, distance;
   //  Uint headposition;
 
-  btptr = stree->branchtab; 
+  btptr = stree->branchtab;
   while(btptr < stree->nextfreebranch)
   {
     if(ISLARGE(*btptr))

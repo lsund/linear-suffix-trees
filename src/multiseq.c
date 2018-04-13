@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include "types.h"
 #include "debugdef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "minmax.h"
 #include "protodef.h"
 #include "errordef.h"
@@ -25,7 +25,7 @@
 
 //}
 
-/*EE 
+/*EE
   This file implements the data type \texttt{Multiseq}.
 */
 
@@ -35,7 +35,7 @@
 
 #define NEWLINE  '\n'
 
-/* 
+/*
   undefined number of database sequences
 */
 
@@ -98,7 +98,7 @@ void freemultiseq(Multiseq *multiseq)
   {
     FREESPACE(multiseq->startdesc);
   }
-  if(multiseq->originalsequence != NULL && 
+  if(multiseq->originalsequence != NULL &&
      multiseq->originalsequence != multiseq->sequence)
   {
     if(DELETEMEMORYMAP(multiseq->originalsequence) != 0)
@@ -114,8 +114,8 @@ void freemultiseq(Multiseq *multiseq)
 }
 
 /*EE
-  The following function applies a function \texttt{apply} to all 
-  sequences in a \texttt{multiseq}. \texttt{rcmode} is \texttt{True} 
+  The following function applies a function \texttt{apply} to all
+  sequences in a \texttt{multiseq}. \texttt{rcmode} is \texttt{True}
   iff the function is to be applied to the reverse complemented sequence.
   In each call, \texttt{apply} has the following arguments:
   \begin{itemize}
@@ -177,12 +177,12 @@ Sint overallsequences(BOOL rcmode,Multiseq *multiseq,void *applyinfo,
   Given a sorted array of separators \texttt{recordspes} of length
   \texttt{numofrecords} such that each separator is a position in
   the range \([0,\texttt{totalwidth}-1]\). The record separator
-  divides the sequence into records numbered from 0 to 
+  divides the sequence into records numbered from 0 to
   \texttt{numofrecords}.
   The following function \texttt{getrecordnum} delivers the number of
   the record in which position occurs.
   If the position is not in the correct range, then a negative error code
-  is returned. The running time of \texttt{getrecordnum} is 
+  is returned. The running time of \texttt{getrecordnum} is
   \(O(\log_{2}\texttt{numofrecords})\).
 */
 
@@ -196,7 +196,7 @@ Sint getrecordnum(Uint *recordseps,Uint numofrecords,Uint totalwidth,
     return 0;
   }
   if(position > recordseps[numofrecords-2])
-  { 
+  {
     if(position < totalwidth)
     {
       return numofrecords - 1;
@@ -222,7 +222,7 @@ Sint getrecordnum(Uint *recordseps,Uint numofrecords,Uint totalwidth,
       if(position < *(midptr+1))
       {
         return (Sint) (midptr - recordseps + 1);
-      } 
+      }
       leftptr = midptr + 1;
     } else
     {
@@ -262,7 +262,7 @@ Sint getseqnum(Multiseq *multiseq,Uint position)
   sequence \(T_{i}\). If this cannot be found, then a negative error code
   is returned. In case of success, the function returns 0.
   The running time of \texttt{pos2pair} is \(O(\log_{2}k)\),
-  if \(k\) is the number of sequences in \texttt{multiseq}. 
+  if \(k\) is the number of sequences in \texttt{multiseq}.
 */
 
 Sint pos2pospair(Multiseq *multiseq,PairUint *pos,Uint position)

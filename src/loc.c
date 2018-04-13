@@ -16,7 +16,7 @@
 #include "protodef.h"
 #include "streeacc.h"
 #include "errordef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 
 int main(Argctype argc, char *argv[])
 {

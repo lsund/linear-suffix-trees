@@ -16,7 +16,7 @@
 #include "streeacc.h"
 #include "debugdef.h"
 #include "arraydef.h"
-#include "spacedef.h"
+#include "spaceman.h"
 #include "protodef.h"
 
 #ifdef STREELARGE
