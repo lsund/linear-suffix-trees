@@ -32,7 +32,7 @@
 #ifdef DEBUG
 
 static Sint debuglevel = 0;        // the value of \texttt{DEBUGLEVEL}
-static BOOL debugwhere = False;    // the value of \texttt{DEBUGWHERE}
+static Bool debugwhere = False;    // the value of \texttt{DEBUGWHERE}
 /*@null@*/ static FILE
            *debugfileptr = NULL;  // the file pointer to show the debug info
 
@@ -49,7 +49,7 @@ Sint getdebuglevel(void)
   The following function returns the value of \texttt{DEBUGWHERE}.
 */
 
-BOOL getdebugwhere(void)
+Bool getdebugwhere(void)
 {
   return debugwhere;
 }

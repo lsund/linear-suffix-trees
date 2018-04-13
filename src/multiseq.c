@@ -130,7 +130,7 @@ void freemultiseq(Multiseq *multiseq)
   \end{itemize}
 */
 
-Sint overallsequences(BOOL rcmode,Multiseq *multiseq,void *applyinfo,
+Sint overallsequences(Bool rcmode,Multiseq *multiseq,void *applyinfo,
                       Sint(*apply)(void *,Uint,Uchar *,Uint))
 {
   Uint i;

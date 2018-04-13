@@ -11,7 +11,7 @@
 #include "streedef.h"
 #include "streeacc.h"
 
-void overallstree(Suffixtree *stree,BOOL skiproot,
+void overallstree(Suffixtree *stree,Bool skiproot,
                   void(*processnode)(Suffixtree *,Bref,Uint,Uint,void *),
                   void *info)
 {

@@ -127,7 +127,7 @@ Sint procoption(OptionDescription *opt,Uint numofopt,char *optstring)
   \texttt{list}.
 */
 
-static BOOL occursinlist(Uint i,Sint *list)
+static Bool occursinlist(Uint i,Sint *list)
 {
   Uint j;
 
@@ -280,7 +280,7 @@ Sint checkdoubleexclude(Uint numofopts,OptionDescription *opt,
 {
   Uint i, j;
   Sint indi, indj;
-  BOOL *excludepairs = ALLOCSPACE(NULL,BOOL,numofopts*numofopts);
+  Bool *excludepairs = ALLOCSPACE(NULL,Bool,numofopts*numofopts);
 
   for(i=0; i < numofopts * numofopts; i++)
   {

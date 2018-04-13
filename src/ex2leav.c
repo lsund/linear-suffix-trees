@@ -10,9 +10,9 @@
 #include "streedef.h"
 #include "streeacc.h"
 
-BOOL exactlytwoleavesstree(Suffixtree *stree,PairUint *twoleaves,Bref start)
+Bool exactlytwoleavesstree(Suffixtree *stree,PairUint *twoleaves,Bref start)
 {
-  BOOL firstleaffound = False;
+  Bool firstleaffound = False;
   Uint tmpval, node;
 
   node = GETCHILD(start);

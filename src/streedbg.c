@@ -69,7 +69,7 @@ static char *showsymbol(SYMBOL c)
 
  Uint getlargelinkstree(Suffixtree *stree,Uint *btptr,Uint depth);
 
-void showtable(Suffixtree *stree,BOOL final)
+void showtable(Suffixtree *stree,Bool final)
 {
   Uint *largeptr, *btptr, *succptr, *rcptr, i,
        succdepth, distance,
@@ -489,7 +489,7 @@ void showstate(Suffixtree *stree)
   (void) fflush(stdout);
 }
 
-static void loc2stringstree(Suffixtree *stree,Stringtype *s,Location *loc)
+static void loc2stringstree(Suffixtree *stree,String *s,Location *loc)
 {
   Branchinfo branchinfo;
 
@@ -531,7 +531,7 @@ static void loc2stringstree(Suffixtree *stree,Stringtype *s,Location *loc)
 
 void showlocation(FILE *fp,Suffixtree *stree,Location *loc)
 {
-  Stringtype lstr;
+  String lstr;
 
   fprintf(fp,"\"");
   loc2stringstree(stree,&lstr,loc);
@@ -584,8 +584,8 @@ static Sint comparelocs(Suffixtree *stree,Location *loc1,Location *loc2)
   if(loc1->nextnode.toleaf != loc2->nextnode.toleaf)
   {
     fprintf(stderr,"loc1->nextnode.toleaf = %s != %s = loc2->nextnode.toleaf\n",
-                    SHOWBOOL(loc1->nextnode.toleaf),
-                    SHOWBOOL(loc2->nextnode.toleaf));
+                    SHOWBool(loc1->nextnode.toleaf),
+                    SHOWBool(loc2->nextnode.toleaf));
     return -1;
   }
   if(loc1->nextnode.address != loc2->nextnode.address)
@@ -626,7 +626,7 @@ static Sint comparelocs(Suffixtree *stree,Location *loc1,Location *loc2)
 void checklocation(Suffixtree *stree,Location *loc)
 {
   Uint rescanlength;
-  Stringtype lstr, llstr;
+  String lstr, llstr;
   SYMBOL *rest;
   Location scanprefixloc, rescanloc, linklocloc;
 

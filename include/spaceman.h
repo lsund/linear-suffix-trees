@@ -23,9 +23,9 @@
 /*@notnull@*/ char *dynamicstrdup(char *file,Uint line,char *source);
 void freespaceviaptr(char *file,Uint line,void *ptr);
 /*@null@*/ void *creatememorymapforfiledesc(char *file,Uint line,Sint fd,
-                                            BOOL writemap,Uint numofbytes);
+                                            Bool writemap,Uint numofbytes);
 /*@null@*/ void *creatememorymap(char *file,Uint line,char *filename,
-                                 BOOL writemap,Uint *numofbytes);
+                                 Bool writemap,Uint *numofbytes);
 Sint deletememorymap(char *file,Uint line,void *mappedfile);
 
 Uint getspacepeak(void);

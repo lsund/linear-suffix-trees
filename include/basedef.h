@@ -24,4 +24,19 @@
 
 #define MAX_CHARS               UCHAR_MAX
 
+// Fast division
+#define DIV2(N)      ((N) >> 1)
+#define DIV4(N)      ((N) >> 2)
+#define DIV8(N)      ((N) >> 3)
+
+// Fast multiplication
+#define MULT2(N)     ((N) << 1)
+#define MULT4(N)     ((N) << 2)
+#define MULT8(N)     ((N) << 3)
+
+// Fast modulu
+#define MOD2(N)      ((N) & 1)
+#define MOD4(N)      ((N) & 3)
+#define MOD8(N)      ((N) & 7)
+
 #endif

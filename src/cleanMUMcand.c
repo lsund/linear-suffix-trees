@@ -13,6 +13,8 @@
 #include "types.h"
 #include "mumcand.h"
 
+typedef int (*Qsortcomparefunction)(const void *,const void *);
+
 //}
 
 /*EE
@@ -66,7 +68,7 @@ Sint mumuniqueinquery(void *processinfo,
   {
     Uint currentright, dbright = 0;
     MUMcandidate *mumcandptr;
-    BOOL ignorecurrent, ignoreprevious = False;
+    Bool ignorecurrent, ignoreprevious = False;
 
     sortMUMcandidates(mumcand);
     for(mumcandptr = mumcand->spaceMUMcandidate;

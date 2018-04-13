@@ -21,7 +21,7 @@
 */
 
 /*
-  The macro \texttt{OPTION} fills the component of a structure of 
+  The macro \texttt{OPTION} fills the component of a structure of
   type \texttt{OptionDesc}. This macro should not be used. It
   is mainly for compatibility of the code.
 */
@@ -34,7 +34,7 @@
         S[N].declared = True
 
 /*
-  The macro \texttt{ADDOPTION} has a similar effect, but adding the 
+  The macro \texttt{ADDOPTION} has a similar effect, but adding the
   option is done via the function \texttt{addoption}. This is the
   recommended way to add an option.
 */
@@ -64,8 +64,8 @@
         }
 
 /*
-  The following four macros check if all options \texttt{B} 
-  (\texttt{C}, \texttt{D}, \texttt{E}) are used, whenever option 
+  The following four macros check if all options \texttt{B}
+  (\texttt{C}, \texttt{D}, \texttt{E}) are used, whenever option
   \texttt{A} is used.
 */
 
@@ -135,18 +135,18 @@
   An option is described by the following type.
 */
 
-typedef struct 
+typedef struct
 {
   char *optname,             // the option string, begins with -
        *description;         // help text describing purpose of option
   Uint optval;               // the unique number of an option
-  BOOL isalreadyset,         // has the option already been set?
+  Bool isalreadyset,         // has the option already been set?
        declared;             // is the option declared by
                              // a line of the form \texttt{ADDOPTION}
 } OptionDescription;         // \Typedef{OptionDescription}
 
 //\Ignore{
 
-#endif 
+#endif
 
 //}

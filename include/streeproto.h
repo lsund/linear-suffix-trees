@@ -30,7 +30,7 @@ void freestree(Suffixtree *stree);
 /* access.c */
 void getleafinfostree(Suffixtree *stree, Leafinfo *leafinfo, Lref lptr);
 void getbranchinfostree(Suffixtree *stree, Uint whichinfo, Branchinfo *branchinfo, Bref btptr);
-void getheadstringstree(Suffixtree *stree, Stringtype *str);
+void getheadstringstree(Suffixtree *stree, String *str);
 Uint getmaxtextlenstree(void);
 void showpathstree(Suffixtree *stree, Bref bnode, void (*showchar)(SYMBOL, void *), void *info);
 void rootsucclocationsstree(Suffixtree *stree, ArraySimpleloc *ll);

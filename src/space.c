@@ -419,8 +419,8 @@ Uint getspacepeak(void)
 #ifdef DEBUG
 void showmemsize(void)
 {
-  Sint pagesize = (Sint) sysconf((Sysconfargtype) _SC_PAGESIZE);
-  Sint physpages = (Sint) sysconf((Sysconfargtype) _SC_PHYS_PAGES);
+  Sint pagesize = (Sint) sysconf((int) _SC_PAGESIZE);
+  Sint physpages = (Sint) sysconf((int) _SC_PHYS_PAGES);
 
   DEBUG1(1,"# pagesize = %ld\n",(Slong) pagesize);
   DEBUG1(1,"# number of physical pages = %ld\n",(Slong) physpages);

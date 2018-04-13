@@ -17,30 +17,30 @@
 //}
 
 /*
-  This file defines the datatype \texttt{Multiseq} which stores information 
+  This file defines the datatype \texttt{Multiseq} which stores information
   about \(k\)-sequences \(T_{0}\), \(\ldots\), \(T_{k-1}\):
   \begin{enumerate}
   \item
-  For each \(i\in[0,k-1]\), \texttt{startdesc[i]} stores the index in 
-  \texttt{descspace.spaceUchar}, where a textual description for sequence 
+  For each \(i\in[0,k-1]\), \texttt{startdesc[i]} stores the index in
+  \texttt{descspace.spaceUchar}, where a textual description for sequence
   \(T_{i}\) starts. A description for sequence \(T_{i}\)
   ends with a newline character at index \texttt{startdesc[i+1]-1}.
-  The description can e.g.\ be the text following the symbol 
-  \texttt{>} in a fasta formatted file. 
+  The description can e.g.\ be the text following the symbol
+  \texttt{>} in a fasta formatted file.
   \item
-  For each \(i\in[0,k-2]\), \texttt{markpos[i]} is the position of a 
+  For each \(i\in[0,k-2]\), \texttt{markpos[i]} is the position of a
   \emph{separator character} between sequence \(T_{i}\) and \(T_{i+1}\).
   \item
   Let \(i\in[0,k-1]\).
   If \(i=0\), then \(T_{i}\) is stored in the component \texttt{sequence}
-  from index \(0\) to index \(\Size{T_{i}}-1\). 
+  from index \(0\) to index \(\Size{T_{i}}-1\).
   If \(i>0\), then \(T_{i}\) is stored in the component \texttt{sequence}
-  from index \(\texttt{markpos[i-1]+1}\) to index 
+  from index \(\texttt{markpos[i-1]+1}\) to index
   \(\texttt{markpos[i-1]}+1+\Size{T_{i}}\).
   \item
   \texttt{numofsequences} is the number \(k\) of sequences stored.
   \item
-  \texttt{totallength} is the total length of the stored sequences 
+  \texttt{totallength} is the total length of the stored sequences
   including the \(k-1\) separator characters.
   \end{enumerate}
 */
@@ -53,7 +53,7 @@
 
 /*
   For a given multiseq and sequence number, the following macros deliver
-  a pointer to the first character of the description, and the 
+  a pointer to the first character of the description, and the
   length of the description.
 */
 
@@ -84,7 +84,7 @@
 
 #define UNDEFFILESEP 0
 
-typedef struct 
+typedef struct
 {
   ArrayPosition markpos;
   Uint *startdesc,                     // of length numofsequences + 1
@@ -92,7 +92,7 @@ typedef struct
        totallength;                    // the total length of all sequences
   ArrayCharacters descspace;           // the space for the descriptions
   Uchar *sequence,                     // the concatenated sequences
-        *rcsequence,                   // NULL or points to 
+        *rcsequence,                   // NULL or points to
                                        // reverse complemented sequences
         *originalsequence;             // NULL or points to orig. sequence
 
@@ -104,7 +104,7 @@ typedef struct
 
 typedef struct
 {
-  BOOL defined,          // show a description
+  Bool defined,          // show a description
        replaceblanks,    // replaceblanks by underscore
        untilfirstblank;  // only show sequence until first blank
   Uint skipprefix,       // always skip this number of prefixes

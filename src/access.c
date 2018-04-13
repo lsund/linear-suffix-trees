@@ -199,7 +199,7 @@ void getbranchinfostree(Suffixtree *stree,Uint whichinfo,
   }
 }
 
-void getheadstringstree(Suffixtree *stree,Stringtype *str)
+void getheadstringstree(Suffixtree *stree,String *str)
 {
   Branchinfo branchinfo;
   Reference ref;
@@ -337,7 +337,7 @@ void rootsucclocationsstree(Suffixtree *stree,ArraySimpleloc *ll)
 
 // use the following functions only for non root location.
 
-void succlocationsstree(Suffixtree *stree,BOOL nosentinel,Simpleloc *loc,
+void succlocationsstree(Suffixtree *stree,Bool nosentinel,Simpleloc *loc,
                         ArraySimpleloc *ll)
 {
   Uint succdepth, succ, leafindex, distance, depth, headpos,

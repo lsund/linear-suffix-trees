@@ -183,7 +183,7 @@
 //}
 
 Sint getdebuglevel(void);
-BOOL getdebugwhere(void);
+Bool getdebugwhere(void);
 void showmemsize(void);
 void setdebuglevel(void);
 void setdebuglevelfilename(char *filename);

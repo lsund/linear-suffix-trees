@@ -28,7 +28,7 @@ static Sint processleaf(/*@unused@*/ Uint leafnumber,
   return 0;
 }
 
-static BOOL processbranch1(/*@unused@*/ Bref nodeptr,void *info)
+static Bool processbranch1(/*@unused@*/ Bref nodeptr,void *info)
 {
   Countstate *cstate = (Countstate *) info;
 

@@ -272,7 +272,7 @@
 #endif
 
 #ifdef DEBUG
-void showtable(Suffixtree *stree,BOOL final);
+void showtable(Suffixtree *stree,Bool final);
 void checkstree(Suffixtree *stree);
 void showstate(Suffixtree *stree);
 void showstree(Suffixtree *stree);

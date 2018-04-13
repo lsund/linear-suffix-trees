@@ -146,7 +146,7 @@ typedef ArrayUchar ArrayCharacters;     // \Typedef{ArrayCharacters}
 
 typedef struct
 {
-  Stringtype *spaceStrings;
+  String *spaceStrings;
   Uchar *stringbuffer;
   Uint stringbufferlength, nextfreeStrings, allocatedStrings;
 } ArrayStrings;   // \Typedef{ArrayStrings}

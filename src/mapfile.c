@@ -129,7 +129,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 */
 
 /*@null@*/ void *creatememorymapforfiledesc(char *file,Uint line,Sint fd,
-                                            BOOL writemap,Uint numofbytes)
+                                            Bool writemap,Uint numofbytes)
 {
   DEBUG1(2,"# creatememorymapforfiledesc %ld\n",(Slong) fd);
   if(numofbytes == 0)
@@ -179,7 +179,7 @@ Sint simplefileOpen(char *filename,Uint *numofbytes)
 */
 
 /*@null@*/ void *creatememorymap(char *file,Uint line,char *filename,
-                                 BOOL writemap,Uint *numofbytes)
+                                 Bool writemap,Uint *numofbytes)
 {
   int fd;
 

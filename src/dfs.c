@@ -26,11 +26,11 @@
 
 Sint depthfirststree(Suffixtree *stree,Reference *startnode,
                      Sint (*processleaf)(Uint,Bref,void *),
-                     BOOL (*processbranch1)(Bref,void *),
+                     Bool (*processbranch1)(Bref,void *),
                      Sint (*processbranch2)(Bref,void *),
-                     BOOL (*stoptraversal)(void *),void *stopinfo,void *info)
+                     Bool (*stoptraversal)(void *),void *stopinfo,void *info)
 {
-  BOOL godown = True, readyforpop = False;
+  Bool godown = True, readyforpop = False;
   Uint child, brotherval;
   Bref lcpnode = NULL;
   Reference currentnode;
