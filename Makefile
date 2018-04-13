@@ -1,8 +1,14 @@
-LIBBASEDIR=include
-INCLUDEDIR=include
+#
+# Copyright (c) 2003 by Stefan Kurtz and The Institute for
+# Genomic Research.  This is OSI Certified Open Source Software.
+# Please see the file LICENSE for licensing information and
+# the file ACKNOWLEDGEMENTS for names of contributors to the
+# code base.
+#
+# Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
 
-# the following flags determines the maximal allowed input size of
-# the suffix tree construction
+
+
 # STREESMALL means that the maximal sequence length is 2 MB
 # STREELARGE means that the maximal sequence length is 134 MB
 # STREEHUGE  means that the maximal sequence length is 500 MB
@@ -11,7 +17,9 @@ INCLUDEDIR=include
 #SIZEFLAG=-DSTREELARGE
 SIZEFLAG=-DSTREEHUGE
 
-override CFLAGS+=-I'include' $(SIZEFLAG)
+INCLUDE=-I'include'
+
+override CFLAGS+=$(INCLUDE) $(SIZEFLAG)
 ##CFLAGS=${DEFINECFLAGS} -I$(INCLUDEDIR) $(SIZEFLAG)
 ##LDFLAGS=${DEFINELDFLAGS}
 
@@ -20,8 +28,6 @@ LDFLAGS+=-m64
 #-DSTARTFACTOR=0.5
 
 LD=${CC}
-
-LIBBASE=${LIBBASEDIR}/libbase.a
 
 PROTOFILES=  access.c\
              scanpref.c\
@@ -62,6 +68,12 @@ stats: clean dirs mccreight
 plain: clean dirs loc
 	./bin/loc data/data.xml
 
+runtest: clean test
+	./bin/test
+
+test: dirs ${OBJ} ${TEST_OBJ}
+	${CC} ${LDFLAGS} ${INCLUDE} ${OBJ} ${TEST_OBJ} test/test.c -o bin/test
+
 mccreight: ${OBJECTS}
 	${CC} ${CFLAGS} ${OBJECTS} src/stree.c -o bin/$@
 
@@ -70,6 +82,9 @@ loc: ${OBJECTS}
 
 obj/%.o:src/%.c
 	$(LD) $(CFLAGS) -c src/$*.c -o $@
+
+obj/test_%.o:test/test_%.c
+	$(CC) $(CFLAGS) -c test/test_$*.c -o $@
 
 .PHONY:clean
 clean:
