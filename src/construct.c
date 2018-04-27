@@ -6,12 +6,6 @@
    code base.
    */
 
-//}
-
-//\FILEINFO{construct.c}{Stefan Kurtz}{November 1999}
-
-//\Ignore{
-
 #include "intbits.h"
 #include "spaceman.h"
 #include "megabytes.h"
@@ -74,15 +68,11 @@ static void showvalues(void)
    \end{itemize}
    */
 
-//\subsection{Space Management}
-
-/*
-   For a string of length \(n\) we initially allocate space for
-   \(\texttt{STARTFACTOR}\cdot\texttt{SMALLINTS}\cdot n\) integers to store
-   the branching nodes. This usually suffices for most cases. In case we need
-   more integers, we allocate space for \(\texttt{ADDFACTOR}\cdot n\)
-   (at least 16) extra branching nodes.
-   */
+// For a string of length \(n\) we initially allocate space for
+// \(\texttt{STARTFACTOR}\cdot\texttt{SMALLINTS}\cdot n\) integers to store
+// the branching nodes. This usually suffices for most cases. In case we need
+// more integers, we allocate space for \(\texttt{ADDFACTOR}\cdot n\)
+// (at least 16) extra branching nodes.
 
 #ifndef STARTFACTOR
 #define STARTFACTOR 0.5
@@ -91,11 +81,9 @@ static void showvalues(void)
 #define ADDFACTOR   0.05
 #define MINEXTRA    16
 
-/*
-   Before a new node is stored, we check if there is enough space available.
-   If not, the space is enlarged by a small amount. Since some global pointers
-   directly refer into the table, these have to be adjusted after reallocation.
-   */
+// Before a new node is stored, we check if there is enough space available.
+// If not, the space is enlarged by a small amount. Since some global pointers
+// directly refer into the table, these have to be adjusted after reallocation.
 
 static void spaceforbranchtab(Suffixtree *stree)
 {
@@ -134,23 +122,23 @@ static void spaceforbranchtab(Suffixtree *stree)
     }
 }
 
-//\subsection{Initializing and Retrieving Headpositions, Depth, and Suffixlinks}
+// Initializing and Retrieving Headpositions, Depth, and Suffixlinks
 
-/*
-   We have three functions to initialize and retrieve head positions, depth, and
-   suffix links. The implementation depends on the bit layout.
-   \begin{enumerate}
-   \item
-   The function \emph{setdepthnum} stores the \emph{depth} and the
-   \emph{head position} of a new large node.
-   \item
-   The function \emph{setsuffixlink} stores the \emph{suffixlink}
-   of a new large node.
-   \item
-   The function \emph{getlargelinkconstruction} retrieves the \emph{suffixlink}
-   of a large node, which is referenced by \emph{headposition}.
-   \end{enumerate}
-   */
+//
+//  We have three functions to initialize and retrieve head positions, depth, and
+//  suffix links. The implementation depends on the bit layout.
+//  \begin{enumerate}
+//  \item
+//  The function \emph{setdepthnum} stores the \emph{depth} and the
+//  \emph{head position} of a new large node.
+//  \item
+//  The function \emph{setsuffixlink} stores the \emph{suffixlink}
+//  of a new large node.
+//  \item
+//  The function \emph{getlargelinkconstruction} retrieves the \emph{suffixlink}
+//  of a large node, which is referenced by \emph{headposition}.
+//  \end{enumerate}
+//  */
 
 #ifdef STREESMALL
 
@@ -392,15 +380,16 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 }
 #endif
 
-//\subsection{Insertion of Nodes}
 
-/*
-   The function \emph{insertleaf} inserts a leaf and a corresponding leaf
-   edge outgoing from the current \emph{headnode}.
-   \emph{insertprev} refers to the node to the left of the leaf to be inserted.
-   If the leaf is the first child, then \emph{insertprev} is
-   \texttt{UNDEFINEDREFERENCE}.
-   */
+// Insertion of Nodes
+
+//
+// The function \emph{insertleaf} inserts a leaf and a corresponding leaf
+// edge outgoing from the current \emph{headnode}.
+// \emph{insertprev} refers to the node to the left of the leaf to be inserted.
+// If the leaf is the first child, then \emph{insertprev} is
+// \texttt{UNDEFINEDREFERENCE}.
+//
 
 static void insertleaf(Suffixtree *stree)
 {
@@ -444,14 +433,14 @@ stree->nextfreeleafnum++;
 stree->nextfreeleafptr++;
 }
 
-/*
-   The function \emph{insertbranch} inserts a branching node and splits
-   the appropriate edges, according to the canonical location of the current
-   head. \emph{insertprev} refers to the node to the left of the branching
-   node to be inserted. If the branching node is the first child, then
-   \emph{insertprev} is \texttt{UNDEFINEDREFERENCE}. The edge to be split ends
-   in the node referred to by \emph{insertnode}.
-   */
+//
+// The function \emph{insertbranch} inserts a branching node and splits
+// the appropriate edges, according to the canonical location of the current
+// head. \emph{insertprev} refers to the node to the left of the branching
+// node to be inserted. If the branching node is the first child, then
+// \emph{insertprev} is \texttt{UNDEFINEDREFERENCE}. The edge to be split ends
+// in the node referred to by \emph{insertnode}.
+//
 
 static void insertbranchnode(Suffixtree *stree)
 {
@@ -533,15 +522,15 @@ static void insertbranchnode(Suffixtree *stree)
     DEBUGCODE(1,stree->nodecount++);
 }
 
-//\subsection{Finding the Head-Locations}
+// Finding the Head-Locations
 
-/*
-   The function \emph{rescan} finds the location of the current head.
-   In order to scan down the tree, it suffices to look at the first
-   character of each edge.
-   */
+//
+// The function \emph{rescan} finds the location of the current head.
+// In order to scan down the tree, it suffices to look at the first
+// character of each edge.
+//
 
-static void rescan(Suffixtree *stree)
+static void rescan(Suffixtree *stree) // skip-count
 {
     Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode,
          nodedepth, edgelen, wlen, leafindex, headposition;
@@ -646,7 +635,7 @@ static Uint taillcp(Suffixtree *stree,SYMBOL *start1, SYMBOL *end1)
 }
 
 // Scans a prefix of the current tail down from a given node
-static void scanprefix(Suffixtree *stree)
+static void scanprefix(Suffixtree *stree) // probably slow-scan / walk
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node,
          distance = 0, prevnode, prefixlen, headposition;
@@ -655,8 +644,9 @@ static void scanprefix(Suffixtree *stree)
     DEBUGDEFAULT;
     if(stree->headnodedepth == 0)   // headnode is root
     {
-        if(stree->tailptr == stree->sentinel)   // there is no \$-edge
-        {
+
+        // there is no \$-edge
+        if(stree->tailptr == stree->sentinel) {
             stree->headend = NULL;
             return;
         }
@@ -666,8 +656,8 @@ static void scanprefix(Suffixtree *stree)
             stree->headend = NULL;
             return;
         }
-        if(ISLEAF(node)) // successor edge is leaf, compare tail and leaf edge label
-        {
+        // successor edge is leaf, compare tail and leaf edge label
+        if(ISLEAF(node)) {
             leftborder = stree->text + GETLEAFINDEX(node);
             prefixlen = 1 + taillcp(stree,leftborder+1,stree->sentinel-1);
             (stree->tailptr) += prefixlen;
@@ -684,7 +674,7 @@ static void scanprefix(Suffixtree *stree)
         if(nodedepth > prefixlen)   // cannot reach the successor, fall out of tree
         {
             stree->headstart = leftborder;
-            stree->headend = leftborder + (prefixlen-1);
+            stree->headend = leftborder + (prefixlen - 1);
             stree->insertnode = node;
             return;
         }
@@ -881,7 +871,7 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
     stree->headnode = stree->nextfreebranch = stree->branchtab;
     stree->headend = NULL;
     stree->headnodedepth = stree->maxbranchdepth = 0;
-    for(ptr=stree->rootchildren; ptr<=stree->rootchildren+LARGESTCHARINDEX; ptr++)
+    for(ptr= stree->rootchildren; ptr<=stree->rootchildren + LARGESTCHARINDEX; ptr++)
     {
         *ptr = UNDEFINEDREFERENCE;
     }
@@ -891,7 +881,7 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
     }
     stree->nextfreebranch = stree->branchtab;
     stree->nextfreebranchnum = 0;
-    SETDEPTHHEADPOS(0,0);
+    SETDEPTHHEADPOS(0, 0);
     SETNEWCHILDBROTHER(MAKELARGELEAF(0),0);
     SETBRANCHNODEOFFSET;
     stree->rootchildren[(Uint) *text] = MAKELEAF(0);
@@ -941,14 +931,16 @@ void freestree(Suffixtree *stree)
     }
 }
 
-//\subsection{Computing the Suffix Tree}
+// The following are some disjoint sections for creating a suffix tree. First,
+// the alias for CONSTRUCT is defined, together with some additional options.
+// Then, the 'suffix tree function' is included as gen.c. Then, the
+// stuff gets undefined. In effect, A bunch of suffix tree methods are defined,
+// reusing the code in 'gen.c'
 
-/*
-   \emph{constructstree} implements McCreight Algorithm to compute the suffix
-   tree for a \texttt{text} of length \texttt{textlen}. For explanations, see
-   \cite{KUR:1998}. The number \((i)\) refers to the cases of Section 6 in
-   \cite{KUR:1998}.
-   */
+
+///////////////////////////////////////////////////////////////////////////////
+// Normal tree
+
 
 #define CONSTRUCT Sint constructstree(Suffixtree *stree,SYMBOL *text,Uint textlen)
 #define DECLAREEXTRA        stree->nonmaximal = NULL
@@ -958,7 +950,7 @@ void freestree(Suffixtree *stree)
 #define CHECKSTEP           /* Nothing */
 #define FINALPROGRESS       /* Nothing */
 
-#include "construct.gen"
+#include "gen.c"
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA
@@ -968,7 +960,10 @@ void freestree(Suffixtree *stree)
 #undef CHECKSTEP
 #undef FINALPROGRESS
 
-/* --------------------------------------------------- */
+
+///////////////////////////////////////////////////////////////////////////////
+// Markmaxstree
+
 
 #define CONSTRUCT Sint constructmarkmaxstree(Suffixtree *stree,SYMBOL *text,Uint textlen)
 
@@ -999,7 +994,7 @@ void freestree(Suffixtree *stree)
 #define CHECKSTEP            /* Nothing */
 #define FINALPROGRESS        /* Nothing */
 
-#include "construct.gen"
+#include "gen.c"
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA
@@ -1009,7 +1004,10 @@ void freestree(Suffixtree *stree)
 #undef CHECKSTEP
 #undef FINALPROGRESS
 
-/* --------------------------------------------------- */
+
+///////////////////////////////////////////////////////////////////////////////
+// Headstree
+
 
 #define CONSTRUCT Sint constructheadstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void(*processhead)(Suffixtree *,Uint,void *),void *processheadinfo)
 
@@ -1022,7 +1020,7 @@ void freestree(Suffixtree *stree)
 #define CHECKSTEP            /* Nothing */
 #define FINALPROGRESS        /* Nothing */
 
-#include "construct.gen"
+#include "gen.c"
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA
@@ -1032,7 +1030,8 @@ void freestree(Suffixtree *stree)
 #undef CHECKSTEP
 #undef FINALPROGRESS
 
-/* --------------------------------------------------- */
+///////////////////////////////////////////////////////////////////////////////
+// Progresstree
 
 #define LEASTSHOWPROGRESS 100000
 #define NUMOFCALLS 100
@@ -1082,7 +1081,7 @@ j++
     }\
 }
 
-#include "construct.gen"
+#include "gen.c"
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA

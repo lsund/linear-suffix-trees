@@ -6,8 +6,6 @@
   code base.
 */
 
-//\Ignore{
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -20,15 +18,6 @@
 #include "errordef.h"
 #include "megabytes.h"
 
-//}
-
-/*EE
-  This module defines functions for handling debug levels and
-  other information related to producing debugging messages.
-  The debug mechanism is only available if the \texttt{DEBUG} compiler
-  flag is used.
-*/
-
 #ifdef DEBUG
 
 static Sint debuglevel = 0;        // the value of \texttt{DEBUGLEVEL}
@@ -36,30 +25,18 @@ static Bool debugwhere = False;    // the value of \texttt{DEBUGWHERE}
 /*@null@*/ static FILE
            *debugfileptr = NULL;  // the file pointer to show the debug info
 
-/*EE
-  The following function returns the \texttt{DEBUGLEVEL}.
-*/
 
 Sint getdebuglevel(void)
 {
   return debuglevel;
 }
 
-/*EE
-  The following function returns the value of \texttt{DEBUGWHERE}.
-*/
 
 Bool getdebugwhere(void)
 {
   return debugwhere;
 }
 
-/*EE
-  The following function sets the debug level by looking up the
-  environment variable \texttt{DEBUGLEVEL}. Moreover, the environment
-  variable \texttt{DEBUGWHERE} is read and \texttt{debugwhere} is set
-  accordingly.
-*/
 
 void setdebuglevel(void)
 {
@@ -102,7 +79,6 @@ void setdebuglevel(void)
       }
     }
   }
-  CHECKALLTYPESIZES
 #ifdef WITHSYSCONF
   showmemsize();
 #endif

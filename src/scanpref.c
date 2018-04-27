@@ -30,7 +30,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
 
 SYMBOL *scanprefixfromnodestree(
             Suffixtree *stree,
-            Location *loc,              // The location of the prefix
+            Location *loc,              // The location of the prefix (out)
             Bref btptr,                 // Branch reference
             SYMBOL *left,               // The start
             SYMBOL *right,              // The end
@@ -231,8 +231,9 @@ SYMBOL *scanprefixstree(
     Uint prefixlen, remainingtoskip;
 
     DEBUG0(4,"scanprefixstree starts at location ");
-    DEBUGCODE(4,showlocation(stdout,stree,inloc));
+    DEBUGCODE(4, showlocation(stdout,stree,inloc));
     DEBUG0(4,"\n");
+
     if(inloc->remain == 0) {
         return scanprefixfromnodestree(stree,outloc,inloc->nextnode.address,
                 left,right,rescanlength);

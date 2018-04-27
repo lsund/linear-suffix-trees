@@ -65,7 +65,7 @@
           fprintf(FP,"\\%lu",(Ulong) (C));\
         } else\
         {\
-          (void) putc((Fputcfirstargtype) (C),FP);\
+          (void) putc((int) (C),FP);\
         }
 
 /*

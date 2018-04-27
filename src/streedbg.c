@@ -452,81 +452,79 @@ void showstree(Suffixtree *stree)
 
 void showstate(Suffixtree *stree)
 {
-  if(stree->headend == NULL)
-  {
-    printf(" head=%lu of depth %lu\n",
+    if(stree->headend == NULL)
+    {
+        printf(" head=%lu of depth %lu\n",
                 (Ulong) BRADDR2NUM(stree,stree->headnode),
                 (Ulong) stree->headnodedepth);
-  } else
-  {
-    printf(" head=[%lu,",(Ulong) BRADDR2NUM(stree,stree->headnode));
-    showthesymbolstring(stdout,stree->sentinel,stree->headstart,stree->headend);
-    printf("] where headnode is of depth %lu\n",
-                         (Ulong) stree->headnodedepth);
-  }
-  printf(" insertnode=");
-  SHOWINDEX(stree->insertnode);
-  printf("\n insertprev=");
-  SHOWINDEX(stree->insertprev);
-  printf("\n smallnode=%lu\n",(Ulong) stree->smallnode);
-  printf(" largenode=%lu\n",(Ulong) stree->largenode);
-  printf(" nodecount=%lu\n",(Ulong) stree->nodecount);
-  if(stree->chainstart == NULL)
-  {
-    printf(" chainstart=UNDEFINEDREFERENCE\n");
-  } else
-  {
-    printf(" chainstart=%lu\n",(Ulong) BRADDR2NUM(stree,stree->chainstart));
-  }
-  printf(" smallnotcompleted=%lu\n",(Ulong) stree->smallnotcompleted);
-  printf(" nextfreebranch=%lu\n",
+    } else
+    {
+        printf(" head=[%lu,",(Ulong) BRADDR2NUM(stree,stree->headnode));
+        showthesymbolstring(stdout,stree->sentinel,stree->headstart,stree->headend);
+        printf("] where headnode is of depth %lu\n",
+                (Ulong) stree->headnodedepth);
+    }
+    printf(" insertnode=");
+    SHOWINDEX(stree->insertnode);
+    printf("\n insertprev=");
+    SHOWINDEX(stree->insertprev);
+    printf("\n smallnode=%lu\n",(Ulong) stree->smallnode);
+    printf(" largenode=%lu\n",(Ulong) stree->largenode);
+    printf(" nodecount=%lu\n",(Ulong) stree->nodecount);
+    if(stree->chainstart == NULL)
+    {
+        printf(" chainstart=UNDEFINEDREFERENCE\n");
+    } else
+    {
+        printf(" chainstart=%lu\n",(Ulong) BRADDR2NUM(stree,stree->chainstart));
+    }
+    printf(" smallnotcompleted=%lu\n",(Ulong) stree->smallnotcompleted);
+    printf(" nextfreebranch=%lu\n",
             (Ulong) BRADDR2NUM(stree,stree->nextfreebranch));
-  printf(" nextfreeleafnum=%lu\n",(Ulong) stree->nextfreeleafnum);
-  printf(" tail of length (%lu)=",(Ulong) (stree->sentinel-stree->tailptr));
-  (void) fflush(stdout);
-  showthesymbolstring(stdout,stree->sentinel,stree->tailptr,stree->sentinel);
-  (void) putchar('\n');
-  (void) fflush(stdout);
+    printf(" nextfreeleafnum=%lu\n",(Ulong) stree->nextfreeleafnum);
+    printf(" tail of length (%lu)=",(Ulong) (stree->sentinel-stree->tailptr));
+    (void) fflush(stdout);
+    showthesymbolstring(stdout,stree->sentinel,stree->tailptr,stree->sentinel);
+    (void) putchar('\n');
+    (void) fflush(stdout);
 }
 
-static void loc2stringstree(Suffixtree *stree,String *s,Location *loc)
+static void loc2stringstree(Suffixtree *stree, String *s, Location *loc)
 {
-  Branchinfo branchinfo;
+    Branchinfo branchinfo;
 
-  if(loc->nextnode.toleaf)
-  {
-    s->start = LEAFADDR2NUM(stree,loc->nextnode.address);
-    s->length = stree->textlen - s->start - loc->remain + 1;
-  } else
-  {
-    getbranchinfostree(stree,ACCESSDEPTH | ACCESSHEADPOS,&branchinfo,
-                             loc->nextnode.address);
-    s->start = branchinfo.headposition;
-    s->length = branchinfo.depth - loc->remain;
-  }
-  if(s->length != loc->locstring.length)
-  {
-    fprintf(stderr,"s->length=%lu != %lu != loc->locstring.length\n",
-                    (Ulong) s->length,
-                    (Ulong) loc->locstring.length);
-    exit(EXIT_FAILURE);
-  }
-  if(s->start != loc->locstring.start)
-  {
-    if(memcmp(stree->text+s->start,
-              stree->text+loc->locstring.start,
-              (size_t) s->length) != 0)
-    {
-      fprintf(stderr,"compare of strings failed: \"");
-      (void) fwrite(stree->text+s->start,sizeof(SYMBOL),
-                    (size_t) s->length,stderr);
-      fprintf(stderr,"\" != \"");
-      (void) fwrite(stree->text + loc->locstring.start,sizeof(SYMBOL),
-                    (size_t) loc->locstring.length,stderr);
-      fprintf(stderr,"\"\n");
-      exit(EXIT_FAILURE);
+    if(loc->nextnode.toleaf) {
+        s->start = LEAFADDR2NUM(stree,loc->nextnode.address);
+        s->length = stree->textlen - s->start - loc->remain + 1;
+    } else {
+        getbranchinfostree(stree,ACCESSDEPTH | ACCESSHEADPOS,&branchinfo,
+                loc->nextnode.address);
+        s->start = branchinfo.headposition;
+        s->length = branchinfo.depth - loc->remain;
     }
-  }
+
+    if(s->length != loc->locstring.length) {
+        fprintf(stderr,"s->length=%lu != %lu != loc->locstring.length\n",
+                (Ulong) s->length,
+                (Ulong) loc->locstring.length);
+        exit(EXIT_FAILURE);
+    }
+
+    if(s->start != loc->locstring.start) {
+        if(memcmp(stree->text+s->start,
+                    stree->text+loc->locstring.start,
+                    (size_t) s->length) != 0)
+        {
+            fprintf(stderr,"compare of strings failed: \"");
+            (void) fwrite(stree->text+s->start, sizeof(SYMBOL),
+                    (size_t) s->length,stderr);
+            fprintf(stderr,"\" != \"");
+            (void) fwrite(stree->text + loc->locstring.start, sizeof(SYMBOL),
+                    (size_t) loc->locstring.length,stderr);
+            fprintf(stderr,"\"\n");
+            exit(EXIT_FAILURE);
+        }
+    }
 }
 
 void showlocation(FILE *fp,Suffixtree *stree, Location *loc)
@@ -572,7 +570,7 @@ void showlocation(FILE *fp,Suffixtree *stree, Location *loc)
         ((Ulong) ((R).toleaf ? LEAFADDR2NUM(stree,(R).address)\
                                 : BRADDR2NUM(stree,(R).address)))
 
-static Sint comparelocs(Suffixtree *stree,Location *loc1,Location *loc2)
+static Sint comparelocs(Suffixtree *stree, Location *loc1,Location *loc2)
 {
   if(loc1->remain != loc2->remain)
   {
@@ -583,9 +581,9 @@ static Sint comparelocs(Suffixtree *stree,Location *loc1,Location *loc2)
   }
   if(loc1->nextnode.toleaf != loc2->nextnode.toleaf)
   {
-    fprintf(stderr,"loc1->nextnode.toleaf = %s != %s = loc2->nextnode.toleaf\n",
-                    SHOWBool(loc1->nextnode.toleaf),
-                    SHOWBool(loc2->nextnode.toleaf));
+    fprintf(stderr,"loc1->nextnode.toleaf = %d != %d = loc2->nextnode.toleaf\n",
+                    loc1->nextnode.toleaf,
+                    loc2->nextnode.toleaf);
     return -1;
   }
   if(loc1->nextnode.address != loc2->nextnode.address)
@@ -630,7 +628,7 @@ void checklocation(Suffixtree *stree, Location *loc)
   SYMBOL *rest;
   Location scanprefixloc, rescanloc, linklocloc;
 
-  loc2stringstree(stree,&lstr,loc);
+  loc2stringstree(stree, &lstr,loc);
 
   for(rescanlength = 0; rescanlength <= lstr.length; rescanlength++) {
     rest = scanprefixfromnodestree(
@@ -644,7 +642,7 @@ void checklocation(Suffixtree *stree, Location *loc)
 
     if(rest != NULL) {
       fprintf(stderr,"string of location ");
-      showlocation(stderr,stree,loc);
+      showlocation(stderr, stree, loc);
       fprintf(stderr,"\nscanned = ");
       showlocation(stderr,stree, &scanprefixloc);
       fprintf(stderr,"\nnot found\n");

@@ -47,6 +47,8 @@ OBJ=         obj/construct.o\
              obj/depthtab.o\
              obj/ex2leav.o\
              obj/dfs.o\
+             obj/streedbg.o\
+             obj/debug.o\
              obj/overmax.o\
              obj/oversucc.o\
              obj/addleafcount.o\

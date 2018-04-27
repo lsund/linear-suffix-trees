@@ -41,7 +41,7 @@ typedef struct
 
 // For each leaf, we store a reference to its branchbrother, which is NULL if
 // the right brother does not exist. This is expressed with LeafInfo
-typedef Reference Leafinfo;  // \Typedef{Leafinfo}
+typedef Reference Leafinfo;
 
 
 // A suffix tree is implemented by the type SuffixTree. Most of the feilds are
@@ -132,8 +132,8 @@ typedef struct
   String locstring;     // string represented by location
   Bref previousnode;    // reference to previous node (which is branching)
   SYMBOL *firstptr;     // pointer to first character of edge label
-  Uint edgelen,         // length of edge
-       remain;          // number of remaining characters on edge
+  Uint edgelen;         // length of edge
+  Uint remain;          // number of remaining characters on edge
   Reference nextnode;   // reference to node the edge points to
 } Location;             // \Typedef{Location}
 

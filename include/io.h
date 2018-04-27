@@ -69,5 +69,6 @@ FILE *createfilehandle(char *file, Uint line, char *path, char *mode);
 // Opens the path for appending, erasing any prior content of the same file
 FILE *open_append(const char *path);
 
+Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Uchar ***wordsp);
 #endif
 

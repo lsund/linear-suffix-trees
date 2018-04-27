@@ -12,8 +12,13 @@
 #include "streeacc.h"
 #include "streehuge.h"
 
-void rescanstree(Suffixtree *stree,Location *loc,
-                 Bref btptr,SYMBOL *left,SYMBOL *right)
+void rescanstree(
+        Suffixtree *stree,
+        Location *loc,
+        Bref btptr,
+        SYMBOL *left,
+        SYMBOL *right
+    )
 {
   Uint *nodeptr, *largeptr = NULL, leafindex, nodedepth,
        node, distance = 0, prefixlen, headposition, tmpnodedepth;

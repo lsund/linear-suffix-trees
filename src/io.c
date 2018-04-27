@@ -198,6 +198,57 @@ int file2Array(char *name, Uint *textlen, int size, char ***wordsp)
     return i;
 }
 
+Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Uchar ***wordsp)
+{
+    Uchar **words = *wordsp;
+    int fd = fileOpen(name, textlen, False);
+
+    if (fd < 0) {
+        return -1;
+    }
+    int max_line_len = 1001;
+
+    FILE *fp = fopen(name, "r");
+    if (fp == NULL) {
+        fprintf(stderr,"Error opening file.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    Uint i;
+    for (i = 0; i < nlines; i++)
+    {
+        Uint j;
+
+        /* Allocate space for the next line */
+        words[i] = (Uchar *) malloc(max_line_len * sizeof(Uchar));
+
+        if (words[i] == NULL) {
+            fprintf(stderr,"Out of memory (3).\n");
+            exit(4);
+        }
+
+        char c;
+        j = 0;
+        do  {
+            c = fgetc(fp);
+            if (c == EOF) {
+
+                *wordsp = words;
+                fclose(fp);
+                return i;
+            }
+            words[i][j] = c;
+            j++;
+        } while (c != 10);
+
+        words[i][j - 1] = 0;
+    }
+    fprintf(stderr, "Warning, not all patterns were read\n");
+    *wordsp = words;
+    fclose(fp);
+    return i;
+}
+
 
 FILE *open_append(const char *path)
 {

@@ -3,8 +3,7 @@
 
 Uint textlen;
 
-Uchar *wtext;
-
+Uchar *text;
 
 // Naively search `wtext` for the pattern beginning at address `start`, ending
 // at address `end`.
@@ -18,7 +17,7 @@ bool naive_search(Uchar *start, Uchar *end)
     for (Uint i = 0; i < textlen; i++) {
         k = i;
         for (j = 0; j < m; j++) {
-            if (pattern[j] == wtext[k]) {
+            if (pattern[j] == text[k]) {
                 k++;
             } else {
                 break;
