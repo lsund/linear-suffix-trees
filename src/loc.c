@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
   }
   CONSTRUCTSTREE(&stree,text,textlen,return EXIT_FAILURE);
 #ifdef DEBUG
-  enumlocations(&stree,checklocation);
+  enumlocations(&stree, checklocation);
 #endif
   freestree(&stree);
   if(DELETEMEMORYMAP(text) != 0)

@@ -11,117 +11,96 @@
 
 #include "types.h"
 #include "arraydef.h"
+#include "symboldef.h"
 
-//}
-
-/*
-  A \texttt{Reference} consists of an \texttt{address} pointing a leaf,
-  or to a branching node. The boolean \texttt{toleaf} is \texttt{True} if
-  and only if \texttt{address} points to a leaf.
-*/
-
+// A reference consists of an `address` pointing to a leaf or a branching node.
+// The boolean toleaf is true iff `address` points to a leaf.
 typedef struct
 {
   Bool toleaf;
   Uint *address;
-} Reference;            // \Typedef{Reference}
+} Reference;
 
-/*
-  The following types are used for references to leaves and
-  branching nodes, respectively. We will always identify a leaf and
-  and branching node with their references.
-*/
+// Reference to a branching node
+typedef Uint * Bref;
 
-typedef Uint * Bref;    // \Typedef{Bref}
-typedef Uint * Lref;    // \Typedef{Lref}
+// Reference to a leaf
+typedef Uint * Lref;
 
-/*
-  For each branching node we store five values, as described in Section
-  \ref{Representation}. These values comprise the following structure.
-*/
-
+// For each branching node we store six values
 typedef struct
 {
-  Uint headposition,        // the head position of the branching node
-       depth;               // the depth of the branching node
+  Uint headposition;        // the head position of the branching node
+  Uint depth;               // the depth of the branching node
   Bref suffixlink;          // the suffix link is always to a branching node
-  Reference firstchild,     // the reference to the first child
-            branchbrother;  // the reference to the right brother;
+  Reference firstchild;     // the reference to the first child
+  Reference branchbrother;  // the reference to the right brother;
                             // if this doesn't exist then it's \texttt{NULL}
 } Branchinfo;               // \Typedef{Branchinfo}
 
-/*
-  For each leaf, we store a reference to its right brother, which is
-  \texttt{NULL}, if the right brother does not exist. This is
-  expressed in the type synonym \texttt{Leafinfo}.
-*/
 
+// For each leaf, we store a reference to its branchbrother, which is NULL if
+// the right brother does not exist. This is expressed with LeafInfo
 typedef Reference Leafinfo;  // \Typedef{Leafinfo}
 
-/*
-  A suffix tree is implemented by the type \texttt{Suffixtree}.
-  This structure contains several components which are mostly only used
-  during the suffix tree construction. For applications, assume the
-  following definition. Note that the input sequence is represented
-  as an array of elements of type \texttt{SYMBOL}. The latter
-  is a synonym for \texttt{Uchar} by default.
 
-@typedef struct
-@{
-@  SYMBOL *text;     // points to the input string
-@  Uint textlen;     // the length of the input string
-@  Uint *branchtab;  // stores the infos for the branching nodes
-@  Uint *leaftab;    // stores the brother-references of the leaves
-@} Suffixtree;       // \Typedef{Suffixtree}
+// A suffix tree is implemented by the type SuffixTree. Most of the feilds are
+// only used during construction.
+//
+// The important are the following:
+//
+// SYMBOL *text;     // points to the input string
+// Uint textlen;     // the length of the input string
+// Uint *branchtab;  // stores the infos for the branching nodes
+// Uint *leaftab;    // stores the brother-references of the leaves
+//
+//
 
-*/
-
-//\Ignore{
-
-struct Suffixtreetype
+typedef struct suffixtree
 {
-  Uint textlen,               // the length of the input string
-       *leaftab,              // stores the brother-references of the leafs
-       *branchtab,            // table TBranch
-       *rootchildren;         // references to successors of root
-  SYMBOL *text,               // points to the input string
-         *sentinel;           // points to the position of the \(\$\)-symbol
+  Uint textlen;               // the length of the input string
+  Uint *leaftab;              // stores the brother-references of the leafs
+  Uint *branchtab;            // table TBranch
+  Uint *rootchildren;         // references to successors of root
 
-  Uint nextfreeleafnum,       // the number of the next leaf
-       headnodedepth,         // the depth of the headnode
-       insertnode,            // the node the split edge leads to
-       insertprev,            // the edge preceeding the split edge
-       smallnotcompleted,     // the number of small nodes in the current chain
-       nextfreebranchnum,     // the number of the next free branch node
-       onsuccpath,            // refers to node on success path of headnode
-       currentdepth,          // depth of the new branch node
-       branchnodeoffset,      // number of leafs in tree
-       alphasize,             // the number of different characters in t
-       maxbranchdepth,        // maximal depth of branching node
-       largenode,             // number of large nodes
-       smallnode,             // number of small nodes
-       *setlink,              // address of a nil-reference
-       *nextfreeleafptr,      // points to next free entry in leaftab
-       *chainstart,           // address of the node, current chains starts at
-       *nextfreebranch,       // reference to next free base addr. in branchtab
-       *headnode,             // left component of head location
-       currentbranchtabsize,  // current number of cells in branchtab
-       *firstnotallocated,    // refers to the last address, such that at
+  SYMBOL *text;               // points to the input string
+  SYMBOL *sentinel;           // points to the position of the \(\$\)-symbol
+
+  Uint nextfreeleafnum;       // the number of the next leaf
+  Uint headnodedepth;         // the depth of the headnode
+  Uint insertnode;            // the node the split edge leads to
+  Uint insertprev;            // the edge preceeding the split edge
+  Uint smallnotcompleted;     // the number of small nodes in the current chain
+  Uint nextfreebranchnum;     // the number of the next free branch node
+  Uint onsuccpath;            // refers to node on success path of headnode
+  Uint currentdepth;          // depth of the new branch node
+  Uint branchnodeoffset;      // number of leafs in tree
+  Uint alphasize;             // the number of different characters in t
+  Uint maxbranchdepth;        // maximal depth of branching node
+  Uint largenode;             // number of large nodes
+  Uint smallnode;             // number of small nodes
+  Uint *setlink;              // address of a nil-reference
+  Uint *nextfreeleafptr;      // points to next free entry in leaftab
+  Uint *chainstart;           // address of the node, current chains starts at
+  Uint *nextfreebranch;       // reference to next free base addr. in branchtab
+  Uint *headnode;             // left component of head location
+  Uint currentbranchtabsize;  // current number of cells in branchtab
+  Uint *firstnotallocated;    // refers to the last address, such that at
                               // least \texttt{LARGEINTS} integers are
                               // available. So a large node can be stored in
                               // the available amount of space.
-       *nonmaximal,           // bit table: if node with headposition \(i\) is
+  Uint *nonmaximal;           // bit table: if node with headposition \(i\) is
                               // not maximal, then \(nonmaximal[i]\) is set.
-       *leafcounts;           // holds counts of the number of leafs in subtree
+  Uint *leafcounts;           // holds counts of the number of leafs in subtree
                               // indexed by headposition
   Bool setatnewleaf;          // nil-reference is stored in new leaf
-  SYMBOL *headstart,          // these references represent the right component
-         *headend,            // of the head location \((\overline{u},v)\).
+  SYMBOL *headstart;          // these references represent the right component
+  SYMBOL *headend;            // of the head location \((\overline{u},v)\).
                               // \emph{headstart} refers to the first character
                               // of \(v\), and \emph{headend} to the last
                               // character. In case, \(v=\varepsilon\),
                               // \(\emph{headend}=\emph{NULL}\).
-         *tailptr;            // points to the tail
+  SYMBOL *tailptr;            // points to the tail
 
 #ifdef DEBUG
   char * (*showsymbolstree)(SYMBOL,Uchar *);
@@ -142,21 +121,15 @@ struct Suffixtreetype
   Sint lastcharindex;
 #endif
 
-};
-
-typedef struct Suffixtreetype Suffixtree;
+} Suffixtree;
 
 DECLAREARRAYSTRUCT(Bref);
 
-//}
 
-/*
-  A location is implemented by the type \texttt{Location}.
-*/
-
+// A location is implemented by the type `Location`
 typedef struct
 {
-  String locstring; // string represented by location
+  String locstring;     // string represented by location
   Bref previousnode;    // reference to previous node (which is branching)
   SYMBOL *firstptr;     // pointer to first character of edge label
   Uint edgelen,         // length of edge
@@ -164,52 +137,38 @@ typedef struct
   Reference nextnode;   // reference to node the edge points to
 } Location;             // \Typedef{Location}
 
-/*
-  If a location is a node \(\overline{u}\), we set \texttt{remain} to 0, and
-  store a reference to \(\overline{u}\) in \texttt{nextnode}. Moreover, we
-  store a position where \(u\) starts and its length in \texttt{locstring}.
-  If the location is of the form \((\overline{u},v,w,\overline{uvw})\),
-  then the components of the location satisfies the following values:
-  \begin{enumerate}
-  \item
-  \texttt{previousnode} is a reference to \(\overline{u}\)
-  \item
-  \texttt{firstptr} points to the first symbol of the edge label \(vw\).
-  \item
-  \(\texttt{edgelen}=\Size{vw}\)
-  \item
-  \(\texttt{remain}=\Size{w}\)
-  \item
-  \texttt{nextnode} is a reference to \(\overline{uvw}\).
-  \end{enumerate}
-  Since \(w\) is not empty, a location is a node location if and only if
-  \texttt{remain} is 0.
-*/
+// If a location is a node u, we set `remain` to 0, and store a reference to
+// u in `nextnode`. Moreover, we store a position where u starts and its length
+// in `locstring`. If the location is of form (u, v, w, uvw), then the
+// components of the location satisfies the following values:
+//
+// 1. `previousnode` is a reference to u
+//
+// 2. firstptr points to the first symbol of the edge label vw
+//
+// 3. edgelen = |vw|
+//
+// 4. remain = |w|
+//
+// 5. nextnode is a reference to uvw
+//
+// Since w is not empty, a location is a node location iff remain = 0.
 
-//\Ignore{
-
-/*
-  A simple location stores just a part of information stored in a suffix tree.
-*/
-
-typedef struct
-{
-  Uint remain,
-       textpos;  // these last two items are redundant and can be computed
+// A SimpleLoc is a subset of a Location
+typedef struct {
+  Uint remain;
+  Uint textpos;  // these last two items are redundant and can be computed
   Reference nextnode;
 } Simpleloc;     // \Typedef{Simpleloc}
 
 DECLAREARRAYSTRUCT(Simpleloc);
 
-/*
-  A path in the suffix tree is stored as an array of \texttt{Pathinfo}-records.
-*/
-
+// A path in the suffix tree is stored with the `Pathinfo` struct
 typedef struct
 {
   Uint depth, headposition;
   Bref ref;
-} Pathinfo;      // \Typedef{Pathinfo}
+} Pathinfo;
 
 DECLAREARRAYSTRUCT(Pathinfo);
 
@@ -217,7 +176,7 @@ typedef struct
 {
   Bool secondtime;
   ArrayBref stack;
-} DFSstate;      // \Typedef{DFSstate}
+} DFSstate;
 
 #endif
 

@@ -6,6 +6,8 @@
   code base.
 */
 
+#include "types.h"
+
 #ifndef SYMBOLDEF_H
 #define SYMBOLDEF_H
 

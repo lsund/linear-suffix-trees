@@ -529,7 +529,7 @@ static void loc2stringstree(Suffixtree *stree,String *s,Location *loc)
   }
 }
 
-void showlocation(FILE *fp,Suffixtree *stree,Location *loc)
+void showlocation(FILE *fp,Suffixtree *stree, Location *loc)
 {
   String lstr;
 
@@ -623,7 +623,7 @@ static Sint comparelocs(Suffixtree *stree,Location *loc1,Location *loc2)
   return 0;
 }
 
-void checklocation(Suffixtree *stree,Location *loc)
+void checklocation(Suffixtree *stree, Location *loc)
 {
   Uint rescanlength;
   String lstr, llstr;
@@ -727,7 +727,7 @@ static void enumlocationssubtree(Suffixtree *stree,Uint *btptr,
     {
       loc.nextnode.toleaf = False;
       loc.nextnode.address = stree->branchtab + GETBRANCHINDEX(succ);
-      getbranchinfostree(stree,ACCESSDEPTH | ACCESSHEADPOS,&branchinfo,
+      getbranchinfostree(stree, ACCESSDEPTH | ACCESSHEADPOS, &branchinfo,
                                loc.nextnode.address);
       loc.firstptr = stree->text + depth + branchinfo.headposition;
       loc.edgelen = branchinfo.depth - depth;
@@ -740,8 +740,10 @@ static void enumlocationssubtree(Suffixtree *stree,Uint *btptr,
   } while(!NILPTR(succ));
 }
 
-void enumlocations(Suffixtree *stree,
-                   void(*processloc)(Suffixtree *stree,Location *))
+void enumlocations(
+        Suffixtree *stree,
+        void(*processloc)(Suffixtree *stree,Location *)
+    )
 {
   Location loc;
   Uint leafindex, *rcptr;
