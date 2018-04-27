@@ -650,15 +650,14 @@ void checklocation(Suffixtree *stree,Location *loc)
       fprintf(stderr,"\nnot found\n");
       exit(EXIT_FAILURE);
     }
-    if(comparelocs(stree,loc,&scanprefixloc) == -1)
-    {
+    if(comparelocs(stree,loc,&scanprefixloc) == -1) {
       fprintf(stderr,"compare loc and scanprefixloc for string \"");
       (void) fwrite(stree->text+lstr.start,sizeof(SYMBOL),
                     (size_t) lstr.length,stderr);
       fprintf(stderr,"\"\n");
-      showlocation(stderr,stree,loc);
+      showlocation(stderr,stree, loc);
       fprintf(stderr,"!=");
-      showlocation(stderr,stree,&scanprefixloc);
+      showlocation(stderr,stree, &scanprefixloc);
       fprintf(stderr,"\n");
       exit(EXIT_FAILURE);
     }

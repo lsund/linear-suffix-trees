@@ -30,10 +30,10 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
 
 SYMBOL *scanprefixfromnodestree(
             Suffixtree *stree,
-            Location *loc,
-            Bref btptr,
-            SYMBOL *left,
-            SYMBOL *right,
+            Location *loc,              // The location of the prefix
+            Bref btptr,                 // Branch reference
+            SYMBOL *left,               // The start
+            SYMBOL *right,              // The end
             Uint rescanlength
         )
 {
@@ -49,8 +49,7 @@ SYMBOL *scanprefixfromnodestree(
     if(nodeptr == stree->branchtab) {
         nodedepth = 0;
         headposition = 0;
-    } else
-    {
+    } else {
         GETBOTH(nodedepth,headposition,nodeptr);
     }
     loc->nextnode.toleaf = False;
