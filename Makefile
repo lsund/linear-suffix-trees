@@ -35,7 +35,7 @@ PROTOFILES=  access.c\
              iterator.c
 
 OBJ=         obj/construct.o\
-             obj/boyermoore.o\
+             obj/naive_search.o\
              obj/access.o\
              obj/space.o\
              obj/io.o\
