@@ -62,7 +62,78 @@ Sint depthfirststree(Suffixtree *stree,Reference *startnode,
     {
 #define PROCESSBRANCH1(A,B) /* Nothing */
 #define PROCESSBRANCH2(A,B) godown = True
-#include "dfs.gen"
+/* #include "dfs.gen" */
+while(True)
+{
+  if(stoptraversal != NULL && stoptraversal(stopinfo))
+  {
+    return 0;
+  }
+  if(currentnode.toleaf)
+  {
+    DEBUG1(3,"visit leaf %lu ",
+              (Ulong) LEAFADDR2NUM(stree,currentnode.address));
+    DEBUG1(3,"below %lu\n",(Ulong) BRADDR2NUM(stree,startnode->address));
+    if(processleaf(LEAFADDR2NUM(stree,currentnode.address),lcpnode,info) != 0)
+    {
+      return -1;
+    }
+    brotherval = LEAFBROTHERVAL(*(currentnode.address));
+    if(NILPTR(brotherval))
+    {
+      readyforpop = True;
+      currentnode.toleaf = False;
+    } else
+    {
+      SETCURRENT(brotherval);     // current comes from brother
+      lcpnode = stack.spaceBref[stack.nextfreeBref-1];
+    }
+  } else
+  {
+    if(readyforpop)
+    {
+      if(stack.nextfreeBref == UintConst(1))
+      {
+        break;
+      }
+      (stack.nextfreeBref)--;
+      DEBUG1(3,"#pop[%lu]=",(Ulong) stack.nextfreeBref);
+      DEBUG1(3,"%lu\n",
+             (Ulong) BRADDR2NUM(stree,stack.spaceBref[stack.nextfreeBref]));
+      PROCESSBRANCH2(stack.spaceBref[stack.nextfreeBref],info);
+      brotherval = GETBROTHER(stack.spaceBref[stack.nextfreeBref]);
+      if(!NILPTR(brotherval))
+      {
+        SETCURRENT(brotherval);    // current comes from brother
+        lcpnode = stack.spaceBref[stack.nextfreeBref-1];
+        readyforpop = False;
+      }
+    } else
+    {
+      DEBUG1(3,"#process1 %lu\n",
+               (Ulong) BRADDR2NUM(stree,currentnode.address));
+      PROCESSBRANCH1(currentnode.address,info);
+      if(godown)
+      {
+        STOREINARRAY(&stack,Bref,128,currentnode.address);
+        DEBUG1(3,"#push[%lu]=",(Ulong) (stack.nextfreeBref-1));
+        DEBUG1(3,"%lu\n",(Ulong) BRADDR2NUM(stree,currentnode.address));
+        child = GETCHILD(currentnode.address);
+        SETCURRENT(child);    // current comes from child
+      } else
+      {
+        brotherval = GETBROTHER(currentnode.address);
+        if(NILPTR(brotherval))
+        {
+          readyforpop = True;
+        } else
+        {
+          SETCURRENT(brotherval);    // current comes brother
+        }
+      }
+    }
+  }
+}
     } else
     {
 #undef PROCESSBRANCH1
@@ -72,7 +143,78 @@ Sint depthfirststree(Suffixtree *stree,Reference *startnode,
         {\
             return -2;\
         }
-#include "dfs.gen"
+/* #include "dfs.gen" */
+while(True)
+{
+  if(stoptraversal != NULL && stoptraversal(stopinfo))
+  {
+    return 0;
+  }
+  if(currentnode.toleaf)
+  {
+    DEBUG1(3,"visit leaf %lu ",
+              (Ulong) LEAFADDR2NUM(stree,currentnode.address));
+    DEBUG1(3,"below %lu\n",(Ulong) BRADDR2NUM(stree,startnode->address));
+    if(processleaf(LEAFADDR2NUM(stree,currentnode.address),lcpnode,info) != 0)
+    {
+      return -1;
+    }
+    brotherval = LEAFBROTHERVAL(*(currentnode.address));
+    if(NILPTR(brotherval))
+    {
+      readyforpop = True;
+      currentnode.toleaf = False;
+    } else
+    {
+      SETCURRENT(brotherval);     // current comes from brother
+      lcpnode = stack.spaceBref[stack.nextfreeBref-1];
+    }
+  } else
+  {
+    if(readyforpop)
+    {
+      if(stack.nextfreeBref == UintConst(1))
+      {
+        break;
+      }
+      (stack.nextfreeBref)--;
+      DEBUG1(3,"#pop[%lu]=",(Ulong) stack.nextfreeBref);
+      DEBUG1(3,"%lu\n",
+             (Ulong) BRADDR2NUM(stree,stack.spaceBref[stack.nextfreeBref]));
+      PROCESSBRANCH2(stack.spaceBref[stack.nextfreeBref],info);
+      brotherval = GETBROTHER(stack.spaceBref[stack.nextfreeBref]);
+      if(!NILPTR(brotherval))
+      {
+        SETCURRENT(brotherval);    // current comes from brother
+        lcpnode = stack.spaceBref[stack.nextfreeBref-1];
+        readyforpop = False;
+      }
+    } else
+    {
+      DEBUG1(3,"#process1 %lu\n",
+               (Ulong) BRADDR2NUM(stree,currentnode.address));
+      PROCESSBRANCH1(currentnode.address,info);
+      if(godown)
+      {
+        STOREINARRAY(&stack,Bref,128,currentnode.address);
+        DEBUG1(3,"#push[%lu]=",(Ulong) (stack.nextfreeBref-1));
+        DEBUG1(3,"%lu\n",(Ulong) BRADDR2NUM(stree,currentnode.address));
+        child = GETCHILD(currentnode.address);
+        SETCURRENT(child);    // current comes from child
+      } else
+      {
+        brotherval = GETBROTHER(currentnode.address);
+        if(NILPTR(brotherval))
+        {
+          readyforpop = True;
+        } else
+        {
+          SETCURRENT(brotherval);    // current comes brother
+        }
+      }
+    }
+  }
+}
     }
     FREEARRAY(&stack,Bref);
     return 0;
