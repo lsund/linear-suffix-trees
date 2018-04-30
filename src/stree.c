@@ -19,7 +19,6 @@
 #include "spaceman.h"
 #include "megabytes.h"
 #include "clock.h"
-#include "mapfile.h"
 #include "streelarge.h"
 #include "externs.h"
 
@@ -82,7 +81,5 @@ int main(int argc, char *argv[])
     fprintf(stderr,"# TIME %s %s %.2f\n",argv[0],filename,getruntime());
     fprintf(stderr,"# SPACE %s %s %.1f\n",argv[0],filename,
             (double) MEGABYTES(getspacepeak()));
-    fprintf(stderr,"# MMSPACE %s %s %.1f\n",argv[0],filename,
-            (double) MEGABYTES(mmgetspacepeak()));
     return EXIT_SUCCESS;
 }

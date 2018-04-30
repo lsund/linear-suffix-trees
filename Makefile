@@ -39,7 +39,6 @@ OBJ=         obj/construct.o\
              obj/space.o\
              obj/io.o\
              obj/clock.o\
-             obj/mapfile.o\
              obj/seterror.o\
              obj/scanpref.o\
              obj/linkloc.o\
