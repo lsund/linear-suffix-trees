@@ -56,7 +56,7 @@
 #define GETBRANCHINDEX(V)         GETLEAFINDEX(V)
 
 #define NILPTR(P)                 ((P) & NILBIT)
-#define UNDEFINEDREFERENCE        (~((Uint) 0))
+#define UNDEFREFERENCE            (~((Uint) 0))
 #define MAXTEXTLEN                ((MAXINDEX/((LARGEINTS+SMALLINTS)/2)) - 3)
 
 #define GETCHILD(B)               ((*(B)) & MAXINDEX)
@@ -86,22 +86,9 @@
 #define MAKEBRANCHADDR(V)         (V)
 #define SETBRANCHNODEOFFSET       /* nothing */
 
-//\Ignore{
-
 #ifdef DEBUG
 #define CHILDREFERSTOLEAF(B)   ISLEAF(*(B))
 #endif
 
-//}
-
-//\Ignore{
-
-#if SYMBOLBYTES == 1
-#define LARGESTCHARINDEX          UCHAR_MAX
-#else
-#define LARGESTCHARINDEX          stree->lastcharindex
-#endif
 
 #endif
-
-//}

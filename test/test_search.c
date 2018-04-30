@@ -71,9 +71,12 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     Suffixtree stree;
     constructstree(&stree, text, textlen);
 
-    for (Uint i = 0; i < 2; i++) {
-        printf("%lu\n", *(stree.rootchildren + i));
+    for (Uint i = 0; i < MAX_CHARS; i++) {
+        if (*(stree.rootchildren + i) != UNDEFREFERENCE) {
+            printf("%lu\n", *(stree.rootchildren + i));
+        }
     }
+
 
 
     /* int exists_n = 0, rexists_n = 0; */

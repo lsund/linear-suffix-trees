@@ -10,7 +10,6 @@
 #include "protodef.h"
 #include "debugdef.h"
 #include "streeacc.h"
-#include "streehuge.h"
 
 void rescanstree(
         Suffixtree *stree,

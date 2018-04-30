@@ -12,7 +12,7 @@
 #include "streedef.h"
 #include "streeacc.h"
 #include "protodef.h"
-#include "streehuge.h"
+#include "basedef.h"
 
 static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
 {
@@ -72,7 +72,7 @@ SYMBOL *scanprefixfromnodestree(
         firstchar = *lptr;
         if(nodeptr == stree->branchtab)  // at the root
         {
-            if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFINEDREFERENCE)
+            if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFREFERENCE)
             {
                 return lptr;
             }
@@ -343,7 +343,7 @@ SYMBOL *scanprefixstree(
         firstchar = *lptr;
         if(nodeptr == stree->branchtab)  // at the root
         {
-            if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFINEDREFERENCE)
+            if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFREFERENCE)
             {
                 return lptr;
             }

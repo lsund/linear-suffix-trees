@@ -14,7 +14,8 @@
 #define MAXPATTERNLEN           1024
 
 // undefined reference
-#define UNDEFREFERENCE          UINT_MAX
+/* #define UNDEFREFERENCE          UINT_MAX */
+#define UNDEFREFERENCE      (~((Uint) 0))
 
 // undefined successor
 #define UNDEFINEDSUCC           UINT_MAX
@@ -34,9 +35,16 @@
 #define MULT4(N)     ((N) << 2)
 #define MULT8(N)     ((N) << 3)
 
-// Fast modulu
+// Fast modulo
 #define MOD2(N)      ((N) & 1)
 #define MOD4(N)      ((N) & 3)
 #define MOD8(N)      ((N) & 7)
+
+#if SYMBOLBYTES == 1
+#define LARGESTCHARINDEX          UCHAR_MAX
+#else
+#define LARGESTCHARINDEX          stree->lastcharindex
+#endif
+
 
 #endif

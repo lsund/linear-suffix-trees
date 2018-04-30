@@ -18,6 +18,7 @@
 #include "arraydef.h"
 #include "spaceman.h"
 #include "protodef.h"
+#include "basedef.h"
 
 #ifdef STREELARGE
 
@@ -311,7 +312,7 @@ void rootsucclocationsstree(Suffixtree *stree,ArraySimpleloc *ll)
   CHECKARRAYSPACE(ll,Simpleloc,stree->alphasize+1);
   for(ch = 0; ch <= UCHAR_MAX; ch++)
   {
-    if((node = stree->rootchildren[ch]) != UNDEFINEDREFERENCE)
+    if((node = stree->rootchildren[ch]) != UNDEFREFERENCE)
     {
       llptr = ll->spaceSimpleloc + ll->nextfreeSimpleloc++;
       if(ISLEAF(node))

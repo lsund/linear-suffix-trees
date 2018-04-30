@@ -52,7 +52,7 @@
 #define ISSMALLDEPTH(V)     (((V) & ~SMALLDEPTH) == 0)  // is depth small
 #define MAXTLEN             ((1U << (INDEXBITS-2)) - 1)  // maximal text length
 #define UNUSEDINLEAF        2                            // unused bits in leaf
-#define HIGHERSIZE          (~((1U << (INDEXBITS-1-UNUSEDINLEAF)) - 1)) 
+#define HIGHERSIZE          (~((1U << (INDEXBITS-1-UNUSEDINLEAF)) - 1))
 #define SHIFTHIGHER         4
 #define LOWERLINKBITS       (32 - (SMALLDEPTHBITS+1))  // # bits for lower link
 #define LOWERLINKSIZE       ((1U << LOWERLINKBITS) - 1)  // max value of llink
@@ -132,14 +132,3 @@ static Uint getdepth(Uint *btptr)
   return thirdval & MAXTLEN;
 }
 
-//\Ignore{
-
-#if SYMBOLBYTES == 1
-#define LARGESTCHARINDEX          UCHAR_MAX
-#else
-#define LARGESTCHARINDEX          stree->lastcharindex
-#endif
-
-#endif
-
-//}

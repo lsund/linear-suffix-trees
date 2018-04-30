@@ -14,18 +14,22 @@
 
 #ifndef STREESTDEF_H
 #define STREESTDEF_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
+#include "streemac.h"
+#include "debug.h"
+#include "streetyp.h"
 //}
 
 /*
-  This header file defines the constants and macros used for the improved 
+  This header file defines the constants and macros used for the improved
   linked list implementation technique for suffix trees as described
   in \cite{KUR:BAL:1999}. The implementation technique requires
   one integer for each leaf, two integers for each small node and
-  3 integers for each large node, provided 
+  3 integers for each large node, provided
   \(n\leq 2^{21}-1=2~\emph{megabytes}\).
   For more details, see \cite{KUR:1998,KUR:BAL:1999} and the bit layout,
   as depicted in the file \texttt{bitlayout.ps}.
@@ -59,8 +63,8 @@
 #define ISSMALLDEPTH(V)     (((V) & ~SMALLDEPTH) == 0)
 
 #define NILPTR(P)           ((P) & NILBIT)
-#define UNDEFINEDREFERENCE  (~((Uint) 0))
-#define MAXTEXTLEN          2097150
+/* #define UNDEFREFERENCE      (~((Uint) 0)) */
+/* #define MAXTEXTLEN          2097150 */
 
 #define GETCHILD(B)         ((*(B)) & MAXINDEX)
 #define SETCHILD(B,VAL)     SETVAL(B,((*(B)) & (511 << 23)) | (VAL))
@@ -91,7 +95,7 @@
 #define LEAFBROTHERVAL(V)      ((V) & (MAXINDEX | NILBIT))
 #define SETLEAFBROTHER(B,VAL)  *(B) = (*(B) & (255 << 24)) | (VAL)
 
-#define GETCHAINEND(C,B,D)     C = (B) + (MULTBYSMALLINTS(D)) 
+#define GETCHAINEND(C,B,D)     C = (B) + (MULTBYSMALLINTS(D))
 #define SETBRANCHNODEOFFSET    stree->branchnodeoffset = stree->textlen + 1
 
 //\Ignore{
@@ -103,7 +107,7 @@
 //}
 
 /*
-  This following function looks up the depth of a large node. 
+  This following function looks up the depth of a large node.
   \emph{btptr} refers to the first integer of that node.
 */
 
@@ -118,15 +122,11 @@ static Uint getdepth(Uint *btptr)
          (*(btptr+2) >> 21);
 }
 
-//\Ignore{
 
-#if SYMBOLBYTES == 1
-#define LARGESTCHARINDEX          UCHAR_MAX
-#else
-#define LARGESTCHARINDEX          stree->lastcharindex
+void setdepthheadposition(Suffixtree *stree,Uint depth, Uint headposition);
+
+void setsuffixlink(Suffixtree *stree,Uint slink);
+
+Uint getlargelinkconstruction(Suffixtree *stree);
 #endif
 
-
-#endif
-
-//}

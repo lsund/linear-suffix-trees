@@ -13,9 +13,9 @@
 # STREELARGE means that the maximal sequence length is 134 MB
 # STREEHUGE  means that the maximal sequence length is 500 MB
 
-#SIZEFLAG=-DSTREESMALL
+SIZEFLAG=-DSTREESMALL
 #SIZEFLAG=-DSTREELARGE
-SIZEFLAG=-DSTREEHUGE
+# SIZEFLAG=-DSTREEHUGE
 
 INCLUDE=-I'include'
 
@@ -52,7 +52,8 @@ OBJ=         obj/construct.o\
              obj/overmax.o\
              obj/oversucc.o\
              obj/addleafcount.o\
-             obj/iterator.o
+             obj/iterator.o\
+             obj/streesmall.o
 
 TEST_OBJ = obj/test_search.o
 

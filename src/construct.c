@@ -6,13 +6,15 @@
    code base.
    */
 
-#include "intbits.h"
+#include "bitvector.h"
 #include "spaceman.h"
 #include "megabytes.h"
 #include "debugdef.h"
 #include "streedef.h"
 #include "streeacc.h"
 #include "protodef.h"
+#include "basedef.h"
+#include "streesmall.h"
 
 #define FUNCLEVEL 4
 
@@ -84,7 +86,6 @@ static void showvalues(void)
 // Before a new node is stored, we check if there is enough space available.
 // If not, the space is enlarged by a small amount. Since some global pointers
 // directly refer into the table, these have to be adjusted after reallocation.
-
 static void spaceforbranchtab(Suffixtree *stree)
 {
     DEBUG1(FUNCLEVEL,">%s\n",__func__);
@@ -122,130 +123,6 @@ static void spaceforbranchtab(Suffixtree *stree)
     }
 }
 
-// Initializing and Retrieving Headpositions, Depth, and Suffixlinks
-
-//
-//  We have three functions to initialize and retrieve head positions, depth, and
-//  suffix links. The implementation depends on the bit layout.
-//  \begin{enumerate}
-//  \item
-//  The function \emph{setdepthnum} stores the \emph{depth} and the
-//  \emph{head position} of a new large node.
-//  \item
-//  The function \emph{setsuffixlink} stores the \emph{suffixlink}
-//  of a new large node.
-//  \item
-//  The function \emph{getlargelinkconstruction} retrieves the \emph{suffixlink}
-//  of a large node, which is referenced by \emph{headposition}.
-//  \end{enumerate}
-//  */
-
-#ifdef STREESMALL
-
-static void setdepthheadposition(Suffixtree *stree,Uint depth,
-        Uint headposition)
-{
-    DEBUG4(FUNCLEVEL,">%s(%lu)=(depth=%lu,headposition=%lu)\n",
-            __func__,
-            (Ulong) stree->nextfreebranchnum,
-            (Ulong) depth,
-            (Ulong) headposition);
-    DEBUGCODE(1,stree->maxset = stree->nextfreebranch + 2);
-    if(ISSMALLDEPTH(depth))
-    {
-        *(stree->nextfreebranch+1) |= SMALLDEPTHMARK;
-    } else
-    {
-        *(stree->nextfreebranch)
-            = (*(stree->nextfreebranch) & (MAXINDEX | LARGEBIT)) |
-            ((depth << 11) & (7 << 29));
-        *(stree->nextfreebranch+1)
-            = (*(stree->nextfreebranch+1) & (MAXINDEX | NILBIT)) |
-            ((depth << 14) & (127 << 25));
-    }
-    *(stree->nextfreebranch+2) = (depth << 21) | headposition;
-}
-
-static void setsuffixlink(Suffixtree *stree,Uint slink)
-{
-    DEBUG3(FUNCLEVEL,">%s(%lu)=%lu\n",
-            __func__,
-            (Ulong) stree->nextfreebranchnum,
-            (Ulong) slink);
-    *(stree->setlink) = (*(stree->setlink) & (255 << 24)) | (slink | NILBIT);
-    if(ISSMALLDEPTH(stree->currentdepth))
-    {
-        *(stree->nextfreebranch+1) |= (slink << 25);
-        if(stree->nextfreebranchnum & (~((1 << 7) - 1)))
-        {
-            *(stree->nextfreebranch) |= ((slink << 17) & (255 << 24));
-            if(stree->nextfreebranchnum & (~((1 << 15) - 1)))
-            {
-                stree->leaftab[stree->nextfreeleafnum-1] |=
-                    ((slink << 9) & (255 << 24));
-            }
-        }
-    }
-}
-
-static Uint getlargelinkconstruction(Suffixtree *stree)
-{
-    SYMBOL secondchar;
-    Uint succ, slink, headnodenum;
-
-    DEBUG2(FUNCLEVEL,">%s(%lu)\n",
-            __func__,
-            (Ulong) BRADDR2NUM(stree,stree->headnode));
-
-    DEBUGCODE(1,stree->largelinks++);
-    if(stree->headnodedepth == 1)
-    {
-        return 0;               // link refers to the root
-    }
-    if(stree->headnodedepth == 2)   // determine second character of edge
-    {
-        if(stree->headend == NULL)
-        {
-            secondchar = *(stree->tailptr-1);
-        } else
-        {
-            secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
-        }
-        // this leads to the suffix link node
-        return GETBRANCHINDEX(stree->rootchildren[(Uint) secondchar]);
-    }
-    if(ISSMALLDEPTH(stree->headnodedepth))   // retrieve link in constant time
-    {
-        slink = *(stree->headnode+1) >> 25;
-        headnodenum = BRADDR2NUM(stree,stree->headnode);
-        if(headnodenum & (~((1 << 7) - 1)))
-        {
-            slink |= ((*(stree->headnode) & (255 << 24)) >> 17);
-            if(headnodenum & (~((1 << 15) - 1)))
-            {
-                slink |= ((stree->leaftab[GETHEADPOS(stree->headnode)]
-                            & (255 << 24)) >> 9);
-            }
-        }
-        return slink;
-    }
-    succ = stree->onsuccpath;   // start at node on successor path
-    DEBUGCODE(1,stree->largelinklinkwork++);
-    while(!NILPTR(succ))        // linear retrieval of suffix links
-    {
-        DEBUGCODE(1,stree->largelinkwork++);
-        if(ISLEAF(succ))
-        {
-            succ = LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(succ)]);
-        } else
-        {
-            succ = GETBROTHER(stree->branchtab + GETBRANCHINDEX(succ));
-        }
-        DEBUGCODE(1,stree->largelinkwork++);
-    }
-    return succ & MAXINDEX;   // get only the index
-}
-#endif
 
 #ifdef STREELARGE
 
@@ -279,11 +156,11 @@ static void setsuffixlink(Suffixtree *stree,Uint slink)
     *(stree->setlink) = (*(stree->setlink) & EXTRAPATT) | (slink | NILBIT);
     if(ISSMALLDEPTH(stree->currentdepth))
     {
-        *(stree->nextfreebranch+2)
+        *(stree->nextfreebranch + 2)
             |= ((slinkhalf << SMALLDEPTHBITS) & LOWERLINKPATT);
         if(stree->nextfreebranchnum & (~LOWERLINKSIZE))
         {
-            *(stree->nextfreebranch+3)
+            *(stree->nextfreebranch + 3)
                 |= ((slinkhalf << SHIFTMIDDLE) & MIDDLELINKPATT);
             if(stree->nextfreebranchnum & HIGHERSIZE)
             {
@@ -388,7 +265,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 // edge outgoing from the current \emph{headnode}.
 // \emph{insertprev} refers to the node to the left of the leaf to be inserted.
 // If the leaf is the first child, then \emph{insertprev} is
-// \texttt{UNDEFINEDREFERENCE}.
+// \texttt{UNDEFREFERENCE}.
 //
 
 static void insertleaf(Suffixtree *stree)
@@ -409,7 +286,7 @@ static void insertleaf(Suffixtree *stree)
         }
     } else
     {
-        if (stree->insertprev == UNDEFINEDREFERENCE)  // newleaf = first child
+        if (stree->insertprev == UNDEFREFERENCE)  // newleaf = first child
         {
             *(stree->nextfreeleafptr) = GETCHILD(stree->headnode);
             SETCHILD(stree->headnode,newleaf);
@@ -438,7 +315,7 @@ stree->nextfreeleafptr++;
 // the appropriate edges, according to the canonical location of the current
 // head. \emph{insertprev} refers to the node to the left of the branching
 // node to be inserted. If the branching node is the first child, then
-// \emph{insertprev} is \texttt{UNDEFINEDREFERENCE}. The edge to be split ends
+// \emph{insertprev} is \texttt{UNDEFREFERENCE}. The edge to be split ends
 // in the node referred to by \emph{insertnode}.
 //
 
@@ -450,6 +327,7 @@ static void insertbranchnode(Suffixtree *stree)
     spaceforbranchtab(stree);
     if(stree->headnodedepth == 0)      // head is the root
     {
+
         stree->rootchildren[(Uint) *(stree->headstart)]
             = MAKEBRANCHADDR(stree->nextfreebranchnum);
         *(stree->nextfreebranch+1) = VALIDINIT;
@@ -457,7 +335,7 @@ static void insertbranchnode(Suffixtree *stree)
                 *(stree->headstart),(Ulong) stree->nextfreebranchnum);
     } else
     {
-        if(stree->insertprev == UNDEFINEDREFERENCE)  // new branch = first child
+        if(stree->insertprev == UNDEFREFERENCE)  // new branch = first child
         {
             SETCHILD(stree->headnode,MAKEBRANCHADDR(stree->nextfreebranchnum));
         } else
@@ -566,7 +444,7 @@ static void rescan(Suffixtree *stree) // skip-count
     while(True)   // \emph{headnode} is not the root
     {
         headchar = *(stree->headstart);  // \emph{headstart} is assumed to be nonempty
-        prevnode = UNDEFINEDREFERENCE;
+        prevnode = UNDEFREFERENCE;
         node = GETCHILD(stree->headnode);
         while(True)             // traverse the list of successors
         {
@@ -651,7 +529,7 @@ static void scanprefix(Suffixtree *stree) // probably slow-scan / walk
             return;
         }
         tailchar = *(stree->tailptr);
-        if((node = stree->rootchildren[(Uint) tailchar]) == UNDEFINEDREFERENCE)
+        if((node = stree->rootchildren[(Uint) tailchar]) == UNDEFREFERENCE)
         {
             stree->headend = NULL;
             return;
@@ -683,7 +561,7 @@ static void scanprefix(Suffixtree *stree) // probably slow-scan / walk
     }
     while(True)  // \emph{headnode} is not the root
     {
-        prevnode = UNDEFINEDREFERENCE;
+        prevnode = UNDEFREFERENCE;
         node = GETCHILD(stree->headnode);
         if(stree->tailptr == stree->sentinel)  //  \$-edge
         {
@@ -800,17 +678,17 @@ static void completelarge(Suffixtree *stree)
 
 static void linkrootchildren(Suffixtree *stree)
 {
-    Uint *rcptr, *prevnodeptr, prev = UNDEFINEDREFERENCE;
+    Uint *rcptr, *prevnodeptr, prev = UNDEFREFERENCE;
 
     DEBUGDEFAULT;
     stree->alphasize = 0;
     for(rcptr = stree->rootchildren;
-            rcptr <= stree->rootchildren + LARGESTCHARINDEX; rcptr++)
+            rcptr <= stree->rootchildren + MAX_CHARS; rcptr++)
     {
-        if(*rcptr != UNDEFINEDREFERENCE)
+        if(*rcptr != UNDEFREFERENCE)
         {
             stree->alphasize++;
-            if(prev == UNDEFINEDREFERENCE)
+            if(prev == UNDEFREFERENCE)
             {
                 SETCHILD(stree->branchtab,MAKELARGE(*rcptr));
             } else
@@ -838,32 +716,32 @@ static void linkrootchildren(Suffixtree *stree)
     stree->leaftab[stree->textlen] = NILBIT;
 }
 
-/*
-   \newpage
-   \emph{initSuffixtree} allocates and initializes the data structures for
-   McCreight's Algorithm.
-   */
 
 static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
 {
-    Uint i, *ptr;
+    Uint i;
 
-    DEBUG1(4,">%s\n",__func__);
-    DEBUG1(2,"# MULTBYSMALLINTS(textlen+1)=%lu\n",
-            (Ulong) MULTBYSMALLINTS(textlen+1));
-    DEBUG1(2,"# STARTFACTOR=%.2f\n",STARTFACTOR);
-    DEBUG1(2,"# MINEXTRA=%lu\n",(Ulong) MINEXTRA);
     stree->currentbranchtabsize
         = (Uint) (STARTFACTOR * MULTBYSMALLINTS(textlen+1));
-    if(stree->currentbranchtabsize < MINEXTRA)
-    {
+    if(stree->currentbranchtabsize < MINEXTRA) {
         stree->currentbranchtabsize = MULTBYSMALLINTS(MINEXTRA);
     }
-    stree->leaftab = ALLOCSPACE(NULL,Uint,textlen+2);
-    stree->rootchildren = ALLOCSPACE(NULL,Uint,LARGESTCHARINDEX + 1);
-    stree->branchtab = ALLOCSPACE(NULL,Uint,stree->currentbranchtabsize);
 
-    stree->text = stree->tailptr = text;
+    stree->leaftab = ALLOCSPACE(NULL, Uint, textlen + 2);
+
+    stree->branchtab = ALLOCSPACE(NULL, Uint, stree->currentbranchtabsize);
+    for(i=0; i<LARGEINTS; i++) {
+        stree->branchtab[i] = 0;
+    }
+
+    stree->rootchildren = ALLOCSPACE(NULL, Uint, MAX_CHARS + 1);
+    for(Uint *child= stree->rootchildren; child<=stree->rootchildren + MAX_CHARS; child++)
+    {
+        *child = UNDEFREFERENCE;
+    }
+
+    stree->text = text;
+    stree->tailptr = text;
     stree->textlen = textlen;
     stree->sentinel = text + textlen;
     stree->firstnotallocated
@@ -871,33 +749,28 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
     stree->headnode = stree->nextfreebranch = stree->branchtab;
     stree->headend = NULL;
     stree->headnodedepth = stree->maxbranchdepth = 0;
-    for(ptr= stree->rootchildren; ptr<=stree->rootchildren + LARGESTCHARINDEX; ptr++)
-    {
-        *ptr = UNDEFINEDREFERENCE;
-    }
-    for(i=0; i<LARGEINTS; i++)
-    {
-        stree->branchtab[i] = 0;
-    }
+
     stree->nextfreebranch = stree->branchtab;
     stree->nextfreebranchnum = 0;
+
     SETDEPTHHEADPOS(0, 0);
     SETNEWCHILDBROTHER(MAKELARGELEAF(0),0);
     SETBRANCHNODEOFFSET;
-    stree->rootchildren[(Uint) *text] = MAKELEAF(0);
-    stree->leaftab[0] = VALIDINIT;
-    DEBUG2(4,"%c-edge from root points to leaf %lu\n",*text,(Ulong) 0);
-    stree->leafcounts = NULL;
-    stree->nextfreeleafnum = 1;
-    stree->nextfreeleafptr = stree->leaftab + 1;
-    stree->nextfreebranch = stree->branchtab + LARGEINTS;
-    stree->nextfreebranchnum = LARGEINTS;
-    stree->insertnode = stree->insertprev = UNDEFINEDREFERENCE;
-    stree->smallnotcompleted = 0;
-    stree->chainstart = NULL;
-    stree->largenode = stree->smallnode = 0;
+    printf("%c\n", *text);
+    stree->rootchildren[(Uint) *text] = MAKELEAF(0); // Necessary?
+    stree->leaftab[0]                 = VALIDINIT;
 
-    //\Ignore{
+    stree->leafcounts                 = NULL;
+    stree->nextfreeleafnum            = 1;
+    stree->nextfreeleafptr            = stree->leaftab + 1;
+    stree->nextfreebranch             = stree->branchtab + LARGEINTS;
+    stree->nextfreebranchnum          = LARGEINTS;
+    stree->insertnode                 = UNDEFREFERENCE;
+    stree->insertprev                 = UNDEFREFERENCE;
+    stree->smallnotcompleted          = 0;
+    stree->chainstart                 = NULL;
+    stree->largenode                  = stree->smallnode              = 0;
+
 
 #ifdef DEBUG
     stree->showsymbolstree = NULL;

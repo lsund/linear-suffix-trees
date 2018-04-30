@@ -6,7 +6,7 @@
   code base.
 */
 
-#include "intbits.h"
+#include "bitvector.h"
 #include "debugdef.h"
 #include "streedef.h"
 #include "streeacc.h"
