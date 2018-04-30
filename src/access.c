@@ -14,7 +14,7 @@
 #include <limits.h>
 #include "streedef.h"
 #include "streeacc.h"
-#include "debugdef.h"
+#include "debug.h"
 #include "arraydef.h"
 #include "spaceman.h"
 #include "protodef.h"

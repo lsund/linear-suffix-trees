@@ -17,7 +17,7 @@
 #include "types.h"
 #include "errordef.h"
 #include "megabytes.h"
-#include "debugdef.h"
+#include "debug.h"
 
 //}
 

@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <wchar.h>
-#include "debugdef.h"
+#include "debug.h.h"
 #include "types.h"
 #include "streedef.h"
 #include "protodef.h"

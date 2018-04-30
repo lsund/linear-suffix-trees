@@ -8,7 +8,7 @@
 
 #include "types.h"
 #include "protodef.h"
-#include "debugdef.h"
+#include "debug.h"
 #include "streedef.h"
 #include "spaceman.h"
 #include "arraydef.h"

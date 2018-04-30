@@ -10,7 +10,7 @@
 #include "types.h"
 #include "intbits.h"
 #include "visible.h"
-#include "debugdef.h"
+#include "debug.h.h"
 #include "streedef.h"
 #include "streeacc.h"
 #include "protodef.h"

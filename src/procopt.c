@@ -13,7 +13,7 @@
 #include <string.h>
 #include "optdesc.h"
 #include "errordef.h"
-#include "debugdef.h"
+#include "debug.h.h"
 #include "protodef.h"
 #include "spaceman.h"
 

@@ -8,7 +8,7 @@
 
 #include "streedef.h"
 #include "protodef.h"
-#include "debugdef.h"
+#include "debug.h"
 #include "streeacc.h"
 
 void rescanstree(

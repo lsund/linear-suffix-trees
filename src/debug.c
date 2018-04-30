@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include "types.h"
 #include "fopen.h"
-#include "debugdef.h"
+#include "debug.h"
 #include "errordef.h"
 #include "megabytes.h"
 

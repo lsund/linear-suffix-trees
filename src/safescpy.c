@@ -9,7 +9,7 @@
 //\Ignore{
 
 #include <string.h>
-#include "debugdef.h"
+#include "debug.h.h"
 #include "errordef.h"
 #include "protodef.h"
 

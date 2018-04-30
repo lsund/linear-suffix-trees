@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include "debugdef.h"
+#include "debug.h"
 #include "types.h"
 #include "streedef.h"
 #include "streeacc.h"

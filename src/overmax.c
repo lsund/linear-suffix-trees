@@ -7,7 +7,7 @@
 */
 
 #include "bitvector.h"
-#include "debugdef.h"
+#include "debug.h"
 #include "streedef.h"
 #include "streeacc.h"
 

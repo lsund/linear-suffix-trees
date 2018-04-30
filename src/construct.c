@@ -9,7 +9,7 @@
 #include "bitvector.h"
 #include "spaceman.h"
 #include "megabytes.h"
-#include "debugdef.h"
+#include "debug.h"
 #include "streedef.h"
 #include "streeacc.h"
 #include "protodef.h"

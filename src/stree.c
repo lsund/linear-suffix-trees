@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <wchar.h>
-#include "debugdef.h"
+#include "debug.h.h"
 #include "protodef.h"
 #include "errordef.h"
 #include "streedef.h"

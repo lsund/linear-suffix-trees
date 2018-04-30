@@ -8,7 +8,7 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-#include "debugdef.h"
+#include "debug.h"
 #include "streedef.h"
 #include "streeacc.h"
 #include "protodef.h"
