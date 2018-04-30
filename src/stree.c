@@ -21,12 +21,13 @@
 #include "megabytes.h"
 #include "clock.h"
 #include "mapfile.h"
+#include "streelarge.h"
 
 // This constructs a suffix tree
 int main(int argc, char *argv[])
 {
     Uchar *text;
-    Uint textlen;
+    Uint textlen = 0;
     Suffixtree stree;
     char *filename;
 
@@ -35,22 +36,35 @@ int main(int argc, char *argv[])
     CHECKARGNUM(2,"filename");
     initclock();
     filename = argv[1];
-    text = (Uchar *) CREATEMEMORYMAP(filename,False,&textlen);
-    if(text == NULL)
-    {
+
+    FILE *in = fopen(filename, "r");
+    text = malloc(sizeof(Uchar) * MAXTEXTLEN);
+
+    if(text == NULL) {
         fprintf(stderr,"%s: cannot open file \"%s\" ",argv[0],filename);
         fprintf(stderr,"or file \"%s\" is empty\n",filename);
         return EXIT_FAILURE;
     }
-    if(textlen == 0)
-    {
+
+    char c;
+    textlen = 0;
+    while ((c = fgetc(in)) != EOF) {
+        text[textlen] = c;
+        textlen++;
+    }
+    text[textlen + 1] = '\0';
+
+    if(textlen == 0) {
         fprintf(stderr,"%s: file \"%s\" is empty\n",argv[0],filename);
         return EXIT_FAILURE;
     }
-    fprintf(stderr,"# construct suffix tree for sequence of length %lu\n",
-            (Ulong) textlen);
-    fprintf(stderr,"# (maximal input length is %lu)\n",
-            (Ulong) getmaxtextlenstree());
+    fprintf(stderr,"Creating a suffix tree for text of length %lu\n", textlen);
+    fprintf(
+        stderr,
+        "%f %% of maximal input length \n",
+        (float) 100 * textlen / (float) getmaxtextlenstree()
+    );
+
     if(constructprogressstree(&stree,text,textlen,NULL,NULL,NULL) != 0) {
         fprintf(stderr,"%s %s: %s\n",argv[0],filename,messagespace());
         return EXIT_FAILURE;
@@ -58,11 +72,8 @@ int main(int argc, char *argv[])
     /*
        addleafcountsstree(&stree);
        */
-    if(DELETEMEMORYMAP(text) != 0)
-    {
-        STANDARDMESSAGE;
-    }
     freestree(&stree);
+
     fprintf(stderr,"# TIME %s %s %.2f\n",argv[0],filename,getruntime());
     fprintf(stderr,"# SPACE %s %s %.1f\n",argv[0],filename,
             (double) MEGABYTES(getspacepeak()));

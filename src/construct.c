@@ -142,8 +142,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
         if(stree->headend == NULL)
         {
             secondchar = *(stree->tailptr-1);
-        } else
-        {
+        } else {
             secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
         }
         return stree->rootchildren[(Uint) secondchar];

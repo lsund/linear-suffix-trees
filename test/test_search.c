@@ -128,16 +128,16 @@ char *utest_search()
     mu_message(DATA, "Random existing patterns\n");
     error = compare_vs_naive(
                 "/home/lsund/Data/testdata/members/random-patterns.txt",
-                "/home/lsund/Data/testdata/members/diffsize/001.txt"
+                "/home/lsund/Data/testdata/members/diffsize/005.txt"
             );
     if (error) return error;
 
-    /* mu_message(DATA, "Random non-existing patterns\n"); */
-    /* error = compare_vs_naive( */
-    /*             "data/members/random-patterns-non-existing.txt", */
-    /*             "data/members/diffsize/005.txt" */
-    /*         ); */
-    /* if (error) return error; */
+    mu_message(DATA, "Random non-existing patterns\n");
+    error = compare_vs_naive(
+                "/home/lsund/Data/testdata/members/random-patterns-non-existing.txt",
+                "/home/lsund/Data/testdata/members/diffsize/005.txt"
+            );
+    if (error) return error;
 
     /* mu_message(DATA, "Akz patterns\n"); */
     /* error = compare_vs_naive( */

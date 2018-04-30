@@ -34,8 +34,8 @@
   via some useful macros, as defined in the file \texttt{spaceman.h}.
   \begin{enumerate}
   \item
-  The function \texttt{creatememorymap} should be called
-  via the macro \texttt{CREATEMEMORYMAP}.
+  The function \texttt{creatememorymap} should be called via the macro
+  \texttt{CREATEMEMORYMAP}.
   \item
   The function \texttt{deletememorymap} should be called
   via the macro \texttt{DELETEMEMORYMAP}.
