@@ -46,4 +46,6 @@
 #define LARGESTCHARINDEX          stree->lastcharindex
 #endif
 
+#define MEGABYTES(V)  ((double) (V)/((UintConst(1) << 20) - 1))
+
 #endif
