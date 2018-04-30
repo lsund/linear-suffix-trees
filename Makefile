@@ -27,7 +27,6 @@ PROTOFILES=  access.c\
              scanpref.c\
              linkloc.c\
              depthtab.c\
-             ex2leav.c\
              dfs.c \
              overmax.c\
              oversucc.c\
@@ -45,7 +44,6 @@ OBJ=         obj/construct.o\
              obj/scanpref.o\
              obj/linkloc.o\
              obj/depthtab.o\
-             obj/ex2leav.o\
              obj/dfs.o\
              obj/streedbg.o\
              obj/debug.o\

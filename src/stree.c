@@ -14,7 +14,6 @@
 #include <sys/types.h>
 #include <wchar.h>
 #include "debugdef.h"
-#include "args.h"
 #include "protodef.h"
 #include "errordef.h"
 #include "streedef.h"
@@ -34,9 +33,13 @@ int main(int argc, char *argv[])
     Suffixtree stree;
     char *filename;
 
+    if (argc != 2) {
+        fprintf(stderr, "Need exactly one argument");
+        return EXIT_FAILURE;
+    }
+
     DEBUGLEVELSET;
 
-    CHECKARGNUM(2,"filename");
     initclock();
     filename = argv[1];
 

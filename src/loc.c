@@ -11,7 +11,6 @@
 #include <sys/types.h>
 #include <wchar.h>
 #include "debugdef.h"
-#include "args.h"
 #include "types.h"
 #include "streedef.h"
 #include "protodef.h"
@@ -30,7 +29,10 @@ int main(int argc, char *argv[])
 
     DEBUGLEVELSET;
 
-    CHECKARGNUM(2,"filename");
+    if (argc != 2) {
+        fprintf(stderr, "Need exactly one argument");
+        return EXIT_FAILURE;
+    }
     char *filename = argv[1];
     FILE *in = fopen(filename, "r");
     text = malloc(sizeof(wchar_t) * MAXTEXTLEN);
