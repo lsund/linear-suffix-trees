@@ -51,7 +51,9 @@ OBJ=         obj/construct.o\
              obj/oversucc.o\
              obj/addleafcount.o\
              obj/iterator.o\
-             obj/streelarge.o
+             obj/normaltree.o\
+             obj/streelarge.o\
+             obj/progresstree.o
              # obj/streesmall.o\
 
 TEST_OBJ = obj/test_search.o
