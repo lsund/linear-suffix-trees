@@ -1,3 +1,4 @@
 [x] Set up testing
-[ ] Search for a pattern in the tree. Can probably use
-    scanpref/scanprefixfromnodestree if I get the root in initSuffixtree
+[x] Search for a pattern in the tree.
+[ ] Make algorithm work for wchar
+[ ] Simplify
