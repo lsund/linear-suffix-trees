@@ -200,7 +200,7 @@ void getbranchinfostree(Suffixtree *stree,Uint whichinfo,
   }
 }
 
-void getheadstringstree(Suffixtree *stree,String *str)
+void getheadstringstree(Suffixtree *stree, String *str)
 {
   Branchinfo branchinfo;
   Reference ref;

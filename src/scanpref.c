@@ -38,25 +38,27 @@ SYMBOL *scanprefixfromnodestree(
         )
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth,
-         node, distance = 0, prefixlen, headposition, tmpnodedepth,
+         node = 0, distance = 0, prefixlen, headposition, tmpnodedepth,
          edgelen, remainingtoskip;
-    SYMBOL *lptr, *leftborder = (SYMBOL *) NULL, firstchar, edgechar = 0;
+    SYMBOL *lptr, *leftborder = NULL, firstchar, edgechar = 0;
 
     DEBUG1(4,"scanprefixfromnodestree starts at node %lu\n",
-            (Ulong) BRADDR2NUM(stree,btptr));
+            (Ulong) BRADDR2NUM(stree, btptr));
     lptr = left;
     nodeptr = btptr;
     if(nodeptr == stree->branchtab) {
         nodedepth = 0;
         headposition = 0;
     } else {
-        GETBOTH(nodedepth,headposition,nodeptr);
+        GETBOTH(nodedepth, headposition, nodeptr);
     }
+
     loc->nextnode.toleaf = False;
     loc->nextnode.address = nodeptr;
     loc->locstring.start = headposition;
     loc->locstring.length = nodedepth;
     loc->remain = 0;
+
     if(rescanlength <= nodedepth)
     {
         remainingtoskip = 0;
@@ -103,7 +105,7 @@ SYMBOL *scanprefixfromnodestree(
                 return lptr + prefixlen;
             }
             nodeptr = stree->branchtab + GETBRANCHINDEX(node);
-            GETONLYHEADPOS(headposition,nodeptr);
+            GETONLYHEADPOS(headposition, nodeptr);
             leftborder = stree->text + headposition;
         } else
         {

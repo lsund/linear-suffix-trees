@@ -36,7 +36,7 @@ typedef struct
   Reference firstchild;     // the reference to the first child
   Reference branchbrother;  // the reference to the right brother;
                             // if this doesn't exist then it's \texttt{NULL}
-} Branchinfo;               // \Typedef{Branchinfo}
+} Branchinfo;
 
 
 // For each leaf, we store a reference to its branchbrother, which is NULL if
@@ -135,7 +135,7 @@ typedef struct
   Uint edgelen;         // length of edge
   Uint remain;          // number of remaining characters on edge
   Reference nextnode;   // reference to node the edge points to
-} Location;             // \Typedef{Location}
+} Location;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to
 // u in `nextnode`. Moreover, we store a position where u starts and its length
