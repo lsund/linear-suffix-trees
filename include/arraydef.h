@@ -6,36 +6,11 @@
   code base.
 */
 
-//\Ignore{
-
 #ifndef ARRAYDEF_H
 #define ARRAYDEF_H
 #include "types.h"
 #include "errordef.h"
 #include "spaceman.h"
-
-//}
-
-/*
-  This file defines macros to conveniently declare and
-  manipulate dynamic arrays whose size grow on demand. Each dynamic
-  array over some type \texttt{T}
-  is implemented by a structure consisting of three components:
-  \begin{enumerate}
-  \item
-  \texttt{space\#\#T} is a pointer to the space block of type \texttt{T}
-  allocated for the array.
-  \item
-  \texttt{allocated\#\#T} is an \texttt{Uint} storing the number
-  of entries in the array currently allocated.
-  \item
-  \texttt{nextfree\#\#T} holds the smallest index of the array where no
-  value is stored.
-  \end{enumerate}
-  Here \texttt{\#\#} is the concatenation operator of the C-preprocessor.
-  The following macro expands to a corresponding type definition over
-  some given \texttt{TYPE}.
-*/
 
 #define DECLAREARRAYSTRUCT(TYPE)\
         typedef struct\
