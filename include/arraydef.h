@@ -53,6 +53,7 @@
 
 
 DECLAREARRAYSTRUCT(wchar_t);
+DECLAREARRAYSTRUCT(Uint);
 
 typedef Arraywchar_t ArrayCharacters;
 

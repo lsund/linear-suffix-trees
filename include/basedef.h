@@ -46,5 +46,4 @@
 #define LARGESTCHARINDEX          stree->lastcharindex
 #endif
 
-
 #endif
