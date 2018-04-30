@@ -15,7 +15,6 @@
 #include <unistd.h>
 #include <string.h>
 #include "types.h"
-#include "errordef.h"
 #include "megabytes.h"
 #include "debug.h"
 
@@ -152,7 +151,9 @@ static void subtractspace(Uint space)
                       (Ulong) line);
   if(nextfreeblock > 0)
   {
-    NOTSUPPOSEDTOBENULL(blocks);
+      if (!blocks) {
+          fprintf(stderr, "Not supposed to be null");
+      }
     for(blocknum=0; blocknum < nextfreeblock; blocknum++)
     {
       if(blocks[blocknum].spaceptr == ptr)
@@ -187,7 +188,9 @@ static void subtractspace(Uint space)
       ALLOCVIAFATAL("cannot find space block");
     }
   }
-  NOTSUPPOSEDTOBENULL(blocks);
+    if (!blocks) {
+        fprintf(stderr, "Not supposed to be null");
+    }
   subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
   addspace(size*number);
   DEBUG3(2,"# allocandusespaceviaptr:block %lu: %lu cells of size %lu\n",
@@ -209,7 +212,9 @@ static void subtractspace(Uint space)
     ALLOCVIAFATAL("not enough memory");
   }
   DEBUG0(2,"# allocandusespaceviaptr Okay\n");
-  NOTSUPPOSEDTOBENULL(blocks[blocknum].spaceptr);
+if (!blocks[blocknum].spaceptr) {
+    fprintf(stderr, "Not supposed to be null");
+}
   return blocks[blocknum].spaceptr;
 }
 
@@ -229,7 +234,9 @@ void freespaceviaptr(char *file,Uint line,void *ptr)
                     file,(Ulong) line);
     exit(EXIT_SUCCESS);
   }
-  NOTSUPPOSEDTOBENULL(blocks);
+if (!blocks) {
+    fprintf(stderr, "Not supposed to be null");
+}
   for(blocknum=0; blocknum < nextfreeblock; blocknum++)
   {
     if(blocks[blocknum].spaceptr == ptr)
@@ -260,12 +267,10 @@ void freespaceviaptr(char *file,Uint line,void *ptr)
   blocks[blocknum].spaceptr = NULL;
   if(numberofblocks == 0)
   {
-    NOTSUPPOSED;
+    fprintf(stderr, "Not supposed to happen");
   }
   numberofblocks--;
 }
-
-//\IgnoreLatex{
 
 /*EE
   The following function frees the space for all main memory blocks
@@ -277,7 +282,9 @@ void wrapspace(void)
   Uint blocknum;
 
   DEBUG0(2,"# wrapspace\n");
-  NOTSUPPOSEDTOBENULL(blocks);
+      if (!blocks) {
+          fprintf(stderr, "Not supposed to be null");
+      }
   for(blocknum=0; blocknum < nextfreeblock; blocknum++)
   {
     if(blocks[blocknum].spaceptr != NULL)
@@ -311,7 +318,9 @@ void activeblocks(void)
 {
   Uint blocknum;
 
-  NOTSUPPOSEDTOBENULL(blocks);
+      if (!blocks) {
+          fprintf(stderr, "Not supposed to be null");
+      }
   for(blocknum=0; blocknum < nextfreeblock; blocknum++)
   {
     if(blocks[blocknum].spaceptr != NULL)
@@ -336,7 +345,10 @@ void checkspaceleak(void)
 {
   Uint blocknum;
 
-  NOTSUPPOSEDTOBENULL(blocks);
+  if (!blocks) {
+      fprintf(stderr, "Not supposed to be null");
+  }
+
   for(blocknum=0; blocknum < nextfreeblock; blocknum++)
   {
     if(blocks[blocknum].spaceptr != NULL)
@@ -361,7 +373,7 @@ void checkspaceleak(void)
   }
   if(numberofblocks > 0)
   {
-    fprintf(stderr,"space leak: number of blocks = %u\n",numberofblocks);
+    fprintf(stderr,"space leak: number of blocks = %lu\n", numberofblocks);
     exit(EXIT_FAILURE);
   }
   free(blocks);

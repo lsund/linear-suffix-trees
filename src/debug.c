@@ -15,7 +15,6 @@
 #include "types.h"
 #include "fopen.h"
 #include "debug.h"
-#include "errordef.h"
 #include "megabytes.h"
 
 #ifdef DEBUG

@@ -11,7 +11,6 @@
 
 
 #include "types.h"
-#include "errordef.h"
 #include "spaceman.h"
 
 #define DECLAREARRAYSTRUCT(TYPE)\
@@ -37,7 +36,9 @@
                                                (Uint) sizeof(TYPE),\
                                                (A)->allocated##TYPE);\
         }\
-        NOTSUPPOSEDTOBENULL((A)->space##TYPE)
+        if (!(A)->space##TYPE) {\
+            fprintf(stderr, "Not supposed to be null");\
+        }\
 
 
 #define STOREINARRAY(A,TYPE,L,VAL)\

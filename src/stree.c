@@ -13,9 +13,8 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <wchar.h>
-#include "debug.h.h"
+#include "debug.h"
 #include "protodef.h"
-#include "errordef.h"
 #include "streedef.h"
 #include "spaceman.h"
 #include "megabytes.h"
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
     );
 
     if(constructprogressstree(&stree,text,textlen,NULL,NULL,NULL) != 0) {
-        fprintf(stderr,"%s %s: %s\n",argv[0],filename,messagespace());
+        fprintf(stderr,"%s %s: %s\n",argv[0],filename, messagespace());
         return EXIT_FAILURE;
     }
     /*

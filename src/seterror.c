@@ -15,7 +15,7 @@
 
 /*EE
   This module implements a simple mechanism to write error messages
-  into a global buffer, and to output this buffer when required. 
+  into a global buffer, and to output this buffer when required.
   We also maintain a global error code.
 */
 

@@ -9,8 +9,7 @@
 //\Ignore{
 
 #include <string.h>
-#include "debug.h.h"
-#include "errordef.h"
+#include "debug.h"
 #include "protodef.h"
 
 //}
@@ -30,7 +29,7 @@ Sint safestringcopy(char *dest,char *source,Sint maxlen)
   slen = (Sint) strlen(source);
   if(slen >= maxlen)
   {
-    ERROR2("string \"%s\" is too long, cannot copy, maximum length is %ld",
+    fprintf(stderr, "string \"%s\" is too long, cannot copy, maximum length is %ld",
            source,(Slong) maxlen);
     return -1;
   }

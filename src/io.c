@@ -76,11 +76,11 @@ static int fileOpen(char *name, Uint *textlen, Bool writefile)
     struct stat buf;
 
     if((fd = open(name,(writefile) ? O_RDWR : O_RDONLY)) == -1) {
-        ERROR1("fileOpen: Cannot open \"%s\"",name);
+        fprintf(stderr, "fileOpen: Cannot open \"%s\"",name);
         return -1;
     }
     if(fstat(fd,&buf) == -1) {
-        ERROR2("file \"%s\": fstat(fd = %d) failed",name,fd);
+        fprintf(stderr, "file \"%s\": fstat(fd = %d) failed",name,fd);
         return -2;
     }
     *textlen = (Uint) buf.st_size;
@@ -99,7 +99,7 @@ caddr_t fileParts(int fd, Uint offset, Uint len, Bool writemap)
                         MAP_PRIVATE,fd,(off_t) offset
                     );
     if (addr == MAP_FAILED) {
-        ERROR4("fileParts(fd = %d, left = %ld, len = %ld, %s) failed",
+        fprintf(stderr, "fileParts(fd = %d, left = %ld, len = %ld, %s) failed",
                 fd,
                 (long) offset,
                 (long) len,

@@ -9,7 +9,6 @@
 #ifndef SPACEDEF_H
 #define SPACEDEF_H
 #include "types.h"
-#include "errordef.h"
 
 void *allocandusespaceviaptr(
         char *file,Uint line,
@@ -22,6 +21,7 @@ void freespaceviaptr(char *file,Uint line,void *ptr);
 
 Uint getspacepeak(void);
 
+char *messagespace(void);
 
 #define ALLOC(S,T,N)\
         (T *) allocandusespaceviaptr(__FILE__,(Uint) __LINE__,\

@@ -182,7 +182,9 @@ SYMBOL *scanprefixfromnodestree(
                 remainingtoskip -= prefixlen;
             } else
             {
-                NOTSUPPOSEDTOBENULL(leftborder);
+            if (!leftborder) {
+                fprintf(stderr, "Not supposed to be null");
+            }
                 prefixlen = remainingtoskip +
                     lcp(lptr+remainingtoskip,right,
                             leftborder+remainingtoskip,leftborder+edgelen-1);
@@ -190,7 +192,9 @@ SYMBOL *scanprefixfromnodestree(
             }
         } else
         {
-            NOTSUPPOSEDTOBENULL(leftborder);
+            if (!leftborder) {
+                fprintf(stderr, "Not supposed to be null");
+            }
             prefixlen = 1 + lcp(lptr+1,right,
                     leftborder+1,leftborder+edgelen-1);
         }
@@ -454,7 +458,9 @@ SYMBOL *scanprefixstree(
                 remainingtoskip -= prefixlen;
             } else
             {
-                NOTSUPPOSEDTOBENULL(leftborder);
+            if (!leftborder) {
+                fprintf(stderr, "Not supposed to be null");
+            }
                 prefixlen = remainingtoskip +
                     lcp(lptr+remainingtoskip,right,
                             leftborder+remainingtoskip,leftborder+edgelen-1);
@@ -462,7 +468,9 @@ SYMBOL *scanprefixstree(
             }
         } else
         {
-            NOTSUPPOSEDTOBENULL(leftborder);
+            if (!leftborder) {
+                fprintf(stderr, "Not supposed to be null");
+            }
             prefixlen = 1 + lcp(lptr+1,right,
                     leftborder+1,leftborder+edgelen-1);
         }

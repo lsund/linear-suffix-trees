@@ -12,8 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "optdesc.h"
-#include "errordef.h"
-#include "debug.h.h"
+#include "debug.h"
 #include "protodef.h"
 #include "spaceman.h"
 
@@ -60,14 +59,14 @@ Sint addoption(OptionDescription *options,Uint numofoptions,
   DEBUG2(3,"add option number %ld: %s\n",(Slong) optnum,optname);
   if(optnum>=numofoptions)
   {
-    ERROR2("option number %ld out of range [0,%lu]",
+    fprintf(stderr, "option number %ld out of range [0,%lu]",
             (Slong) optnum,
             (Ulong) (numofoptions-1));
     return -1;
   }
   if(optnum > 0 && options[optnum].declared)
   {
-    ERROR1("option %lu already declared",(Ulong) optnum);
+    fprintf(stderr, "option %lu already declared",(Ulong) optnum);
     return -2;
   }
   options[optnum].optname = optname;
@@ -82,7 +81,7 @@ Sint addoption(OptionDescription *options,Uint numofoptions,
     {
       if(!options[i].declared)
       {
-        ERROR1("option %lu not declared",(Ulong) i);
+        fprintf(stderr, "option %lu not declared",(Ulong) i);
         return -3;
       }
     }
@@ -111,14 +110,14 @@ Sint procoption(OptionDescription *opt,Uint numofopt,char *optstring)
     {
       if(opt[i].isalreadyset)
       {
-        ERROR1("option \"%s\" already set",optstring);
+        fprintf(stderr, "option \"%s\" already set",optstring);
         return -1;
       }
       opt[i].isalreadyset = True;
       return (Sint) i;
     }
   }
-  ERROR1("illegal option \"%s\"",optstring);
+  fprintf(stderr, "illegal option \"%s\"",optstring);
   return -2;
 }
 
@@ -295,7 +294,7 @@ Sint checkdoubleexclude(Uint numofopts,OptionDescription *opt,
       DEBUG2(2,"Exclude %s %s\n",opt[indi].optname,opt[indj].optname);
       if(excludepairs[indi*numofopts+indj])
       {
-        ERROR2("option %s and option %s already specfied as excluded",
+        fprintf(stderr, "option %s and option %s already specfied as excluded",
                opt[indi].optname,opt[indj].optname);
         return -1;
       }
@@ -336,7 +335,7 @@ Sint checkexclude(OptionDescription *opt,Sint *excludetab,Uint len)
                                  opt[excludetab[j]].optname);
       if(opt[excludetab[i]].isalreadyset && opt[excludetab[j]].isalreadyset)
       {
-        ERROR2("option %s and option %s exclude each other",
+        fprintf(stderr, "option %s and option %s exclude each other",
                opt[excludetab[i]].optname,opt[excludetab[j]].optname);
         return -1;
       }

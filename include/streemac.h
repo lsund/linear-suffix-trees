@@ -11,7 +11,6 @@
 
 #include "types.h"
 #include "symboldef.h"
-#include "errordef.h"
 
 /*
   For each branching node we store five integers, see \cite{KUR:1999}.

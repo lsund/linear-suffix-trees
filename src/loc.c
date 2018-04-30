@@ -10,12 +10,11 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <wchar.h>
-#include "debug.h.h"
+#include "debug.h"
 #include "types.h"
 #include "streedef.h"
 #include "protodef.h"
 #include "streeacc.h"
-#include "errordef.h"
 #include "spaceman.h"
 #include "externs.h"
 #include "streelarge.h"

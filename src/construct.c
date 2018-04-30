@@ -27,7 +27,7 @@
 #define CHECKTEXTLEN\
     if(textlen > MAXTEXTLEN)\
 {\
-    ERROR2("suffix tree construction failed: "\
+    fprintf(stderr, "suffix tree construction failed: "\
             "textlen=%lu larger than maximal textlen=%lu",\
             (Ulong) textlen,(Ulong) MAXTEXTLEN);\
     return -1;\
