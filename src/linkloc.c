@@ -7,7 +7,6 @@
 */
 
 #include "streedef.h"
-#include "protodef.h"
 #include "debug.h"
 #include "streeacc.h"
 

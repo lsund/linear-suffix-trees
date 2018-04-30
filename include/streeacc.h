@@ -9,17 +9,7 @@
 #ifndef STREEACC_H
 #define STREEACC_H
 
-#ifdef STREESMALL
-#include "streesmall.h"
-#endif
-
-#ifdef STREELARGE
 #include "streelarge.h"
-#endif
-
-#ifdef STREEHUGE
-#include "streehuge.h"
-#endif
 
 #ifdef DEBUG
 #define SHOWVAL(S)    fprintf(stderr,"#%s %lu\n",#S,(Ulong) S)

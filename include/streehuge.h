@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "intbits.h"
 
 /*
   This header file defines the constants and macros for

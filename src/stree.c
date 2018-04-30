@@ -14,7 +14,6 @@
 #include <sys/types.h>
 #include <wchar.h>
 #include "debug.h"
-#include "protodef.h"
 #include "streedef.h"
 #include "spaceman.h"
 #include "clock.h"

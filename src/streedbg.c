@@ -13,7 +13,6 @@
 #include "debug.h.h"
 #include "streedef.h"
 #include "streeacc.h"
-#include "protodef.h"
 #include "streeproto.h"
 
 #define SETLEAFUSED(V)   SETIBIT(leafused,V)

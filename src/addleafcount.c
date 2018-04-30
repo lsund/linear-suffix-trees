@@ -7,7 +7,6 @@
 */
 
 #include "types.h"
-#include "protodef.h"
 #include "debug.h"
 #include "streedef.h"
 #include "spaceman.h"

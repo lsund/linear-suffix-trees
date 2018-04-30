@@ -13,7 +13,6 @@
 #include "debug.h"
 #include "types.h"
 #include "streedef.h"
-#include "protodef.h"
 #include "streeacc.h"
 #include "spaceman.h"
 #include "externs.h"

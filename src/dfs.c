@@ -11,7 +11,6 @@
 #include "debug.h"
 #include "streedef.h"
 #include "streeacc.h"
-#include "protodef.h"
 
 #define SETCURRENT(V)\
     if(ISLEAF(V))\

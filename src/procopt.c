@@ -11,9 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "optdesc.h"
 #include "debug.h"
-#include "protodef.h"
 #include "spaceman.h"
 
 //}

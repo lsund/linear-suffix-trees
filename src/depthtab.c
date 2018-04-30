@@ -13,7 +13,6 @@
 #include "streedef.h"
 #include "streeacc.h"
 #include "spaceman.h"
-#include "protodef.h"
 
 #define ADDAMOUNT 128
 

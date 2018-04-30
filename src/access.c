@@ -17,7 +17,6 @@
 #include "debug.h"
 #include "arraydef.h"
 #include "spaceman.h"
-#include "protodef.h"
 #include "basedef.h"
 
 #ifdef STREELARGE
