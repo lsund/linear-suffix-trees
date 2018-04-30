@@ -13,7 +13,6 @@
 #include <limits.h>
 #include <unistd.h>
 #include "types.h"
-#include "fopen.h"
 #include "debug.h"
 #include "megabytes.h"
 
@@ -92,8 +91,8 @@ void setdebuglevel(void)
 
 void setdebuglevelfilename(char *filename)
 {
-  FILEOPEN(debugfileptr,filename,"w");
-  setdebuglevel();
+    debugfileptr = fopen(filename, "w");
+    setdebuglevel();
 }
 
 /*EE
