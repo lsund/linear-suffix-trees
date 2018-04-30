@@ -6,17 +6,16 @@
   code base.
 */
 
-//}
-
-//\FILEINFO{streelarge.h}{Stefan Kurtz}{November 1999}
-
-//\Ignore{
-
 #ifndef STREELARGE_H
 #define STREELARGE_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+
+#include "types.h"
+#include "streemac.h"
+#include "debug.h"
+#include "streetyp.h"
 
 /*
   This header file defines the constants and macros used for the improved
@@ -76,7 +75,7 @@
 #define GETBRANCHINDEX(V)   (V)
 
 #define NILPTR(P)           ((P) & NILBIT)
-#define UNDEFINEDREFERENCE  (~((Uint) 0))
+/* #define UNDEFINEDREFERENCE  (~((Uint) 0)) */
 #define MAXTEXTLEN          ((MAXINDEX/LARGEINTS) - 3)
 
 #define GETCHILD(B)          ((((*(B)) << 2) & MAXINDEX) | ((*((B)+1)) >> 30))
@@ -132,3 +131,10 @@ static Uint getdepth(Uint *btptr)
   return thirdval & MAXTLEN;
 }
 
+void setdepthheadposition(Suffixtree *stree,Uint depth, Uint headposition);
+
+void setsuffixlink(Suffixtree *stree,Uint slink);
+
+Uint getlargelinkconstruction(Suffixtree *stree);
+
+#endif

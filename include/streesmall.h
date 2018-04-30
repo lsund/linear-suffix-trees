@@ -6,12 +6,6 @@
   code base.
 */
 
-//}
-
-//\FILEINFO{streesmall.h}{Stefan Kurtz}{November 1999}
-
-//\Ignore{
-
 #ifndef STREESTDEF_H
 #define STREESTDEF_H
 
@@ -22,7 +16,6 @@
 #include "streemac.h"
 #include "debug.h"
 #include "streetyp.h"
-//}
 
 /*
   This header file defines the constants and macros used for the improved
@@ -64,7 +57,7 @@
 
 #define NILPTR(P)           ((P) & NILBIT)
 /* #define UNDEFREFERENCE      (~((Uint) 0)) */
-/* #define MAXTEXTLEN          2097150 */
+#define MAXTEXTLEN          2097150
 
 #define GETCHILD(B)         ((*(B)) & MAXINDEX)
 #define SETCHILD(B,VAL)     SETVAL(B,((*(B)) & (511 << 23)) | (VAL))

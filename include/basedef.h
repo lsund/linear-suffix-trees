@@ -9,7 +9,7 @@
 
 #define BRANCHWIDTH             UintConst(2)
 
-#define MAXTEXTLEN              UintConst(715827882)
+/* #define MAXTEXTLEN              UintConst(715827882) */
 
 #define MAXPATTERNLEN           1024
 
