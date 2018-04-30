@@ -35,6 +35,9 @@ int main(int argc, char *argv[])
     char *filename = argv[1];
     FILE *in = fopen(filename, "r");
     text = malloc(sizeof(wchar_t) * MAXTEXTLEN);
+    if(!text) {
+        fprintf(stderr, "Could not allocate enough space");
+    }
     Uint c;
     textlen = 0;
     while ((c = fgetwc(in)) != WEOF) {
@@ -42,10 +45,6 @@ int main(int argc, char *argv[])
         textlen++;
     }
     text[textlen + 1] = '\0';
-    if(text == NULL)
-    {
-        STANDARDMESSAGE;
-    }
     CONSTRUCTSTREE(&stree,text,textlen,return EXIT_FAILURE);
 #ifdef DEBUG
     enumlocations(&stree, checklocation);

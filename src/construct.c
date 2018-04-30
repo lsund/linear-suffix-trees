@@ -6,16 +6,7 @@
    code base.
    */
 
-#include "bitvector.h"
-#include "spaceman.h"
-#include "megabytes.h"
-#include "debug.h"
-#include "streedef.h"
-#include "streeacc.h"
-#include "protodef.h"
-#include "basedef.h"
-/* #include "streesmall.h" */
-#include "streelarge.h"
+#include "construct.h"
 
 #define FUNCLEVEL 4
 
@@ -23,15 +14,6 @@
     DEBUGCODE(5,showstree(stree))
 
 #define VALIDINIT     0
-
-#define CHECKTEXTLEN\
-    if(textlen > MAXTEXTLEN)\
-{\
-    fprintf(stderr, "suffix tree construction failed: "\
-            "textlen=%lu larger than maximal textlen=%lu",\
-            (Ulong) textlen,(Ulong) MAXTEXTLEN);\
-    return -1;\
-}
 
 #ifdef DEBUG
 
@@ -152,17 +134,7 @@ static Uint getlargelinkconstruction(Suffixtree *stree)
 #endif
 
 
-// Insertion of Nodes
-
-//
-// The function \emph{insertleaf} inserts a leaf and a corresponding leaf
-// edge outgoing from the current \emph{headnode}.
-// \emph{insertprev} refers to the node to the left of the leaf to be inserted.
-// If the leaf is the first child, then \emph{insertprev} is
-// \texttt{UNDEFREFERENCE}.
-//
-
-static void insertleaf(Suffixtree *stree)
+void insertleaf(Suffixtree *stree)
 {
     Uint *ptr, newleaf;
 
@@ -204,16 +176,7 @@ stree->nextfreeleafnum++;
 stree->nextfreeleafptr++;
 }
 
-//
-// The function \emph{insertbranch} inserts a branching node and splits
-// the appropriate edges, according to the canonical location of the current
-// head. \emph{insertprev} refers to the node to the left of the branching
-// node to be inserted. If the branching node is the first child, then
-// \emph{insertprev} is \texttt{UNDEFREFERENCE}. The edge to be split ends
-// in the node referred to by \emph{insertnode}.
-//
-
-static void insertbranchnode(Suffixtree *stree)
+void insertbranchnode(Suffixtree *stree)
 {
     Uint *ptr, *insertnodeptr, *insertleafptr, insertnodeptrbrother;
 
@@ -302,7 +265,7 @@ static void insertbranchnode(Suffixtree *stree)
 // character of each edge.
 //
 
-static void rescan(Suffixtree *stree) // skip-count
+void rescan(Suffixtree *stree) // skip-count
 {
     Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode,
          nodedepth, edgelen, wlen, leafindex, headposition;
@@ -407,7 +370,7 @@ static Uint taillcp(Suffixtree *stree,SYMBOL *start1, SYMBOL *end1)
 }
 
 // Scans a prefix of the current tail down from a given node
-static void scanprefix(Suffixtree *stree) // probably slow-scan / walk
+void scanprefix(Suffixtree *stree)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node,
          distance = 0, prevnode, prefixlen, headposition;
@@ -535,15 +498,7 @@ static void scanprefix(Suffixtree *stree) // probably slow-scan / walk
     }
 }
 
-//\subsection{Completion and Initialization}
-
-/*
-   The function \emph{completelarge} is called whenever a large node
-   is inserted. It basically sets the appropriate distance values of the small
-   nodes of the current chain.
-   */
-
-static void completelarge(Suffixtree *stree)
+void completelarge(Suffixtree *stree)
 {
     Uint distance, *backwards;
 
@@ -564,13 +519,7 @@ static void completelarge(Suffixtree *stree)
     stree->largenode++;
 }
 
-/*
-   The function \emph{linkrootchildren} constructs the successor chain
-   for the children of the root. This is done at the end of the algorithm
-   in one sweep over table \emph{rootchildren}.
-   */
-
-static void linkrootchildren(Suffixtree *stree)
+void linkrootchildren(Suffixtree *stree)
 {
     Uint *rcptr, *prevnodeptr, prev = UNDEFREFERENCE;
 
@@ -611,7 +560,7 @@ static void linkrootchildren(Suffixtree *stree)
 }
 
 
-static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
+void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
 {
     Uint i;
 
@@ -716,7 +665,129 @@ void freestree(Suffixtree *stree)
 #define CHECKSTEP           /* Nothing */
 #define FINALPROGRESS       /* Nothing */
 
-#include "gen.c"
+CONSTRUCT
+{
+  DECLAREEXTRA;
+
+  if (textlen > MAXTEXTLEN) {
+      fprintf(stderr, "Text too large");
+  }
+
+  DEBUGCODE(3,showvalues());
+
+  initSuffixtree(stree,text,textlen);
+  while(stree->tailptr < stree->sentinel ||
+        stree->headnodedepth != 0 || stree->headend != NULL)
+  {
+    CHECKSTEP;
+    // case (1): headloc is root
+    if(stree->headnodedepth == 0 && stree->headend == NULL)
+    {
+      (stree->tailptr)++;
+      scanprefix(stree);
+    } else
+    {
+      if(stree->headend == NULL)  // case (2.1): headloc is a node
+      {
+        FOLLOWSUFFIXLINK;
+        scanprefix(stree);
+      } else               // case (2.2)
+      {
+        if(stree->headnodedepth == 0) // case (2.2.1): at root: do not use links
+        {
+          if(stree->headstart == stree->headend)  // rescan not necessary
+          {
+            stree->headend = NULL;
+          } else
+          {
+            (stree->headstart)++;
+            rescan(stree);
+          }
+        } else
+        {
+          FOLLOWSUFFIXLINK;    // case (2.2.2)
+          rescan(stree);
+        }
+        if(stree->headend == NULL)  // case (2.2.3): headloc is a node
+        {
+          SETSUFFIXLINK(BRADDR2NUM(stree,stree->headnode));
+          COMPLETELARGEFIRST;
+          scanprefix(stree);
+        } else
+        {
+          if(stree->smallnotcompleted == MAXDISTANCE)  // artifical large node
+          {
+            DEBUGCODE(1,stree->artificial++);
+            DEBUG1(3,"#artifical large node %lu\n",
+                      (Ulong) stree->nextfreebranchnum);
+            SETSUFFIXLINK(stree->nextfreebranchnum + LARGEINTS);
+            COMPLETELARGESECOND;
+          } else
+          {
+            if(stree->chainstart == NULL)
+            {
+              stree->chainstart = stree->nextfreebranch;   // start new chain
+            }
+            (stree->smallnotcompleted)++;
+            (stree->nextfreebranch) += SMALLINTS;      // case (2.2.4)
+            (stree->nextfreebranchnum) += SMALLINTS;
+            stree->smallnode++;
+          }
+        }
+      }
+    }
+
+    PROCESSHEAD;
+
+    if(stree->headend == NULL)
+    {
+      insertleaf(stree);  // case (a)
+    } else
+    {
+      insertbranchnode(stree);  // case (b)
+    }
+    DEBUGCODE(5,showtable(stree,False));
+  }
+  stree->chainstart = NULL;
+  linkrootchildren(stree);
+
+//\Ignore{
+
+  DEBUG1(2,"#integers for branchnodes %lu\n",
+           (Ulong) stree->nextfreebranchnum);
+  DEBUG4(2,"#small %lu large %lu textlen %lu all %lu ",
+            (Ulong) stree->smallnode,(Ulong) stree->largenode,
+            (Ulong) stree->textlen,
+            (Ulong) (stree->smallnode+stree->largenode));
+  DEBUG1(2,"ratio %f\n",
+         (double) (stree->smallnode+stree->largenode)/stree->nextfreeleafnum);
+  DEBUG1(2,"#splitleafedge = %lu\n",(Ulong) stree->splitleafedge);
+  DEBUG1(2,"#splitinternaledge = %lu\n",(Ulong) stree->splitinternaledge);
+  DEBUG1(2,"#insertleafcalls = %lu\n",(Ulong) stree->insertleafcalls);
+  DEBUG1(2,"#artificial = %lu\n",(Ulong) stree->artificial);
+  DEBUG1(2,"#multiplications = %lu\n",(Ulong) stree->multiplications);
+  DEBUGCODE(4,showtable(stree,True));
+  DEBUGCODE(3,showstree(stree));
+#ifdef DEBUG
+  {
+    DEBUG3(2,"#largelinks %lu largelinklinkwork %lu largelinkwork %lu ",
+              (Ulong) stree->largelinks,
+              (Ulong) stree->largelinklinkwork,
+              (Ulong) stree->largelinkwork);
+    DEBUG2(2,"#ratio1 %.4f ratio2 %.4f\n",
+              (double) stree->largelinkwork/stree->largelinks,
+              (double) stree->largelinkwork/stree->textlen);
+  }
+#endif
+  DEBUG2(2,"#%6lu %6lu\n",(Ulong) stree->smallnode,
+                          (Ulong) stree->largenode);
+  DEBUGCODE(2,showspace());
+  DEBUGCODE(1,checkstree(stree));
+
+//}
+  FINALPROGRESS;
+  return 0;
+}
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA
@@ -760,7 +831,129 @@ void freestree(Suffixtree *stree)
 #define CHECKSTEP            /* Nothing */
 #define FINALPROGRESS        /* Nothing */
 
-#include "gen.c"
+CONSTRUCT
+{
+  DECLAREEXTRA;
+
+  if (textlen > MAXTEXTLEN) {
+      fprintf(stderr, "Text too large");
+  }
+
+  DEBUGCODE(3,showvalues());
+
+  initSuffixtree(stree,text,textlen);
+  while(stree->tailptr < stree->sentinel ||
+        stree->headnodedepth != 0 || stree->headend != NULL)
+  {
+    CHECKSTEP;
+    // case (1): headloc is root
+    if(stree->headnodedepth == 0 && stree->headend == NULL)
+    {
+      (stree->tailptr)++;
+      scanprefix(stree);
+    } else
+    {
+      if(stree->headend == NULL)  // case (2.1): headloc is a node
+      {
+        FOLLOWSUFFIXLINK;
+        scanprefix(stree);
+      } else               // case (2.2)
+      {
+        if(stree->headnodedepth == 0) // case (2.2.1): at root: do not use links
+        {
+          if(stree->headstart == stree->headend)  // rescan not necessary
+          {
+            stree->headend = NULL;
+          } else
+          {
+            (stree->headstart)++;
+            rescan(stree);
+          }
+        } else
+        {
+          FOLLOWSUFFIXLINK;    // case (2.2.2)
+          rescan(stree);
+        }
+        if(stree->headend == NULL)  // case (2.2.3): headloc is a node
+        {
+          SETSUFFIXLINK(BRADDR2NUM(stree,stree->headnode));
+          COMPLETELARGEFIRST;
+          scanprefix(stree);
+        } else
+        {
+          if(stree->smallnotcompleted == MAXDISTANCE)  // artifical large node
+          {
+            DEBUGCODE(1,stree->artificial++);
+            DEBUG1(3,"#artifical large node %lu\n",
+                      (Ulong) stree->nextfreebranchnum);
+            SETSUFFIXLINK(stree->nextfreebranchnum + LARGEINTS);
+            COMPLETELARGESECOND;
+          } else
+          {
+            if(stree->chainstart == NULL)
+            {
+              stree->chainstart = stree->nextfreebranch;   // start new chain
+            }
+            (stree->smallnotcompleted)++;
+            (stree->nextfreebranch) += SMALLINTS;      // case (2.2.4)
+            (stree->nextfreebranchnum) += SMALLINTS;
+            stree->smallnode++;
+          }
+        }
+      }
+    }
+
+    PROCESSHEAD;
+
+    if(stree->headend == NULL)
+    {
+      insertleaf(stree);  // case (a)
+    } else
+    {
+      insertbranchnode(stree);  // case (b)
+    }
+    DEBUGCODE(5,showtable(stree,False));
+  }
+  stree->chainstart = NULL;
+  linkrootchildren(stree);
+
+//\Ignore{
+
+  DEBUG1(2,"#integers for branchnodes %lu\n",
+           (Ulong) stree->nextfreebranchnum);
+  DEBUG4(2,"#small %lu large %lu textlen %lu all %lu ",
+            (Ulong) stree->smallnode,(Ulong) stree->largenode,
+            (Ulong) stree->textlen,
+            (Ulong) (stree->smallnode+stree->largenode));
+  DEBUG1(2,"ratio %f\n",
+         (double) (stree->smallnode+stree->largenode)/stree->nextfreeleafnum);
+  DEBUG1(2,"#splitleafedge = %lu\n",(Ulong) stree->splitleafedge);
+  DEBUG1(2,"#splitinternaledge = %lu\n",(Ulong) stree->splitinternaledge);
+  DEBUG1(2,"#insertleafcalls = %lu\n",(Ulong) stree->insertleafcalls);
+  DEBUG1(2,"#artificial = %lu\n",(Ulong) stree->artificial);
+  DEBUG1(2,"#multiplications = %lu\n",(Ulong) stree->multiplications);
+  DEBUGCODE(4,showtable(stree,True));
+  DEBUGCODE(3,showstree(stree));
+#ifdef DEBUG
+  {
+    DEBUG3(2,"#largelinks %lu largelinklinkwork %lu largelinkwork %lu ",
+              (Ulong) stree->largelinks,
+              (Ulong) stree->largelinklinkwork,
+              (Ulong) stree->largelinkwork);
+    DEBUG2(2,"#ratio1 %.4f ratio2 %.4f\n",
+              (double) stree->largelinkwork/stree->largelinks,
+              (double) stree->largelinkwork/stree->textlen);
+  }
+#endif
+  DEBUG2(2,"#%6lu %6lu\n",(Ulong) stree->smallnode,
+                          (Ulong) stree->largenode);
+  DEBUGCODE(2,showspace());
+  DEBUGCODE(1,checkstree(stree));
+
+//}
+  FINALPROGRESS;
+  return 0;
+}
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA
@@ -774,27 +967,6 @@ void freestree(Suffixtree *stree)
 ///////////////////////////////////////////////////////////////////////////////
 // Headstree
 
-
-#define CONSTRUCT Sint constructheadstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void(*processhead)(Suffixtree *,Uint,void *),void *processheadinfo)
-
-#define DECLAREEXTRA         stree->nonmaximal = NULL
-#define COMPLETELARGEFIRST   completelarge(stree)
-#define COMPLETELARGESECOND  completelarge(stree)
-#define PROCESSHEAD          processhead(stree,stree->nextfreeleafnum,\
-        processheadinfo)
-
-#define CHECKSTEP            /* Nothing */
-#define FINALPROGRESS        /* Nothing */
-
-#include "gen.c"
-
-#undef CONSTRUCT
-#undef DECLAREEXTRA
-#undef COMPLETELARGEFIRST
-#undef COMPLETELARGESECOND
-#undef PROCESSHEAD
-#undef CHECKSTEP
-#undef FINALPROGRESS
 
 ///////////////////////////////////////////////////////////////////////////////
 // Progresstree
@@ -847,7 +1019,129 @@ j++
     }\
 }
 
-#include "gen.c"
+CONSTRUCT
+{
+  DECLAREEXTRA;
+
+  if (textlen > MAXTEXTLEN) {
+      fprintf(stderr, "Text too large");
+  }
+
+  DEBUGCODE(3,showvalues());
+
+  initSuffixtree(stree,text,textlen);
+  while(stree->tailptr < stree->sentinel ||
+        stree->headnodedepth != 0 || stree->headend != NULL)
+  {
+    CHECKSTEP;
+    // case (1): headloc is root
+    if(stree->headnodedepth == 0 && stree->headend == NULL)
+    {
+      (stree->tailptr)++;
+      scanprefix(stree);
+    } else
+    {
+      if(stree->headend == NULL)  // case (2.1): headloc is a node
+      {
+        FOLLOWSUFFIXLINK;
+        scanprefix(stree);
+      } else               // case (2.2)
+      {
+        if(stree->headnodedepth == 0) // case (2.2.1): at root: do not use links
+        {
+          if(stree->headstart == stree->headend)  // rescan not necessary
+          {
+            stree->headend = NULL;
+          } else
+          {
+            (stree->headstart)++;
+            rescan(stree);
+          }
+        } else
+        {
+          FOLLOWSUFFIXLINK;    // case (2.2.2)
+          rescan(stree);
+        }
+        if(stree->headend == NULL)  // case (2.2.3): headloc is a node
+        {
+          SETSUFFIXLINK(BRADDR2NUM(stree,stree->headnode));
+          COMPLETELARGEFIRST;
+          scanprefix(stree);
+        } else
+        {
+          if(stree->smallnotcompleted == MAXDISTANCE)  // artifical large node
+          {
+            DEBUGCODE(1,stree->artificial++);
+            DEBUG1(3,"#artifical large node %lu\n",
+                      (Ulong) stree->nextfreebranchnum);
+            SETSUFFIXLINK(stree->nextfreebranchnum + LARGEINTS);
+            COMPLETELARGESECOND;
+          } else
+          {
+            if(stree->chainstart == NULL)
+            {
+              stree->chainstart = stree->nextfreebranch;   // start new chain
+            }
+            (stree->smallnotcompleted)++;
+            (stree->nextfreebranch) += SMALLINTS;      // case (2.2.4)
+            (stree->nextfreebranchnum) += SMALLINTS;
+            stree->smallnode++;
+          }
+        }
+      }
+    }
+
+    PROCESSHEAD;
+
+    if(stree->headend == NULL)
+    {
+      insertleaf(stree);  // case (a)
+    } else
+    {
+      insertbranchnode(stree);  // case (b)
+    }
+    DEBUGCODE(5,showtable(stree,False));
+  }
+  stree->chainstart = NULL;
+  linkrootchildren(stree);
+
+//\Ignore{
+
+  DEBUG1(2,"#integers for branchnodes %lu\n",
+           (Ulong) stree->nextfreebranchnum);
+  DEBUG4(2,"#small %lu large %lu textlen %lu all %lu ",
+            (Ulong) stree->smallnode,(Ulong) stree->largenode,
+            (Ulong) stree->textlen,
+            (Ulong) (stree->smallnode+stree->largenode));
+  DEBUG1(2,"ratio %f\n",
+         (double) (stree->smallnode+stree->largenode)/stree->nextfreeleafnum);
+  DEBUG1(2,"#splitleafedge = %lu\n",(Ulong) stree->splitleafedge);
+  DEBUG1(2,"#splitinternaledge = %lu\n",(Ulong) stree->splitinternaledge);
+  DEBUG1(2,"#insertleafcalls = %lu\n",(Ulong) stree->insertleafcalls);
+  DEBUG1(2,"#artificial = %lu\n",(Ulong) stree->artificial);
+  DEBUG1(2,"#multiplications = %lu\n",(Ulong) stree->multiplications);
+  DEBUGCODE(4,showtable(stree,True));
+  DEBUGCODE(3,showstree(stree));
+#ifdef DEBUG
+  {
+    DEBUG3(2,"#largelinks %lu largelinklinkwork %lu largelinkwork %lu ",
+              (Ulong) stree->largelinks,
+              (Ulong) stree->largelinklinkwork,
+              (Ulong) stree->largelinkwork);
+    DEBUG2(2,"#ratio1 %.4f ratio2 %.4f\n",
+              (double) stree->largelinkwork/stree->largelinks,
+              (double) stree->largelinkwork/stree->textlen);
+  }
+#endif
+  DEBUG2(2,"#%6lu %6lu\n",(Ulong) stree->smallnode,
+                          (Ulong) stree->largenode);
+  DEBUGCODE(2,showspace());
+  DEBUGCODE(1,checkstree(stree));
+
+//}
+  FINALPROGRESS;
+  return 0;
+}
 
 #undef CONSTRUCT
 #undef DECLAREEXTRA

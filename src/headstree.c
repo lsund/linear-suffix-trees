@@ -1,16 +1,16 @@
-/*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
-*/
 
-CONSTRUCT
+#include "construct.h"
+
+Sint constructheadstree(Suffixtree *stree,SYMBOL *text,Uint
+        textlen,void(*processhead)(Suffixtree *,Uint,void *),void
+        *processheadinfo)
 {
-  DECLAREEXTRA;
 
-  CHECKTEXTLEN;
+    stree->nonmaximal = NULL;
+
+  if (textlen > MAXTEXTLEN) {
+      fprintf(stderr, "Text too large");
+  }
 
   DEBUGCODE(3,showvalues());
 
@@ -18,7 +18,6 @@ CONSTRUCT
   while(stree->tailptr < stree->sentinel ||
         stree->headnodedepth != 0 || stree->headend != NULL)
   {
-    CHECKSTEP;
     // case (1): headloc is root
     if(stree->headnodedepth == 0 && stree->headend == NULL)
     {
@@ -50,7 +49,7 @@ CONSTRUCT
         if(stree->headend == NULL)  // case (2.2.3): headloc is a node
         {
           SETSUFFIXLINK(BRADDR2NUM(stree,stree->headnode));
-          COMPLETELARGEFIRST;
+            completelarge(stree);
           scanprefix(stree);
         } else
         {
@@ -60,7 +59,7 @@ CONSTRUCT
             DEBUG1(3,"#artifical large node %lu\n",
                       (Ulong) stree->nextfreebranchnum);
             SETSUFFIXLINK(stree->nextfreebranchnum + LARGEINTS);
-            COMPLETELARGESECOND;
+            completelarge(stree);
           } else
           {
             if(stree->chainstart == NULL)
@@ -76,7 +75,7 @@ CONSTRUCT
       }
     }
 
-    PROCESSHEAD;
+    processhead(stree,stree->nextfreeleafnum, processheadinfo);
 
     if(stree->headend == NULL)
     {
@@ -124,6 +123,6 @@ CONSTRUCT
   DEBUGCODE(1,checkstree(stree));
 
 //}
-  FINALPROGRESS;
   return 0;
 }
+
