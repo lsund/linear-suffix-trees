@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <wchar.h>
 #include "debugdef.h"
 #include "args.h"
 #include "protodef.h"
@@ -22,11 +23,13 @@
 #include "clock.h"
 #include "mapfile.h"
 #include "streelarge.h"
+#include "externs.h"
+
+wchar_t *text;
 
 // This constructs a suffix tree
 int main(int argc, char *argv[])
 {
-    Uchar *text;
     Uint textlen = 0;
     Suffixtree stree;
     char *filename;
@@ -38,7 +41,7 @@ int main(int argc, char *argv[])
     filename = argv[1];
 
     FILE *in = fopen(filename, "r");
-    text = malloc(sizeof(Uchar) * MAXTEXTLEN);
+    text = malloc(sizeof(wchar_t) * MAXTEXTLEN);
 
     if(text == NULL) {
         fprintf(stderr,"%s: cannot open file \"%s\" ",argv[0],filename);
@@ -46,9 +49,9 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    char c;
+    Uint c;
     textlen = 0;
-    while ((c = fgetc(in)) != EOF) {
+    while ((c = fgetwc(in)) != WEOF) {
         text[textlen] = c;
         textlen++;
     }

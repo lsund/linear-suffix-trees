@@ -55,7 +55,7 @@ typedef struct filehandle {
 
 caddr_t fileParts(int fd,Uint offset,Uint len,Bool writemap);
 
-void freetextspace(Uchar *text, Uint textlen);
+void freetextspace(wchar_t *text, Uint textlen);
 
 caddr_t genfile2String(char *name, Uint *textlen,
                                   Bool writefile, Bool writemap);
@@ -69,6 +69,6 @@ FILE *createfilehandle(char *file, Uint line, char *path, char *mode);
 // Opens the path for appending, erasing any prior content of the same file
 FILE *open_append(const char *path);
 
-Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Uchar ***wordsp);
+Uint file_to_strings(char *name, Uint *textlen, Uint nlines, wchar_t ***wordsp);
 #endif
 

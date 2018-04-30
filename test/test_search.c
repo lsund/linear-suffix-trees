@@ -1,17 +1,26 @@
 #include "test.h"
 
-Uchar *text;
+size_t strlenw(Wchar *s)
+{
+    size_t i = 0;
+    while (s[i]) {
+        i++;
+    }
+    return i;
+}
+
+
+wchar_t *text;
 Uint textlen, max_codepoint;
 
-
-static bool search_pattern(Suffixtree *stree, Uchar *patt)
+static bool search_pattern(Suffixtree *stree, wchar_t *patt)
 {
     Location loc;
-    size_t pattlen = strlen((char *) patt);
+    Uint pattlen = strlenw(patt);
     SYMBOL *rem = scanprefixfromnodestree(
             stree, &loc, stree->branchtab, patt, patt + pattlen, 0
     );
-    return rem[0] == 0;
+    return !rem || rem[0] == 0;
 }
 
 static Uint min(const Uint a, const Uint b)
@@ -22,31 +31,32 @@ static Uint min(const Uint a, const Uint b)
 char *test_count(char *patternfile, char *textfile, Uint count)
 {
     Uint patternslen;
-    /* setlocale(LC_ALL, "en_US.utf8"); */
+    setlocale(LC_ALL, "en_US.utf8");
     FILE *in = fopen(textfile, "r");
-    text = malloc(sizeof(Uchar) * MAXTEXTLEN);
-    char c;
+    text = malloc(sizeof(Wchar) * MAXTEXTLEN);
+    wint_t c;
     textlen = 0;
-    while ((c = fgetc(in)) != EOF) {
+    while ((c = fgetwc(in)) != WEOF) {
         text[textlen] = c;
         textlen++;
     }
     text[textlen + 1] = '\0';
     /* max_codepoint = get_max(wtext, textlen); */
     fclose(in);
-    char **patterns = (char **) malloc(sizeof(char *) * MAX_PATTERNS);
-    int npatterns  = file2Array(patternfile, &patternslen, MAX_PATTERNS, &patterns);
+    Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
+    int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
+    Suffixtree stree;
+    constructstree(&stree, text, textlen);
+
 
     Uint exists_n = 0;
-
     for (Uint j = 0; j < (Uint) npatterns; j++) {
 
-        /* char *current_pattern = patterns[j]; */
-        /* Uint patternlen = strlen(current_pattern); */
+        Wchar *current_pattern = patterns[j];
 
-        /* bool exists = search_pattern(current_pattern, patternlen); */
+        bool exists = search_pattern(&stree, current_pattern);
 
-        /* exists ? exists_n++ : (void) 0; */
+        exists ? exists_n++ : (void) 0;
     }
     for (int i = npatterns - 1; i >= 0; i--) {
         free(patterns[i]);
@@ -61,35 +71,34 @@ char *test_count(char *patternfile, char *textfile, Uint count)
 
 char *compare_vs_naive(char *patternfile, char *textfile)
 {
-    int maxpatterns = 50;
+    int maxpatterns = 500;
 
     Uint patternslen;
-    /* setlocale(LC_ALL, "en_US.utf8"); */
+    setlocale(LC_ALL, "en_US.utf8");
     FILE *in = fopen(textfile, "r");
-    text = malloc(sizeof(Uchar) * MAXTEXTLEN);
-    char c;
+    text = malloc(sizeof(Wchar) * MAXTEXTLEN);
+    wint_t c;
     textlen = 0;
-    while ((c = fgetc(in)) != EOF) {
+    while ((c = fgetwc(in)) != WEOF) {
         text[textlen] = c;
         textlen++;
     }
     text[textlen + 1] = '\0';
-
     /* max_codepoint = get_max(wtext, textlen); */
     fclose(in);
-    Uchar **patterns = (Uchar **) malloc(sizeof(Uchar *) * MAX_PATTERNS);
+    Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
     Suffixtree stree;
     constructstree(&stree, text, textlen);
 
+
     int exists_n = 0, rexists_n = 0;
     for (Uint j = 0; j < min(npatterns, maxpatterns); j++) {
 
-        Uchar *current_pattern = patterns[j];
+        Wchar *current_pattern = patterns[j];
+        Uint patternlen = strlenw(current_pattern);
 
-        Uint patternlen = strlen((char *) current_pattern);
-
-        Uchar *end = current_pattern + patternlen;
+        Wchar *end = current_pattern + patternlen;
 
         bool exists = search_pattern(&stree, current_pattern);
         bool rexists = naive_search(current_pattern, end);
@@ -99,7 +108,7 @@ char *compare_vs_naive(char *patternfile, char *textfile)
 
         if (rexists != exists) {
             printf("%d %d\n", rexists, exists);
-            printf("Fail on: %s\n", patterns[j]);
+            printf("Fail on: %ls\n", patterns[j]);
         }
         mu_assert(
             "Naive and suffix tree sourch should be the same.",

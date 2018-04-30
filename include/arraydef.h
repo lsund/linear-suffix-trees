@@ -115,14 +115,14 @@
 #define FREEARRAY(A,TYPE)\
         if((A)->space##TYPE != NULL)\
         {\
-          FREESPACE((A)->space##TYPE);\
+          FREE((A)->space##TYPE);\
         }
 
 /*
   Some declarations for the most common array types.
 */
 
-DECLAREARRAYSTRUCT(Uchar);
+DECLAREARRAYSTRUCT(wchar_t);
 DECLAREARRAYSTRUCT(Ushort);
 DECLAREARRAYSTRUCT(char);
 DECLAREARRAYSTRUCT(Uint);
@@ -135,7 +135,7 @@ DECLAREARRAYSTRUCT(ThreeUint);
 */
 
 typedef ArrayUint  ArrayPosition;       // \Typedef{ArrayPosition}
-typedef ArrayUchar ArrayCharacters;     // \Typedef{ArrayCharacters}
+typedef Arraywchar_t ArrayCharacters;     // \Typedef{ArrayCharacters}
 
 /*
   The following array type has some extra components. However, it can be
@@ -147,7 +147,7 @@ typedef ArrayUchar ArrayCharacters;     // \Typedef{ArrayCharacters}
 typedef struct
 {
   String *spaceStrings;
-  Uchar *stringbuffer;
+  wchar_t *stringbuffer;
   Uint stringbufferlength, nextfreeStrings, allocatedStrings;
 } ArrayStrings;   // \Typedef{ArrayStrings}
 

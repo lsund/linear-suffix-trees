@@ -56,7 +56,7 @@
         {\
           allocatedstartdesc += 128;\
           multiseq->startdesc\
-            = ALLOCSPACE(multiseq->startdesc,Uint,allocatedstartdesc);\
+            = ALLOC(multiseq->startdesc,Uint,allocatedstartdesc);\
         }\
         multiseq->startdesc[multiseq->numofsequences]\
           = multiseq->descspace.nextfreeUchar
@@ -70,7 +70,7 @@ void initmultiseq(Multiseq *multiseq)
 {
   multiseq->startdesc = NULL;
   INITARRAY(&multiseq->markpos,Uint);
-  INITARRAY(&multiseq->descspace,Uchar);
+  INITARRAY(&multiseq->descspace,wchar_t);
   multiseq->sequence = NULL;
   multiseq->rcsequence = NULL;
   multiseq->numofsequences = 0;
@@ -92,25 +92,25 @@ void freemultiseq(Multiseq *multiseq)
   }
   if(DELETEMEMORYMAP(multiseq->descspace.spaceUchar) != 0)
   {
-    FREEARRAY(&multiseq->descspace,Uchar);
+    FREEARRAY(&multiseq->descspace,wchar_t);
   }
   if(DELETEMEMORYMAP(multiseq->startdesc) != 0)
   {
-    FREESPACE(multiseq->startdesc);
+    FREE(multiseq->startdesc);
   }
   if(multiseq->originalsequence != NULL &&
      multiseq->originalsequence != multiseq->sequence)
   {
     if(DELETEMEMORYMAP(multiseq->originalsequence) != 0)
     {
-      FREESPACE(multiseq->originalsequence);
+      FREE(multiseq->originalsequence);
     }
   }
   if(DELETEMEMORYMAP(multiseq->sequence) != 0)
   {
-    FREESPACE(multiseq->sequence);
+    FREE(multiseq->sequence);
   }
-  FREESPACE(multiseq->rcsequence);
+  FREE(multiseq->rcsequence);
 }
 
 /*EE
@@ -131,10 +131,10 @@ void freemultiseq(Multiseq *multiseq)
 */
 
 Sint overallsequences(Bool rcmode,Multiseq *multiseq,void *applyinfo,
-                      Sint(*apply)(void *,Uint,Uchar *,Uint))
+                      Sint(*apply)(void *,Uint,wchar_t *,Uint))
 {
   Uint i;
-  Uchar *seq, *start, *end;
+  wchar_t *seq, *start, *end;
 
   if(rcmode)
   {

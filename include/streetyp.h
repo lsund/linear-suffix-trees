@@ -103,8 +103,8 @@ typedef struct suffixtree
   SYMBOL *tailptr;            // points to the tail
 
 #ifdef DEBUG
-  char * (*showsymbolstree)(SYMBOL,Uchar *);
-  Uchar *alphabet;
+  char * (*showsymbolstree)(SYMBOL,wchar_t *);
+  wchar_t *alphabet;
   Uint splitleafedge,
        splitinternaledge,
        artificial,

@@ -16,7 +16,7 @@
 #endif
 
 #if SYMBOLBYTES == 1
-typedef Uchar SYMBOL;
+typedef wchar_t SYMBOL;
 #else
 #if SYMBOLBYTES == 2
 typedef Ushort SYMBOL;

@@ -29,11 +29,6 @@
 #include "debug.h"
 #include "error.h"
 
-extern Uchar *text, *sentinel, characters[UCHAR_MAX + 1];
-extern Uint     root_children[UCHAR_MAX + 1],
-                textlen,
-                *stree,
-                alphasize;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions

@@ -280,7 +280,7 @@ Sint checkdoubleexclude(Uint numofopts,OptionDescription *opt,
 {
   Uint i, j;
   Sint indi, indj;
-  Bool *excludepairs = ALLOCSPACE(NULL,Bool,numofopts*numofopts);
+  Bool *excludepairs = ALLOC(NULL,Bool,numofopts*numofopts);
 
   for(i=0; i < numofopts * numofopts; i++)
   {
@@ -303,7 +303,7 @@ Sint checkdoubleexclude(Uint numofopts,OptionDescription *opt,
       excludepairs[indj*numofopts+indi] = True;
     }
   }
-  FREESPACE(excludepairs);
+  FREE(excludepairs);
   return 0;
 }
 

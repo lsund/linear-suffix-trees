@@ -111,7 +111,7 @@ caddr_t fileParts(int fd, Uint offset, Uint len, Bool writemap)
 
 
 // Frees the text specified
-void freetextspace(Uchar *text, Uint textlen) {
+void freetextspace(wchar_t *text, Uint textlen) {
   (void) munmap((caddr_t) text,(size_t) textlen);
 }
 
@@ -198,9 +198,9 @@ int file2Array(char *name, Uint *textlen, int size, char ***wordsp)
     return i;
 }
 
-Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Uchar ***wordsp)
+Uint file_to_strings(char *name, Uint *textlen, Uint nlines, wchar_t ***wordsp)
 {
-    Uchar **words = *wordsp;
+    wchar_t **words = *wordsp;
     int fd = fileOpen(name, textlen, False);
 
     if (fd < 0) {
@@ -220,7 +220,7 @@ Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Uchar ***wordsp)
         Uint j;
 
         /* Allocate space for the next line */
-        words[i] = (Uchar *) malloc(max_line_len * sizeof(Uchar));
+        words[i] = (wchar_t *) malloc(max_line_len * sizeof(wchar_t));
 
         if (words[i] == NULL) {
             fprintf(stderr,"Out of memory (3).\n");

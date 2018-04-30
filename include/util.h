@@ -7,13 +7,13 @@
 #include "init.h"
 #include "eval.h"
 
-extern Uchar *sentinel, *text, characters[UCHAR_MAX + 1];
+extern wchar_t *sentinel, *text, characters[UCHAR_MAX + 1];
 
 extern Uint textlen, alphasize;
 
-void showstring(Uchar *left, Uchar *right);
+void showstring(wchar_t *left, wchar_t *right);
 
-void showpattern(Uchar *w, Uint wlen);
+void showpattern(wchar_t *w, Uint wlen);
 
 void printtime();
 

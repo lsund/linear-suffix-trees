@@ -32,10 +32,10 @@
   \begin{enumerate}
   \item
   The function \texttt{allocspaceviaptr} should be called
-  via the macro \texttt{ALLOCSPACE}.
+  via the macro \texttt{ALLOC}.
   \item
   The function \texttt{freespaceviaptr} should be called
-  via the macro \texttt{FREESPACE}.
+  via the macro \texttt{FREE}.
   \item
   The function \texttt{dynamicstrdup} should be called
   via the macro \texttt{DYNAMICSTRDUP}.
@@ -211,24 +211,6 @@ static void subtractspace(Uint space)
   DEBUG0(2,"# allocandusespaceviaptr Okay\n");
   NOTSUPPOSEDTOBENULL(blocks[blocknum].spaceptr);
   return blocks[blocknum].spaceptr;
-}
-
-/*EE
-  The following function makes a copy of a 0-terminated string pointed to by
-  \texttt{source}.
-*/
-
-/*@notnull@*/ char *dynamicstrdup(char *file,Uint line,char *source)
-{
-  Uint len;
-  char *dest;
-
-  NOTSUPPOSEDTOBENULL(source);
-  len = (Uint) strlen(source);
-  dest = (char *) allocandusespaceviaptr(file,line,NULL,(Uint) sizeof(char),
-                                         len+1);
-  strcpy(dest,source);
-  return dest;
 }
 
 /*EE

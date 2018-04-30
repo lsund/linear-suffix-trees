@@ -145,7 +145,7 @@ Sint addleafcountsstree(Suffixtree *stree)
   cstate.stree = stree;
   INITARRAY(&(cstate.countstack),Uint);
   CHECKARRAYSPACE(&(cstate.countstack),Uint,128);
-  stree->leafcounts = ALLOCSPACE(NULL,Uint,stree->nextfreeleafnum+1);
+  stree->leafcounts = ALLOC(NULL,Uint,stree->nextfreeleafnum+1);
   for(i=0; i<=stree->nextfreeleafnum; i++)
   {
     stree->leafcounts[i] = 0;

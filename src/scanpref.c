@@ -67,8 +67,7 @@ SYMBOL *scanprefixfromnodestree(
     }
     while(True)
     {
-        if(lptr > right)   // check for empty word
-        {
+        if(lptr > right) {
             return NULL;
         }
         firstchar = *lptr;
@@ -149,8 +148,7 @@ SYMBOL *scanprefixfromnodestree(
                         loc->nextnode.address = stree->leaftab + leafindex;
                         loc->locstring.start = leafindex;
                         loc->locstring.length = nodedepth + prefixlen;
-                        if(prefixlen == (Uint) (right - lptr + 1))
-                        {
+                        if(prefixlen == (Uint) (right - lptr + 1)) {
                             return NULL;
                         }
                         return lptr + prefixlen;

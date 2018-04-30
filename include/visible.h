@@ -37,7 +37,7 @@
   Check if character is invisible according to the definition from above.
 */
 
-#define INVISIBLE(C)        ((C) < (Uchar) LOWESTVISIBLE ||\
+#define INVISIBLE(C)        ((C) < (wchar_t) LOWESTVISIBLE ||\
                              (C) > (Uchar) HIGHESTVISIBLE)
 
 /*

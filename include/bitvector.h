@@ -19,13 +19,6 @@
 #include "types.h"
 #include "spaceman.h"
 
-//}
-
-/*
-  This file contains some definitions manipulating bitvectors represented
-  by a \texttt{Uint}. In the comment lines we use $w$ for the word size
-  and \texttt{\symbol{94}} for exponentiation of the previous character.
-*/
 
 #define INTWORDSIZE\
         (UintConst(1) << LOGWORDSIZE)     // # of bits in Uint = w

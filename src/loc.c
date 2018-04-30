@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <wchar.h>
 #include "debugdef.h"
 #include "args.h"
 #include "types.h"
@@ -17,29 +18,37 @@
 #include "streeacc.h"
 #include "errordef.h"
 #include "spaceman.h"
+#include "externs.h"
+#include "streelarge.h"
+
+wchar_t *text;
 
 int main(int argc, char *argv[])
 {
-  Uchar *text;
-  Uint textlen;
-  Suffixtree stree;
+    Uint textlen;
+    Suffixtree stree;
 
-  DEBUGLEVELSET;
+    DEBUGLEVELSET;
 
-  CHECKARGNUM(2,"filename");
-  text = (Uchar *) CREATEMEMORYMAP(argv[1],False,&textlen);
-  if(text == NULL)
-  {
-    STANDARDMESSAGE;
-  }
-  CONSTRUCTSTREE(&stree,text,textlen,return EXIT_FAILURE);
+    CHECKARGNUM(2,"filename");
+    char *filename = argv[1];
+    FILE *in = fopen(filename, "r");
+    text = malloc(sizeof(wchar_t) * MAXTEXTLEN);
+    Uint c;
+    textlen = 0;
+    while ((c = fgetwc(in)) != WEOF) {
+        text[textlen] = c;
+        textlen++;
+    }
+    text[textlen + 1] = '\0';
+    if(text == NULL)
+    {
+        STANDARDMESSAGE;
+    }
+    CONSTRUCTSTREE(&stree,text,textlen,return EXIT_FAILURE);
 #ifdef DEBUG
-  enumlocations(&stree, checklocation);
+    enumlocations(&stree, checklocation);
 #endif
-  freestree(&stree);
-  if(DELETEMEMORYMAP(text) != 0)
-  {
-    STANDARDMESSAGE;
-  }
-  return EXIT_SUCCESS;
+    freestree(&stree);
+    return EXIT_SUCCESS;
 }

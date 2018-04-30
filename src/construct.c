@@ -112,7 +112,7 @@ static void spaceforbranchtab(Suffixtree *stree)
         }
 
         stree->branchtab
-            = ALLOCSPACE(stree->branchtab,Uint,stree->currentbranchtabsize);
+            = ALLOC(stree->branchtab,Uint,stree->currentbranchtabsize);
         stree->nextfreebranch = stree->branchtab + stree->nextfreebranchnum;
         stree->headnode = stree->branchtab + tmpheadnode;
         if(stree->chainstart != NULL)
@@ -621,14 +621,14 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
         stree->currentbranchtabsize = MULTBYSMALLINTS(MINEXTRA);
     }
 
-    stree->leaftab = ALLOCSPACE(NULL, Uint, textlen + 2);
+    stree->leaftab = ALLOC(NULL, Uint, textlen + 2);
 
-    stree->branchtab = ALLOCSPACE(NULL, Uint, stree->currentbranchtabsize);
+    stree->branchtab = ALLOC(NULL, Uint, stree->currentbranchtabsize);
     for(i=0; i<LARGEINTS; i++) {
         stree->branchtab[i] = 0;
     }
 
-    stree->rootchildren = ALLOCSPACE(NULL, Uint, MAX_CHARS + 1);
+    stree->rootchildren = ALLOC(NULL, Uint, MAX_CHARS + 1);
     for(Uint *child= stree->rootchildren; child<=stree->rootchildren + MAX_CHARS; child++)
     {
         *child = UNDEFREFERENCE;
@@ -650,7 +650,6 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
     SETDEPTHHEADPOS(0, 0);
     SETNEWCHILDBROTHER(MAKELARGELEAF(0),0);
     SETBRANCHNODEOFFSET;
-    printf("%c\n", *text);
     stree->rootchildren[(Uint) *text] = MAKELEAF(0); // Necessary?
     stree->leaftab[0]                 = VALIDINIT;
 
@@ -685,16 +684,16 @@ static void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
 
 void freestree(Suffixtree *stree)
 {
-    FREESPACE(stree->leaftab);
-    FREESPACE(stree->rootchildren);
-    FREESPACE(stree->branchtab);
+    FREE(stree->leaftab);
+    FREE(stree->rootchildren);
+    FREE(stree->branchtab);
     if(stree->nonmaximal != NULL)
     {
-        FREESPACE(stree->nonmaximal);
+        FREE(stree->nonmaximal);
     }
     if(stree->leafcounts != NULL)
     {
-        FREESPACE(stree->leafcounts);
+        FREE(stree->leafcounts);
     }
 }
 
@@ -736,7 +735,7 @@ void freestree(Suffixtree *stree)
 
 #define DECLAREEXTRA  Uint distance, headposition = 0, *largeptr,\
                                                     tabsize = 1 + DIVWORDSIZE(textlen+1), *tabptr;\
-                                                    stree->nonmaximal = ALLOCSPACE(NULL,Uint,tabsize);\
+                                                    stree->nonmaximal = ALLOC(NULL,Uint,tabsize);\
                                                     for(tabptr = stree->nonmaximal;\
                                                             tabptr < stree->nonmaximal + tabsize;\
                                                             tabptr++)\

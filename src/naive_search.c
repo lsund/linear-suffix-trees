@@ -1,16 +1,16 @@
 
 #include "naive_search.h"
+#include "externs.h"
 
 Uint textlen;
-
-Uchar *text;
+wchar_t *text;
 
 // Naively search `wtext` for the pattern beginning at address `start`, ending
 // at address `end`.
-bool naive_search(Uchar *start, Uchar *end)
+bool naive_search(wchar_t *start, wchar_t *end)
 {
     Uint m = (Uint) (end - start);
-    Uchar *pattern = start;
+    wchar_t *pattern = start;
     Uint j = 0;
     Uint k;
 

@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <stdlib.h>
+#include <wchar.h>
+#include <locale.h>
+#include <string.h>
 
 #include "minunit.h"
 #include "search.h"

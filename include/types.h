@@ -25,6 +25,7 @@
 // size(Sshort) = 2
 
 // Primitives
+typedef wchar_t Wchar;
 typedef unsigned char  Uchar;
 typedef unsigned short Ushort;
 
@@ -66,10 +67,5 @@ typedef struct {
   char *filenamebuf;    // pointer to a copy of a filename
   Uint filelength;      // the length of the corresponding file
 } Fileinfo;             // \Typedef{Fileinfo}
-
-/*
-  The following is the type of the comparison function
-  to be provided to the function \texttt{qsort}.
-*/
 
 #endif

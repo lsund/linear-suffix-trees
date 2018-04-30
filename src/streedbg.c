@@ -115,8 +115,7 @@ void showtable(Suffixtree *stree,Bool final)
     if(*rcptr != UNDEFINEDREFERENCE)
     {
       (void) putchar('(');
-      if(ISLEAF(*rcptr))
-      {
+      if(ISLEAF(*rcptr)) {
         leftpointer = stree->text + GETLEAFINDEX(*rcptr);
         showthesymbolstring(stdout,stree->sentinel,leftpointer,stree->sentinel);
         printf(",Leaf %lu)",(Ulong) GETLEAFINDEX(*rcptr));
@@ -372,8 +371,8 @@ void checkstree(Suffixtree *stree)
     exit(EXIT_FAILURE);
   }
 */
-  FREESPACE(leafused);
-  FREESPACE(branchused);
+  FREE(leafused);
+  FREE(branchused);
   DEBUG2(2,"#edgecount %lu identitycount %lu\n",
               (Ulong) edgecount,
               (Ulong) identitycount);

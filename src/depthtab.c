@@ -37,7 +37,7 @@ static void setdepthtab(ArrayUint *depthtab,Uint depth)
   if(depth >= depthtab->allocatedUint)
   {
     depthtab->spaceUint
-      = ALLOCSPACE(depthtab->spaceUint,Uint,depth+ADDAMOUNT);
+      = ALLOC(depthtab->spaceUint,Uint,depth+ADDAMOUNT);
     for(i= depthtab->allocatedUint; i<depth+ADDAMOUNT; i++)
     {
       depthtab->spaceUint[i] = 0;
