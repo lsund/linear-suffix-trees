@@ -1,4 +1,20 @@
+/*
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
+
+
 #include "stree.h"
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Private
+
 
 static bool last_suffix(Suffixtree *stree)
 {
@@ -38,6 +54,11 @@ static void insert_vertex(Suffixtree *stree)
         insertbranchnode(stree);
     }
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Public
+
 
 Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen)
 {
@@ -83,7 +104,7 @@ Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen)
                 // Case 2.2.3
                 if(head_is_node(stree)) {
 
-                    SETSUFFIXLINK(BRADDR2NUM(stree,stree->headnode));
+                    SETSUFFIXLINK(INDEX_INNER(stree,stree->headnode));
                     completelarge(stree);
                     scanprefix(stree);
 
@@ -91,17 +112,17 @@ Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen)
                     // artificial large node
                     if(stree->smallnotcompleted == MAXDISTANCE) {
 
-                        SETSUFFIXLINK(stree->nextfreebranchnum + LARGEINTS);
+                        SETSUFFIXLINK(stree->inner_vertices.next_free_num + LARGEINTS);
                         completelarge(stree);
 
                     } else {
                         if(stree->chainstart == NULL) {
                             // Start new chain
-                            stree->chainstart = stree->nextfreebranch;
+                            stree->chainstart = stree->inner_vertices.next_free;
                         }
                         (stree->smallnotcompleted)++;
-                        (stree->nextfreebranch) += SMALLINTS;      // case (2.2.4)
-                        (stree->nextfreebranchnum) += SMALLINTS;
+                        (stree->inner_vertices.next_free) += SMALLINTS;      // case (2.2.4)
+                        (stree->inner_vertices.next_free_num) += SMALLINTS;
                         stree->smallnode++;
                     }
                 }

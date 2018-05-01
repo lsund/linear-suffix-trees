@@ -33,7 +33,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
 
     lptr = left;
     nodeptr = btptr;
-    if(nodeptr == stree->branchtab) {
+    if(nodeptr == stree->inner_vertices.first) {
         nodedepth = 0;
         headposition = 0;
     } else {
@@ -53,7 +53,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
             return NULL;
         }
         firstchar = *lptr;
-        if(nodeptr == stree->branchtab)  // at the root
+        if(nodeptr == stree->inner_vertices.first)  // at the root
         {
             if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFREFERENCE)
             {
@@ -72,7 +72,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                     prefixlen = 1 + lcp(lptr+1,right,
                             loc->firstptr+1,stree->sentinel-1);
                 }
-                loc->previousnode = stree->branchtab;
+                loc->previousnode = stree->inner_vertices.first;
                 loc->edgelen = stree->textlen - leafindex + 1;
                 loc->remain = loc->edgelen - prefixlen;
                 loc->nextnode.toleaf = True;
@@ -85,7 +85,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                 }
                 return lptr + prefixlen;
             }
-            nodeptr = stree->branchtab + GETBRANCHINDEX(node);
+            nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
             GETONLYHEADPOS(headposition, nodeptr);
             leftborder = stree->text + headposition;
         } else
@@ -138,7 +138,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                     node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
                 } else
                 {
-                    nodeptr = stree->branchtab + GETBRANCHINDEX(node);
+                    nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
                     GETONLYHEADPOS(headposition,nodeptr);
                     leftborder = stree->text + (nodedepth + headposition);
                     edgechar = *leftborder;

@@ -1,10 +1,10 @@
 /*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
-*/
+   Copyright (c) 2003 by Stefan Kurtz and The Institute for
+   Genomic Research.  This is OSI Certified Open Source Software.
+   Please see the file LICENSE for licensing information and
+   the file ACKNOWLEDGEMENTS for names of contributors to the
+   code base.
+   */
 
 //\Ignore{
 
@@ -38,26 +38,26 @@
   The function \texttt{dynamicstrdup} should be called
   via the macro \texttt{DYNAMICSTRDUP}.
   \end{enumerate}
-*/
+  */
 
 /*EE
   The following is a general macro to print fatal error messages.
-*/
+  */
 
 #define ALLOCVIAFATAL(M) \
-        fprintf(stderr,"file \"%s\", line %lu: "\
-                       " allocandusespaceviaptr(%lu,%lu) failed:%s\n",\
-                       file,(Ulong) line,(Ulong) size,\
-                       (Ulong) number,M);\
-        exit(EXIT_FAILURE)
+    fprintf(stderr,"file \"%s\", line %lu: "\
+            " allocandusespaceviaptr(%lu,%lu) failed:%s\n",\
+            file,(Ulong) line,(Ulong) size,\
+            (Ulong) number,M);\
+            exit(EXIT_FAILURE)
 
 typedef struct
 {
-  void *spaceptr;      // ptr to the spaceblock
-  Uint sizeofcells,    // size of cells of the block
-       numberofcells;  // number of cells in the block
-  char *fileallocated; // the filenames where the block was allocated
-  Uint lineallocated;  // the linenumber where the
+    void *spaceptr;      // ptr to the spaceblock
+    Uint sizeofcells,    // size of cells of the block
+         numberofcells;  // number of cells in the block
+    char *fileallocated; // the filenames where the block was allocated
+    Uint lineallocated;  // the linenumber where the
 } Blockdescription;
 
 /*@null@*/ static Blockdescription *blocks = NULL;
@@ -68,68 +68,68 @@ static Uint numberofblocks = 0, // numberofblocks
             spacepeak = 0;      // maximally allocated num of bytes
 
 /*
-  The following two tables store important information to
-  generate meaningfull error messages.
-*/
+   The following two tables store important information to
+   generate meaningfull error messages.
+   */
 
 /*
-  The following function sets the soft limit on the data size to the hard
-  limit, if it is not already identical to this.
-  This is necessary for the DEC alpha platform, where the soft limit
-  is too small. \texttt{setmaxspace} is called for the first time,
-  space is allocated.
-*/
+   The following function sets the soft limit on the data size to the hard
+   limit, if it is not already identical to this.
+   This is necessary for the DEC alpha platform, where the soft limit
+   is too small. \texttt{setmaxspace} is called for the first time,
+   space is allocated.
+   */
 
 static void setmaxspace(void)
 {
-  int rc;
-  struct rlimit rls;
+    int rc;
+    struct rlimit rls;
 
-  /*@ignore@*/
-  if((rc = getrlimit(RLIMIT_DATA,&rls)) != 0)
-  /*@end@*/
-  {
-    fprintf(stderr,"cannot find rlimit[RLIMIT_DATA]\n");
-    exit(EXIT_FAILURE);
-  }
-
-  if(rls.rlim_cur < rls.rlim_max)
-  {
-    rls.rlim_cur = rls.rlim_max;
     /*@ignore@*/
-    if((rc = setrlimit(RLIMIT_DATA, &rls)) != 0)
-    /*@end@*/
+    if((rc = getrlimit(RLIMIT_DATA,&rls)) != 0)
+        /*@end@*/
     {
-      fprintf(stderr,"cannot set rlimit[RLIMIT_DATA]\n");
-      exit(EXIT_FAILURE);
+        fprintf(stderr,"cannot find rlimit[RLIMIT_DATA]\n");
+        exit(EXIT_FAILURE);
     }
-  }
+
+    if(rls.rlim_cur < rls.rlim_max)
+    {
+        rls.rlim_cur = rls.rlim_max;
+        /*@ignore@*/
+        if((rc = setrlimit(RLIMIT_DATA, &rls)) != 0)
+            /*@end@*/
+        {
+            fprintf(stderr,"cannot set rlimit[RLIMIT_DATA]\n");
+            exit(EXIT_FAILURE);
+        }
+    }
 }
 
 /*
-  The following two functions \texttt{addspace} and \texttt{subtractspace}
-  maintain the variables \texttt{currentspace} and \texttt{spacepeak}.
-*/
+   The following two functions \texttt{addspace} and \texttt{subtractspace}
+   maintain the variables \texttt{currentspace} and \texttt{spacepeak}.
+   */
 
 static void addspace(Uint space)
 {
-  if(currentspace == 0)
-  {
-    setmaxspace();
-    currentspace = space;
-  } else
-  {
-    currentspace += space;
-  }
-  if(currentspace > spacepeak)
-  {
-    spacepeak = currentspace;
-  }
+    if(currentspace == 0)
+    {
+        setmaxspace();
+        currentspace = space;
+    } else
+    {
+        currentspace += space;
+    }
+    if(currentspace > spacepeak)
+    {
+        spacepeak = currentspace;
+    }
 }
 
 static void subtractspace(Uint space)
 {
-  currentspace -= space;
+    currentspace -= space;
 }
 
 /*EE
@@ -137,149 +137,148 @@ static void subtractspace(Uint space)
   for a given pointer \texttt{ptr}. If this is \texttt{NULL}, then the next
   free block is used. Otherwise, we look for the block number corresponding
   to \texttt{ptr}. If there is none, then the program exits with exit code 1.
-*/
+  */
 
 /*@notnull@*/ void *allocandusespaceviaptr(char *file,Uint line,
-                                           /*@null@*/ void *ptr,
-                                           Uint size,Uint number)
+        /*@null@*/ void *ptr,
+        Uint size,Uint number)
 {
-  Uint i, blocknum;
+    Uint i, blocknum;
 
-  if(nextfreeblock > 0)
-  {
-      if (!blocks) {
-          fprintf(stderr, "Not supposed to be null");
-      }
-    for(blocknum=0; blocknum < nextfreeblock; blocknum++)
+    if(nextfreeblock > 0)
     {
-      if(blocks[blocknum].spaceptr == ptr)
-      {
-        break;
-      }
-    }
-  } else
-  {
-    blocknum = 0;
-  }
-  if(blocknum == nextfreeblock)
-  {
-    if(ptr == NULL)
-    {
-      nextfreeblock += 64;
-      blocks = (Blockdescription *) realloc(blocks,
-                                            (size_t) (sizeof(Blockdescription)*
-                                                      nextfreeblock));
-      if(blocks == NULL)
-      {
-        ALLOCVIAFATAL("not enough space for the block descriptions available");
-      }
-      for(i=blocknum; i < nextfreeblock; i++)
-      {
-        blocks[i].spaceptr = NULL;
-        blocks[i].sizeofcells = 0;
-        blocks[i].numberofcells = 0;
-      }
+        if (!blocks) {
+            fprintf(stderr, "Not supposed to be null");
+        }
+        for(blocknum=0; blocknum < nextfreeblock; blocknum++)
+        {
+            if(blocks[blocknum].spaceptr == ptr)
+            {
+                break;
+            }
+        }
     } else
     {
-      ALLOCVIAFATAL("cannot find space block");
+        blocknum = 0;
     }
-  }
+    if(blocknum == nextfreeblock)
+    {
+        if(ptr == NULL)
+        {
+            nextfreeblock += 64;
+            blocks = (Blockdescription *) realloc(blocks,
+                    (size_t) (sizeof(Blockdescription)*
+                        nextfreeblock));
+            if(blocks == NULL)
+            {
+                ALLOCVIAFATAL("not enough space for the block descriptions available");
+            }
+            for(i=blocknum; i < nextfreeblock; i++)
+            {
+                blocks[i].spaceptr = NULL;
+                blocks[i].sizeofcells = 0;
+                blocks[i].numberofcells = 0;
+            }
+        } else
+        {
+            ALLOCVIAFATAL("cannot find space block");
+        }
+    }
     if (!blocks) {
         fprintf(stderr, "Not supposed to be null");
     }
-  subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
-  addspace(size*number);
-  blocks[blocknum].numberofcells = number;
-  blocks[blocknum].sizeofcells = size;
-  blocks[blocknum].fileallocated = file;
-  blocks[blocknum].lineallocated = line;
-  if(blocks[blocknum].spaceptr == NULL)
-  {
-    numberofblocks++;
-  }
-  if((blocks[blocknum].spaceptr
-      = realloc(blocks[blocknum].spaceptr,(size_t) (size*number))) == NULL)
-  {
-    ALLOCVIAFATAL("not enough memory");
-  }
-if (!blocks[blocknum].spaceptr) {
-    fprintf(stderr, "Not supposed to be null");
-}
-  return blocks[blocknum].spaceptr;
+    subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
+    addspace(size*number);
+    blocks[blocknum].numberofcells = number;
+    blocks[blocknum].sizeofcells = size;
+    blocks[blocknum].fileallocated = file;
+    blocks[blocknum].lineallocated = line;
+    if(blocks[blocknum].spaceptr == NULL) {
+        numberofblocks++;
+    }
+    if((blocks[blocknum].spaceptr
+                = realloc(blocks[blocknum].spaceptr,(size_t) (size*number))) == NULL)
+    {
+        ALLOCVIAFATAL("not enough memory");
+    }
+    if (!blocks[blocknum].spaceptr) {
+        fprintf(stderr, "Not supposed to be null");
+    }
+    return blocks[blocknum].spaceptr;
 }
 
 /*EE
   The following function frees the space for the given pointer
   \texttt{ptr}. This cannot be \texttt{NULL}.
-*/
+  */
 
 void freespaceviaptr(char *file,Uint line,void *ptr)
 {
-  Uint blocknum;
+    Uint blocknum;
 
-  if(ptr == NULL)
-  {
-    fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): Cannot free NULL-ptr\n",
-                    file,(Ulong) line);
-    exit(EXIT_SUCCESS);
-  }
-if (!blocks) {
-    fprintf(stderr, "Not supposed to be null");
-}
-  for(blocknum=0; blocknum < nextfreeblock; blocknum++)
-  {
-    if(blocks[blocknum].spaceptr == ptr)
+    if(ptr == NULL)
     {
-      break;
+        fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): Cannot free NULL-ptr\n",
+                file,(Ulong) line);
+        exit(EXIT_SUCCESS);
     }
-  }
-  if(blocknum == nextfreeblock)
-  {
-    fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): "
-                   " cannot find space block\n",
-            file,(Ulong) line);
-    exit(EXIT_FAILURE);
-  }
-  free(blocks[blocknum].spaceptr);
-  subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
-  blocks[blocknum].numberofcells = 0;
-  blocks[blocknum].sizeofcells = 0;
-  blocks[blocknum].fileallocated = NULL;
-  blocks[blocknum].lineallocated = 0;
-  blocks[blocknum].spaceptr = NULL;
-  if(numberofblocks == 0)
-  {
-    fprintf(stderr, "Not supposed to happen");
-  }
-  numberofblocks--;
+    if (!blocks) {
+        fprintf(stderr, "Not supposed to be null");
+    }
+    for(blocknum=0; blocknum < nextfreeblock; blocknum++)
+    {
+        if(blocks[blocknum].spaceptr == ptr)
+        {
+            break;
+        }
+    }
+    if(blocknum == nextfreeblock)
+    {
+        fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): "
+                " cannot find space block\n",
+                file,(Ulong) line);
+        exit(EXIT_FAILURE);
+    }
+    free(blocks[blocknum].spaceptr);
+    subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
+    blocks[blocknum].numberofcells = 0;
+    blocks[blocknum].sizeofcells = 0;
+    blocks[blocknum].fileallocated = NULL;
+    blocks[blocknum].lineallocated = 0;
+    blocks[blocknum].spaceptr = NULL;
+    if(numberofblocks == 0)
+    {
+        fprintf(stderr, "Not supposed to happen");
+    }
+    numberofblocks--;
 }
 
 /*EE
   The following function frees the space for all main memory blocks
   which have not already been freed.
-*/
+  */
 
 void wrapspace(void)
 {
-  Uint blocknum;
+    Uint blocknum;
 
-      if (!blocks) {
-          fprintf(stderr, "Not supposed to be null");
-      }
-  for(blocknum=0; blocknum < nextfreeblock; blocknum++)
-  {
-    if(blocks[blocknum].spaceptr != NULL)
-    {
-      free(blocks[blocknum].spaceptr);
-      blocks[blocknum].spaceptr = NULL;
+    if (!blocks) {
+        fprintf(stderr, "Not supposed to be null");
     }
-    subtractspace(blocks[blocknum].sizeofcells *
-                  blocks[blocknum].numberofcells);
-    blocks[blocknum].sizeofcells = 0;
-    blocks[blocknum].numberofcells = 0;
-    blocks[blocknum].fileallocated = NULL;
-    blocks[blocknum].lineallocated = 0;
-  }
+    for(blocknum=0; blocknum < nextfreeblock; blocknum++)
+    {
+        if(blocks[blocknum].spaceptr != NULL)
+        {
+            free(blocks[blocknum].spaceptr);
+            blocks[blocknum].spaceptr = NULL;
+        }
+        subtractspace(blocks[blocknum].sizeofcells *
+                blocks[blocknum].numberofcells);
+        blocks[blocknum].sizeofcells = 0;
+        blocks[blocknum].numberofcells = 0;
+        blocks[blocknum].fileallocated = NULL;
+        blocks[blocknum].lineallocated = 0;
+    }
 }
 
 //}
@@ -289,25 +288,25 @@ void wrapspace(void)
   which have not been freed. For each block number the filename
   and line number in which the call appears allocating which
   allocated this block.
-*/
+  */
 
 void activeblocks(void)
 {
-  Uint blocknum;
+    Uint blocknum;
 
-      if (!blocks) {
-          fprintf(stderr, "Not supposed to be null");
-      }
-  for(blocknum=0; blocknum < nextfreeblock; blocknum++)
-  {
-    if(blocks[blocknum].spaceptr != NULL)
-    {
-      fprintf(stderr,"# active block %lu: ",(Ulong) blocknum);
-      fprintf(stderr,"allocated in file \"%s\", line %lu\n",
-              blocks[blocknum].fileallocated,
-              (Ulong) blocks[blocknum].lineallocated);
+    if (!blocks) {
+        fprintf(stderr, "Not supposed to be null");
     }
-  }
+    for(blocknum=0; blocknum < nextfreeblock; blocknum++)
+    {
+        if(blocks[blocknum].spaceptr != NULL)
+        {
+            fprintf(stderr,"# active block %lu: ",(Ulong) blocknum);
+            fprintf(stderr,"allocated in file \"%s\", line %lu\n",
+                    blocks[blocknum].fileallocated,
+                    (Ulong) blocks[blocknum].lineallocated);
+        }
+    }
 }
 
 /*EE
@@ -316,65 +315,65 @@ void activeblocks(void)
   an error is reported accordingly. We recommend to call this function
   before the program terminates. This easily allows to discover
   space leaks.
-*/
+  */
 
 void checkspaceleak(void)
 {
-  Uint blocknum;
+    Uint blocknum;
 
-  if (!blocks) {
-      fprintf(stderr, "Not supposed to be null");
-  }
-
-  for(blocknum=0; blocknum < nextfreeblock; blocknum++)
-  {
-    if(blocks[blocknum].spaceptr != NULL)
-    {
-      fprintf(stderr,"space leak: main memory for block %lu not freed\n",
-              (Ulong) blocknum);
-      fprintf(stderr,"%lu cells of size %lu\n",
-              (Ulong) blocks[blocknum].numberofcells,
-              (Ulong) blocks[blocknum].sizeofcells);
-      fprintf(stderr,"allocated: ");
-      if(blocks[blocknum].fileallocated == NULL)
-      {
-        fprintf(stderr,"cannot identify\n");
-      } else
-      {
-        fprintf(stderr,"file \"%s\", line %lu\n",
-               blocks[blocknum].fileallocated,
-               (Ulong) blocks[blocknum].lineallocated);
-      }
-      exit(EXIT_FAILURE);
+    if (!blocks) {
+        fprintf(stderr, "Not supposed to be null");
     }
-  }
-  if(numberofblocks > 0)
-  {
-    fprintf(stderr,"space leak: number of blocks = %lu\n", numberofblocks);
-    exit(EXIT_FAILURE);
-  }
-  free(blocks);
-  blocks = NULL;
-  numberofblocks = 0;
-  nextfreeblock = 0;
-  currentspace = 0;
-  spacepeak = 0;
+
+    for(blocknum=0; blocknum < nextfreeblock; blocknum++)
+    {
+        if(blocks[blocknum].spaceptr != NULL)
+        {
+            fprintf(stderr,"space leak: main memory for block %lu not freed\n",
+                    (Ulong) blocknum);
+            fprintf(stderr,"%lu cells of size %lu\n",
+                    (Ulong) blocks[blocknum].numberofcells,
+                    (Ulong) blocks[blocknum].sizeofcells);
+            fprintf(stderr,"allocated: ");
+            if(blocks[blocknum].fileallocated == NULL)
+            {
+                fprintf(stderr,"cannot identify\n");
+            } else
+            {
+                fprintf(stderr,"file \"%s\", line %lu\n",
+                        blocks[blocknum].fileallocated,
+                        (Ulong) blocks[blocknum].lineallocated);
+            }
+            exit(EXIT_FAILURE);
+        }
+    }
+    if(numberofblocks > 0)
+    {
+        fprintf(stderr,"space leak: number of blocks = %lu\n", numberofblocks);
+        exit(EXIT_FAILURE);
+    }
+    free(blocks);
+    blocks = NULL;
+    numberofblocks = 0;
+    nextfreeblock = 0;
+    currentspace = 0;
+    spacepeak = 0;
 }
 
 /*EE
   The following function shows the space peak in megabytes on \texttt{stderr}.
-*/
+  */
 
 void showspace(void)
 {
-  fprintf(stderr,"# space peak in megabytes: %.2f\n",MEGABYTES(spacepeak));
+    fprintf(stderr,"# space peak in megabytes: %.2f\n",MEGABYTES(spacepeak));
 }
 
 /*EE
   The following function returns the space peak in bytes.
-*/
+  */
 
 Uint getspacepeak(void)
 {
-  return spacepeak;
+    return spacepeak;
 }

@@ -8,8 +8,7 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-
-#include "stree.h"
+#include "construct.h"
 
 wchar_t *text;
 
@@ -58,5 +57,3 @@ int main(int argc, char *argv[])
     }
     return EXIT_SUCCESS;
 }
-
-

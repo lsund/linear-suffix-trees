@@ -60,13 +60,29 @@ typedef struct
 //
 // wchar_t *text;     // points to the input string
 // Uint textlen;     // the length of the input string
-// Uint *branchtab;  // stores the infos for the branching nodes
+// Uint *inner_vertices;  // stores the infos for the branching nodes
 // Uint *leaftab;    // stores the brother-references of the leaves
+
+typedef struct table {
+
+    Uint *first;
+    Uint *next_free;
+    Uint next_free_num;
+    Uint size;
+
+} Table;
+
+
 typedef struct suffixtree
 {
+
+    Table inner_vertices;
+
   Uint textlen;               // the length of the input string
   Uint *leaftab;              // stores the brother-references of the leafs
-  Uint *branchtab;            // table TBranch
+
+  /* Uint *inner_vertices;            // table for inner vertices */
+
   Uint *rootchildren;         // references to successors of root
 
   wchar_t *text;               // points to the input string
@@ -77,7 +93,9 @@ typedef struct suffixtree
   Uint insertnode;            // the node the split edge leads to
   Uint insertprev;            // the edge preceeding the split edge
   Uint smallnotcompleted;     // the number of small nodes in the current chain
-  Uint nextfreebranchnum;     // the number of the next free branch node
+
+  /* Uint next_free_inner_num;     // the number of the next free branch node */
+
   Uint onsuccpath;            // refers to node on success path of headnode
   Uint currentdepth;          // depth of the new branch node
   Uint branchnodeoffset;      // number of leafs in tree
@@ -87,11 +105,15 @@ typedef struct suffixtree
   Uint smallnode;             // number of small nodes
   Uint *setlink;              // address of a nil-reference
   Uint *nextfreeleafptr;      // points to next free entry in leaftab
-  Uint *chainstart;           // address of the node, current chains starts at
-  Uint *nextfreebranch;       // reference to next free base addr. in branchtab
+  Uint *chainstart;           // address of the node current chains starts at
+
+  /* Uint *next_free_inner;      // reference to next free base addr. in inner_vertices */
+
   Uint *headnode;             // left component of head location
-  Uint currentbranchtabsize;  // current number of cells in branchtab
-  Uint *firstnotallocated;    // refers to the last address, such that at
+
+  /* Uint inner_vertices_size;  // current number of cells in inner_vertices */
+
+  Uint *alloc_leftbound;    // refers to the last address, such that at
                               // least \texttt{LARGEINTS} integers are
                               // available. So a large node can be stored in
                               // the available amount of space.
@@ -249,30 +271,30 @@ void freestree(Suffixtree *stree);
 
 #define SETDISTANCE(B,VAL)        SETVAL(B+2,VAL);\
                                   SETVAL(B,(*(B)) | SMALLBIT)
-#define SETDEPTHHEADPOS(DP,HP)    SETVAL(stree->nextfreebranch+2,DP);\
-                                  SETVAL(stree->nextfreebranch+3,HP)
+#define SETDEPTHHEADPOS(DP,HP)    SETVAL(stree->inner_vertices.next_free+2,DP);\
+                                  SETVAL(stree->inner_vertices.next_free+3,HP)
 
 #define SETNEWCHILD(B,VAL)        SETVAL(B,VAL)
-#define SETNEWCHILDBROTHER(CH,BR) SETVAL(stree->nextfreebranch,CH);\
-                                  SETVAL(stree->nextfreebranch+1,BR)
+#define SETNEWCHILDBROTHER(CH,BR) SETVAL(stree->inner_vertices.next_free,CH);\
+                                  SETVAL(stree->inner_vertices.next_free+1,BR)
 
-#define SETSUFFIXLINK(SL)         SETVAL(stree->nextfreebranch+4,SL)
+#define SETSUFFIXLINK(SL)         SETVAL(stree->inner_vertices.next_free+4,SL)
 
 #define LEAFBROTHERVAL(V)         (V)
 #define SETLEAFBROTHER(B,VAL)     *(B) = (VAL)
 
-#define GETCHAINEND(C,B,D)        C = (B) + MULTBYSMALLINTS(D)
+#define GETCHAINEND(C, B, D)      C = (B) + MULTBYSMALLINTS(D)
 #define MAKEBRANCHADDR(V)         (V)
 #define SETBRANCHNODEOFFSET       /* nothing */
 
-#define ROOT(ST)            ((ST)->branchtab)
+#define ROOT(ST)            ((ST)->inner_vertices.first)
 
 // Is the location the root?
 #define ROOTLOCATION(LOC)\
         (((LOC)->locstring.length == 0) ? True : False)
 
 // Index of a branch and leaf relative to the first address
-#define BRADDR2NUM(ST,A)      ((Uint) ((A) - ROOT(ST)))
+#define INDEX_INNER(ST,A)      ((Uint) ((A) - ROOT(ST)))
 #define LEAFADDR2NUM(ST,A)    ((Uint) ((A) - (ST)->leaftab))
 
 // For each branching node we store five integers. These can be accessed by
@@ -290,7 +312,7 @@ void freestree(Suffixtree *stree);
         if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
         {\
           distance = 1 + \
-                     DIVBYSMALLINTS((Uint) (stree->nextfreebranch - (PT)));\
+                     DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
           DP = stree->currentdepth + distance;\
           HP = stree->nextfreeleafnum - distance;\
         } else\
@@ -311,7 +333,7 @@ void freestree(Suffixtree *stree);
 #define GETONLYHEADPOS(HP,PT) \
         if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
         {\
-          distance = 1 + DIVBYSMALLINTS((Uint) (stree->nextfreebranch - (PT)));\
+          distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
           HP = stree->nextfreeleafnum - distance;\
         } else\
         {\
@@ -329,7 +351,7 @@ void freestree(Suffixtree *stree);
 #define GETONLYDEPTH(DP,PT) \
         if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
         {\
-          distance = 1 + DIVBYSMALLINTS((Uint) (stree->nextfreebranch - (PT)));\
+          distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
           DP = stree->currentdepth  + distance;\
         } else\
         {\
@@ -386,7 +408,7 @@ void freestree(Suffixtree *stree);
 #define FOLLOWSUFFIXLINK\
         if(ISLARGE(*(stree->headnode)))\
         {\
-          stree->headnode = stree->branchtab + GETSUFFIXLINK(stree->headnode);\
+          stree->headnode = stree->inner_vertices.first + GETSUFFIXLINK(stree->headnode);\
         } else\
         {\
           stree->headnode += SMALLINTS;\
