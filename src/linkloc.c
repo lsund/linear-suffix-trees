@@ -7,7 +7,105 @@
 */
 
 #include "stree.h"
-#include "access.h"
+
+static Uint getlargelinkstree(/*@unused@*/ Suffixtree *stree,Bref btptr,Uint depth)
+{
+  if(depth == UintConst(1))
+  {
+    return 0;
+  }
+  return *(btptr+4);
+}
+
+static void int2ref(Suffixtree *stree,Reference *ref,Uint i)
+{
+  if(ISLEAF(i))
+  {
+    ref->toleaf = True;
+    ref->address = stree->leaftab + GETLEAFINDEX(i);
+  } else
+  {
+    ref->toleaf = False;
+    ref->address = stree->branchtab + GETBRANCHINDEX(i);
+  }
+}
+
+static void getbranchinfostree(
+        Suffixtree *stree,
+        Uint whichinfo,
+        Branchinfo *branchinfo,
+        Bref btptr
+    )
+{
+  Uint which = whichinfo, node, distance, *largeptr;
+
+  if(which & ACCESSSUFFIXLINK)
+  {
+    which |= ACCESSDEPTH;
+  }
+  if(which & (ACCESSDEPTH | ACCESSHEADPOS))
+  {
+    if(stree->chainstart != NULL && btptr >= stree->chainstart)
+    {
+      distance = DIVBYSMALLINTS((Uint) (stree->nextfreebranch - btptr));
+      branchinfo->depth = stree->currentdepth + distance;
+      branchinfo->headposition = stree->nextfreeleafnum - distance;
+    } else
+    {
+      if(ISLARGE(*btptr))
+      {
+        if(which & ACCESSDEPTH)
+        {
+          branchinfo->depth = GETDEPTH(btptr);
+        }
+        if(which & ACCESSHEADPOS)
+        {
+          branchinfo->headposition = GETHEADPOS(btptr);
+        }
+      } else
+      {
+        distance = GETDISTANCE(btptr);
+        GETCHAINEND(largeptr,btptr,distance);
+        if(which & ACCESSDEPTH)
+        {
+          branchinfo->depth = GETDEPTH(largeptr) + distance;
+        }
+        if(which & ACCESSHEADPOS)
+        {
+          branchinfo->headposition = GETHEADPOS(largeptr) - distance;
+        }
+      }
+    }
+  }
+  if(which & ACCESSSUFFIXLINK)
+  {
+    if((stree->chainstart != NULL && btptr >= stree->chainstart) ||
+       !ISLARGE(*btptr))
+    {
+      branchinfo->suffixlink = btptr + SMALLINTS;
+    } else
+    {
+      branchinfo->suffixlink = stree->branchtab +
+                               getlargelinkstree(stree,btptr,
+                                                 branchinfo->depth);
+    }
+  }
+  if(which & ACCESSFIRSTCHILD)
+  {
+    int2ref(stree,&(branchinfo->firstchild),GETCHILD(btptr));
+  }
+  if(which & ACCESSBRANCHBROTHER)
+  {
+    node = GETBROTHER(btptr);
+    if(NILPTR(node))
+    {
+      branchinfo->branchbrother.address = NULL;
+    } else
+    {
+      int2ref(stree,&(branchinfo->branchbrother),node);
+    }
+  }
+}
 
 void rescanstree(
         Suffixtree *stree,
@@ -149,3 +247,5 @@ void linklocstree(Suffixtree *stree,Location *outloc,Location *inloc)
     }
   }
 }
+
+

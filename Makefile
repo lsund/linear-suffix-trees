@@ -16,11 +16,10 @@ CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
 
 OBJ=         obj/construct.o\
              obj/naive_search.o\
-             obj/access.o\
              obj/space.o\
              obj/io.o\
              obj/clock.o\
-             obj/scanpref.o\
+             obj/scan.o\
              obj/linkloc.o\
              obj/normaltree.o
 
