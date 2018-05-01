@@ -73,38 +73,38 @@ void insertleaf(Suffixtree *stree)
 {
     Uint *ptr, newleaf;
 
-    newleaf = MAKELEAF(stree->nextfreeleafnum);
+    newleaf = MAKELEAF(stree->leaf_vertices.next_free_num);
     if(stree->headnodedepth == 0)                // head is the root
     {
         if(stree->tailptr != stree->sentinel)      // no \$-edge initially
         {
             stree->rootchildren[(Uint) *(stree->tailptr)] = newleaf;
-            *(stree->nextfreeleafptr) = 0;
+            *(stree->leaf_vertices.next_free) = 0;
         }
     } else
     {
         if (stree->insertprev == UNDEFREFERENCE)  // newleaf = first child
         {
-            *(stree->nextfreeleafptr) = GETCHILD(stree->headnode);
+            *(stree->leaf_vertices.next_free) = GETCHILD(stree->headnode);
             SETCHILD(stree->headnode,newleaf);
         } else
         {
             if(ISLEAF(stree->insertprev))   // previous node is leaf
             {
-                ptr = stree->leaftab + GETLEAFINDEX(stree->insertprev);
-                *(stree->nextfreeleafptr) = LEAFBROTHERVAL(*ptr);
+                ptr = stree->leaf_vertices.first + GETLEAFINDEX(stree->insertprev);
+                *(stree->leaf_vertices.next_free) = LEAFBROTHERVAL(*ptr);
                 SETLEAFBROTHER(ptr,newleaf);
             } else   // previous node is branching node
             {
                 ptr = stree->inner_vertices.first + GETBRANCHINDEX(stree->insertprev);
-                *(stree->nextfreeleafptr) = GETBROTHER(ptr);
+                *(stree->leaf_vertices.next_free) = GETBROTHER(ptr);
                 SETBROTHER(ptr,newleaf);
             }
         }
     }
     RECALLSUCC(newleaf);     // recall node on successor path of \emph{headnode}
-stree->nextfreeleafnum++;
-stree->nextfreeleafptr++;
+stree->leaf_vertices.next_free_num++;
+stree->leaf_vertices.next_free++;
 }
 
 void insertbranchnode(Suffixtree *stree)
@@ -127,7 +127,7 @@ void insertbranchnode(Suffixtree *stree)
         {
             if(ISLEAF(stree->insertprev))  // new branch = right brother of leaf
             {
-                ptr = stree->leaftab + GETLEAFINDEX(stree->insertprev);
+                ptr = stree->leaf_vertices.first + GETLEAFINDEX(stree->insertprev);
                 SETLEAFBROTHER(ptr,MAKEBRANCHADDR(stree->inner_vertices.next_free_num));
             } else                     // new branch = brother of branching node
             {
@@ -138,20 +138,20 @@ void insertbranchnode(Suffixtree *stree)
     }
     if(ISLEAF(stree->insertnode))   // split edge is leaf edge
     {
-        insertleafptr = stree->leaftab + GETLEAFINDEX(stree->insertnode);
+        insertleafptr = stree->leaf_vertices.first + GETLEAFINDEX(stree->insertnode);
         if (stree->tailptr == stree->sentinel ||
                 *(stree->headend+1) < *(stree->tailptr))
         {
             SETNEWCHILDBROTHER(MAKELARGE(stree->insertnode),  // first child=oldleaf
                     LEAFBROTHERVAL(*insertleafptr));  // inherit brother
-            RECALLNEWLEAFADDRESS(stree->nextfreeleafptr);
+            RECALLNEWLEAFADDRESS(stree->leaf_vertices.next_free);
             SETLEAFBROTHER(insertleafptr,                     // new leaf =
-                    MAKELEAF(stree->nextfreeleafnum)); // right brother of old leaf
+                    MAKELEAF(stree->leaf_vertices.next_free_num)); // right brother of old leaf
         } else
         {
-            SETNEWCHILDBROTHER(MAKELARGELEAF(stree->nextfreeleafnum),  // first child=new leaf
+            SETNEWCHILDBROTHER(MAKELARGELEAF(stree->leaf_vertices.next_free_num),  // first child=new leaf
                     LEAFBROTHERVAL(*insertleafptr));  // inherit brother
-            *(stree->nextfreeleafptr) = stree->insertnode;  // old leaf = right brother of of new leaf
+            *(stree->leaf_vertices.next_free) = stree->insertnode;  // old leaf = right brother of of new leaf
             RECALLLEAFADDRESS(insertleafptr);
         }
     } else  // split edge leads to branching node
@@ -163,23 +163,23 @@ void insertbranchnode(Suffixtree *stree)
         {
             SETNEWCHILDBROTHER(MAKELARGE(stree->insertnode), // first child new branch
                     insertnodeptrbrother);        // inherit right brother
-            RECALLNEWLEAFADDRESS(stree->nextfreeleafptr);
-            SETBROTHER(insertnodeptr,MAKELEAF(stree->nextfreeleafnum)); // new leaf = brother of old branch
+            RECALLNEWLEAFADDRESS(stree->leaf_vertices.next_free);
+            SETBROTHER(insertnodeptr,MAKELEAF(stree->leaf_vertices.next_free_num)); // new leaf = brother of old branch
         } else
         {
-            SETNEWCHILDBROTHER(MAKELARGELEAF(stree->nextfreeleafnum), // first child is new leaf
+            SETNEWCHILDBROTHER(MAKELARGELEAF(stree->leaf_vertices.next_free_num), // first child is new leaf
                     insertnodeptrbrother);        // inherit brother
-            *(stree->nextfreeleafptr) = stree->insertnode;   // new branch is brother of new leaf
+            *(stree->leaf_vertices.next_free) = stree->insertnode;   // new branch is brother of new leaf
             RECALLBRANCHADDRESS(insertnodeptr);
         }
     }
     SETNILBIT;
     RECALLSUCC(MAKEBRANCHADDR(stree->inner_vertices.next_free)); // node on succ. path
     stree->currentdepth = stree->headnodedepth + (Uint) (stree->headend-stree->headstart+1);
-    SETDEPTHHEADPOS(stree->currentdepth,stree->nextfreeleafnum);
+    SETDEPTHHEADPOS(stree->currentdepth,stree->leaf_vertices.next_free_num);
     SETMAXBRANCHDEPTH(stree->currentdepth);
-    stree->nextfreeleafnum++;
-    stree->nextfreeleafptr++;
+    stree->leaf_vertices.next_free_num++;
+    stree->leaf_vertices.next_free++;
 }
 
 // Finding the Head-Locations
@@ -240,7 +240,7 @@ void rescan(Suffixtree *stree) // skip-count
                     return;
                 }
                 prevnode = node;
-                node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
+                node = LEAFBROTHERVAL(stree->leaf_vertices.first[leafindex]);
             } else   // successor is branch node
             {
                 nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
@@ -350,7 +350,7 @@ void scanprefix(Suffixtree *stree)
                 prevnode = node;
                 if(ISLEAF(node))
                 {
-                    node = LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(node)]);
+                    node = LEAFBROTHERVAL(stree->leaf_vertices.first[GETLEAFINDEX(node)]);
                 } else
                 {
                     node = GETBROTHER(stree->inner_vertices.first + GETBRANCHINDEX(node));
@@ -374,7 +374,7 @@ void scanprefix(Suffixtree *stree)
                     break;
                 }
                 prevnode = node;
-                node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
+                node = LEAFBROTHERVAL(stree->leaf_vertices.first[leafindex]);
             } else  // successor is branch node
             {
                 nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
@@ -459,7 +459,7 @@ void linkrootchildren(Suffixtree *stree)
             {
                 if(ISLEAF(prev))
                 {
-                    stree->leaftab[GETLEAFINDEX(prev)] = *rcptr;
+                    stree->leaf_vertices.first[GETLEAFINDEX(prev)] = *rcptr;
                 } else
                 {
                     prevnodeptr = stree->inner_vertices.first + GETBRANCHINDEX(prev);
@@ -471,13 +471,13 @@ void linkrootchildren(Suffixtree *stree)
     }
     if(ISLEAF(prev))
     {
-        stree->leaftab[GETLEAFINDEX(prev)] = MAKELEAF(stree->textlen);
+        stree->leaf_vertices.first[GETLEAFINDEX(prev)] = MAKELEAF(stree->textlen);
     } else
     {
         prevnodeptr = stree->inner_vertices.first + GETBRANCHINDEX(prev);
         SETBROTHER(prevnodeptr,MAKELEAF(stree->textlen));
     }
-    stree->leaftab[stree->textlen] = NILBIT;
+    stree->leaf_vertices.first[stree->textlen] = NILBIT;
 }
 
 
@@ -487,7 +487,7 @@ void init(Suffixtree *stree,wchar_t *text,Uint textlen)
 
     stree->inner_vertices.size = start_alloc(textlen);
 
-    stree->leaftab = ALLOC(NULL, Uint, textlen + 2);
+    stree->leaf_vertices.first = ALLOC(NULL, Uint, textlen + 2);
 
     stree->inner_vertices.first = ALLOC(NULL, Uint, stree->inner_vertices.size);
     for(i=0; i<LARGEINTS; i++) {
@@ -517,11 +517,11 @@ void init(Suffixtree *stree,wchar_t *text,Uint textlen)
     SETNEWCHILDBROTHER(MAKELARGELEAF(0),0);
     SETBRANCHNODEOFFSET;
     stree->rootchildren[(Uint) *text] = MAKELEAF(0); // Necessary?
-    stree->leaftab[0]                 = 0;
+    stree->leaf_vertices.first[0]                 = 0;
 
     stree->leafcounts                   = NULL;
-    stree->nextfreeleafnum              = 1;
-    stree->nextfreeleafptr              = stree->leaftab + 1;
+    stree->leaf_vertices.next_free_num              = 1;
+    stree->leaf_vertices.next_free              = stree->leaf_vertices.first + 1;
     stree->inner_vertices.next_free              = stree->inner_vertices.first + LARGEINTS;
     stree->inner_vertices.next_free_num = LARGEINTS;
     stree->insertnode                   = UNDEFREFERENCE;
@@ -535,7 +535,7 @@ void init(Suffixtree *stree,wchar_t *text,Uint textlen)
 
 void freestree(Suffixtree *stree)
 {
-    FREE(stree->leaftab);
+    FREE(stree->leaf_vertices.first);
     FREE(stree->rootchildren);
     FREE(stree->inner_vertices.first);
     if(stree->nonmaximal != NULL)

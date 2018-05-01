@@ -76,7 +76,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                 loc->edgelen = stree->textlen - leafindex + 1;
                 loc->remain = loc->edgelen - prefixlen;
                 loc->nextnode.toleaf = True;
-                loc->nextnode.address = stree->leaftab + leafindex;
+                loc->nextnode.address = stree->leaf_vertices.first + leafindex;
                 loc->locstring.start = leafindex;
                 loc->locstring.length = prefixlen;
                 if(prefixlen == (Uint) (right - lptr + 1))
@@ -127,7 +127,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                         loc->edgelen = stree->textlen - (nodedepth + leafindex) + 1;
                         loc->remain = loc->edgelen - prefixlen;
                         loc->nextnode.toleaf = True;
-                        loc->nextnode.address = stree->leaftab + leafindex;
+                        loc->nextnode.address = stree->leaf_vertices.first + leafindex;
                         loc->locstring.start = leafindex;
                         loc->locstring.length = nodedepth + prefixlen;
                         if(prefixlen == (Uint) (right - lptr + 1)) {
@@ -135,7 +135,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                         }
                         return lptr + prefixlen;
                     }
-                    node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
+                    node = LEAFBROTHERVAL(stree->leaf_vertices.first[leafindex]);
                 } else
                 {
                     nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);

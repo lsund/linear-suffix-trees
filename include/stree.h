@@ -77,24 +77,19 @@ typedef struct suffixtree
 {
 
     Table inner_vertices;
+    Table leaf_vertices;
 
   Uint textlen;               // the length of the input string
-  Uint *leaftab;              // stores the brother-references of the leafs
-
-  /* Uint *inner_vertices;            // table for inner vertices */
 
   Uint *rootchildren;         // references to successors of root
 
   wchar_t *text;               // points to the input string
   wchar_t *sentinel;           // points to the position of the \(\$\)-symbol
 
-  Uint nextfreeleafnum;       // the number of the next leaf
   Uint headnodedepth;         // the depth of the headnode
   Uint insertnode;            // the node the split edge leads to
   Uint insertprev;            // the edge preceeding the split edge
   Uint smallnotcompleted;     // the number of small nodes in the current chain
-
-  /* Uint next_free_inner_num;     // the number of the next free branch node */
 
   Uint onsuccpath;            // refers to node on success path of headnode
   Uint currentdepth;          // depth of the new branch node
@@ -104,14 +99,9 @@ typedef struct suffixtree
   Uint largenode;             // number of large nodes
   Uint smallnode;             // number of small nodes
   Uint *setlink;              // address of a nil-reference
-  Uint *nextfreeleafptr;      // points to next free entry in leaftab
   Uint *chainstart;           // address of the node current chains starts at
 
-  /* Uint *next_free_inner;      // reference to next free base addr. in inner_vertices */
-
   Uint *headnode;             // left component of head location
-
-  /* Uint inner_vertices_size;  // current number of cells in inner_vertices */
 
   Uint *alloc_leftbound;    // refers to the last address, such that at
                               // least \texttt{LARGEINTS} integers are
@@ -295,7 +285,7 @@ void freestree(Suffixtree *stree);
 
 // Index of a branch and leaf relative to the first address
 #define INDEX_INNER(ST,A)      ((Uint) ((A) - ROOT(ST)))
-#define LEAFADDR2NUM(ST,A)    ((Uint) ((A) - (ST)->leaftab))
+#define LEAFADDR2NUM(ST,A)    ((Uint) ((A) - (ST)->leaf_vertices.first))
 
 // For each branching node we store five integers. These can be accessed by
 // some or-combination.
@@ -314,7 +304,7 @@ void freestree(Suffixtree *stree);
           distance = 1 + \
                      DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
           DP = stree->currentdepth + distance;\
-          HP = stree->nextfreeleafnum - distance;\
+          HP = stree->leaf_vertices.next_free_num - distance;\
         } else\
         {\
           if(ISLARGE(*(PT)))\
@@ -334,7 +324,7 @@ void freestree(Suffixtree *stree);
         if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
         {\
           distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-          HP = stree->nextfreeleafnum - distance;\
+          HP = stree->leaf_vertices.next_free_num - distance;\
         } else\
         {\
           if(ISLARGE(*(PT)))\
@@ -384,7 +374,7 @@ void freestree(Suffixtree *stree);
 #define GETHEADPOSAFTERDEPTH(HP,PT) \
         if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
         {\
-          HP = stree->nextfreeleafnum - distance;\
+          HP = stree->leaf_vertices.next_free_num - distance;\
         } else\
         {\
           if(ISLARGE(*(PT)))\
