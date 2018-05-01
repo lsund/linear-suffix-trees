@@ -473,7 +473,7 @@ void linkrootchildren(Suffixtree *stree)
 }
 
 
-void initSuffixtree(Suffixtree *stree,wchar_t *text,Uint textlen)
+void init(Suffixtree *stree,wchar_t *text,Uint textlen)
 {
     Uint i;
 

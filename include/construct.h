@@ -6,8 +6,9 @@
 #include "spaceman.h"
 #include "stree.h"
 #include "basedef.h"
+#include <stdbool.h>
 
-void initSuffixtree(Suffixtree *stree, wchar_t *text, Uint textlen);
+void init(Suffixtree *stree, wchar_t *text, Uint textlen);
 
 // Slow-scan
 void scanprefix(Suffixtree *stree);
