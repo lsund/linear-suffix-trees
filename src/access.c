@@ -18,77 +18,6 @@
 #include "spaceman.h"
 #include "basedef.h"
 
-#ifdef STREELARGE
-
-Uint getlargelinkstree(Suffixtree *stree,Bref btptr,Uint depth)
-{
-  Uint succ;
-
-  if(depth == 1)
-  {
-    return 0;
-  }
-  if(ISSMALLDEPTH(depth))
-  {
-    return (((*(btptr+2) & LOWERLINKPATT) >> SMALLDEPTHBITS) |
-           ((*(btptr+3) & MIDDLELINKPATT) >> SHIFTMIDDLE)   |
-           ((stree->leaftab[GETHEADPOS(btptr)] & EXTRAPATT)
-              >> SHIFTHIGHER)) << 1;
-  }
-  succ = GETCHILD(btptr);
-  while(!NILPTR(succ))
-  {
-    if(ISLEAF(succ))
-    {
-      succ = LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(succ)]);
-    } else
-    {
-      succ = GETBROTHER(stree->branchtab + succ);
-    }
-  }
-  return succ & MAXINDEX;
-}
-#endif
-
-#ifdef STREESMALL
-Uint getlargelinkstree(Suffixtree *stree,Bref btptr,Uint depth)
-{
-  Uint succ, slink = 0, headnodenum;
-
-  if(depth == 1)
-  {
-    return 0;
-  }
-  if(ISSMALLDEPTH(depth))
-  {
-    slink = (*(btptr+1) >> 25) & ((1 << 7) - 1);
-    headnodenum = BRADDR2NUM(stree,btptr);
-    if(headnodenum & (~((1 << 7) - 1)))
-    {
-      slink |= ((*btptr & (255 << 24)) >> 17);
-      if(headnodenum & (~((1 << 15) - 1)))
-      {
-        slink |= ((stree->leaftab[GETHEADPOS(btptr)] & (255 << 24)) >> 9);
-      }
-    }
-    return slink;
-  }
-  succ = GETCHILD(btptr);
-  while(!NILPTR(succ))
-  {
-    if(ISLEAF(succ))
-    {
-      succ = LEAFBROTHERVAL(stree->leaftab[GETLEAFINDEX(succ)]);
-    } else
-    {
-      succ = GETBROTHER(stree->branchtab + GETBRANCHINDEX(succ));
-    }
-  }
-  return succ & MAXINDEX;
-}
-#endif
-
-#ifdef STREEHUGE
 Uint getlargelinkstree(/*@unused@*/ Suffixtree *stree,Bref btptr,Uint depth)
 {
   if(depth == UintConst(1))
@@ -97,7 +26,6 @@ Uint getlargelinkstree(/*@unused@*/ Suffixtree *stree,Bref btptr,Uint depth)
   }
   return *(btptr+4);
 }
-#endif
 
 static void int2ref(Suffixtree *stree,Reference *ref,Uint i)
 {

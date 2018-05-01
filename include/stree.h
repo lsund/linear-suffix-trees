@@ -162,11 +162,7 @@
         }\
         stree->headnodedepth--
 
-#if defined(STREELARGE) || defined(STREESMALL)
-#define RECALLSUCC(S)             stree->onsuccpath = S
-#else
 #define RECALLSUCC(S)             /* Nothing */
-#endif
 
 // Set the address for a nil-reference. In the case the reference is a new
 // leaf, this is marked
@@ -177,17 +173,7 @@
 #define RECALLBRANCHADDRESS(A)    stree->setlink = (A) + 1;\
                                   stree->setatnewleaf = False
 
-#ifdef STREEHUGE
 #define SETNILBIT                 *(stree->setlink) = NILBIT
-#else
-#define SETNILBIT                 if(stree->setatnewleaf)\
-                                  {\
-                                    *(stree->setlink) = NILBIT;\
-                                  } else\
-                                  {\
-                                    *(stree->setlink) |= NILBIT;\
-                                  }
-#endif
 
 #define SETMAXBRANCHDEPTH(D)      if((D) > stree->maxbranchdepth)\
                                   {\

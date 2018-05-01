@@ -215,9 +215,6 @@ void checkstree(Suffixtree *stree)
        edgelen, identitycount = 0, edgecount = 0,
        succcount, j, linkdepth, linkheadposition, *leafused, *branchused;
   Sint prevfirstchar, currentfirstchar;
-#ifdef STREELARGE
-  Uint largedepth = 0;
-#endif
   INITBITTAB(leafused,stree->textlen+1);
   INITBITTAB(branchused,stree->textlen+1);
   btptr = stree->branchtab;
@@ -319,12 +316,6 @@ void checkstree(Suffixtree *stree)
     }
     if(ISLARGE(*btptr))
     {
-#ifdef STREELARGE
-      if(!ISSMALLDEPTH(depth))
-      {
-        largedepth++;
-      }
-#endif
       lastsmall = 0;
       slinkptr = stree->branchtab + getlargelinkstree(stree,btptr,depth);
     } else
@@ -374,9 +365,6 @@ void checkstree(Suffixtree *stree)
   DEBUG2(2,"#edgecount %lu identitycount %lu\n",
               (Ulong) edgecount,
               (Ulong) identitycount);
-#ifdef STREELARGE
-  DEBUG1(2,"#largedepth %lu\n",(Ulong) largedepth);
-#endif
 }
 
 static void showsubtree(Suffixtree *stree,Uint indent,Uint *btptr)

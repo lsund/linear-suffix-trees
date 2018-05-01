@@ -23,9 +23,6 @@ static void showvalues(void)
     SHOWVAL(SMALLINTS);
     SHOWVAL(LARGEINTS);
     SHOWVAL(MAXDISTANCE);
-#if defined(STREELARGE) || defined(STREESMALL)
-    SHOWVAL(SMALLDEPTH);
-#endif
     SHOWVAL(MAXTEXTLEN);
 }
 
