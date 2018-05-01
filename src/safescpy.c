@@ -9,7 +9,7 @@
 //\Ignore{
 
 #include <string.h>
-#include "debug.h"
+#include "types.h"
 
 //}
 

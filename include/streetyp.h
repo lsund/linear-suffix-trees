@@ -38,11 +38,6 @@ typedef struct
 } Branchinfo;
 
 
-// For each leaf, we store a reference to its branchbrother, which is NULL if
-// the right brother does not exist. This is expressed with LeafInfo
-typedef Reference Leafinfo;
-
-
 // A suffix tree is implemented by the type SuffixTree. Most of the feilds are
 // only used during construction.
 //
@@ -52,9 +47,6 @@ typedef Reference Leafinfo;
 // Uint textlen;     // the length of the input string
 // Uint *branchtab;  // stores the infos for the branching nodes
 // Uint *leaftab;    // stores the brother-references of the leaves
-//
-//
-
 typedef struct suffixtree
 {
   Uint textlen;               // the length of the input string
@@ -101,21 +93,6 @@ typedef struct suffixtree
                               // \(\emph{headend}=\emph{NULL}\).
   wchar_t *tailptr;            // points to the tail
 
-#ifdef DEBUG
-  char * (*showsymbolstree)(wchar_t,wchar_t *);
-  wchar_t *alphabet;
-  Uint splitleafedge,
-       splitinternaledge,
-       artificial,
-       insertleafcalls,
-       largelinks,
-       largelinkwork,
-       largelinklinkwork,
-       multiplications,
-       nodecount,
-       *maxset;
-  void *generalcounter;
-#endif
 #if (wchar_tBYTES == 2) || (wchar_tBYTES == 4)
   Sint lastcharindex;
 #endif
@@ -123,7 +100,6 @@ typedef struct suffixtree
 } Suffixtree;
 
 DECLAREARRAYSTRUCT(Bref);
-
 
 // A location is implemented by the type `Location`
 typedef struct
@@ -178,5 +154,3 @@ typedef struct
 } DFSstate;
 
 #endif
-
-//}

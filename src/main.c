@@ -25,8 +25,6 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    DEBUGLEVELSET;
-
     initclock();
     filename = argv[1];
 

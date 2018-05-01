@@ -8,7 +8,6 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-#include "debug.h"
 #include "stree.h"
 #include "basedef.h"
 
@@ -40,8 +39,6 @@ wchar_t *scanprefixfromnodestree(
          edgelen, remainingtoskip;
     wchar_t *lptr, *leftborder = NULL, firstchar, edgechar = 0;
 
-    DEBUG1(4,"scanprefixfromnodestree starts at node %lu\n",
-            (Ulong) BRADDR2NUM(stree, btptr));
     lptr = left;
     nodeptr = btptr;
     if(nodeptr == stree->branchtab) {
@@ -231,10 +228,6 @@ wchar_t *scanprefixstree(
         )
 {
     Uint prefixlen, remainingtoskip;
-
-    DEBUG0(4,"scanprefixstree starts at location ");
-    DEBUGCODE(4, showlocation(stdout,stree,inloc));
-    DEBUG0(4,"\n");
 
     if(inloc->remain == 0) {
         return scanprefixfromnodestree(stree,outloc,inloc->nextnode.address,
@@ -512,9 +505,6 @@ wchar_t *findprefixpathstree(Suffixtree *stree,
 {
     Uint prefixlen, remainingtoskip;
 
-    DEBUG0(4,"findprefixpathstree starts at location ");
-    DEBUGCODE(4,showlocation(stdout,stree,inloc));
-    DEBUG0(4,"\n");
     if(inloc->remain == 0)
     {
         CHECKARRAYSPACE(path,Pathinfo,128);

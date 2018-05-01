@@ -8,7 +8,6 @@
 
 #include "arraydef.h"
 #include "spaceman.h"
-#include "debug.h"
 #include "stree.h"
 
 #define SETCURRENT(V)\
@@ -69,9 +68,6 @@ while(True)
   }
   if(currentnode.toleaf)
   {
-    DEBUG1(3,"visit leaf %lu ",
-              (Ulong) LEAFADDR2NUM(stree,currentnode.address));
-    DEBUG1(3,"below %lu\n",(Ulong) BRADDR2NUM(stree,startnode->address));
     if(processleaf(LEAFADDR2NUM(stree,currentnode.address),lcpnode,info) != 0)
     {
       return -1;
@@ -95,9 +91,6 @@ while(True)
         break;
       }
       (stack.nextfreeBref)--;
-      DEBUG1(3,"#pop[%lu]=",(Ulong) stack.nextfreeBref);
-      DEBUG1(3,"%lu\n",
-             (Ulong) BRADDR2NUM(stree,stack.spaceBref[stack.nextfreeBref]));
       PROCESSBRANCH2(stack.spaceBref[stack.nextfreeBref],info);
       brotherval = GETBROTHER(stack.spaceBref[stack.nextfreeBref]);
       if(!NILPTR(brotherval))
@@ -108,14 +101,10 @@ while(True)
       }
     } else
     {
-      DEBUG1(3,"#process1 %lu\n",
-               (Ulong) BRADDR2NUM(stree,currentnode.address));
       PROCESSBRANCH1(currentnode.address,info);
       if(godown)
       {
         STOREINARRAY(&stack,Bref,128,currentnode.address);
-        DEBUG1(3,"#push[%lu]=",(Ulong) (stack.nextfreeBref-1));
-        DEBUG1(3,"%lu\n",(Ulong) BRADDR2NUM(stree,currentnode.address));
         child = GETCHILD(currentnode.address);
         SETCURRENT(child);    // current comes from child
       } else
@@ -150,9 +139,6 @@ while(True)
   }
   if(currentnode.toleaf)
   {
-    DEBUG1(3,"visit leaf %lu ",
-              (Ulong) LEAFADDR2NUM(stree,currentnode.address));
-    DEBUG1(3,"below %lu\n",(Ulong) BRADDR2NUM(stree,startnode->address));
     if(processleaf(LEAFADDR2NUM(stree,currentnode.address),lcpnode,info) != 0)
     {
       return -1;
@@ -176,9 +162,6 @@ while(True)
         break;
       }
       (stack.nextfreeBref)--;
-      DEBUG1(3,"#pop[%lu]=",(Ulong) stack.nextfreeBref);
-      DEBUG1(3,"%lu\n",
-             (Ulong) BRADDR2NUM(stree,stack.spaceBref[stack.nextfreeBref]));
       PROCESSBRANCH2(stack.spaceBref[stack.nextfreeBref],info);
       brotherval = GETBROTHER(stack.spaceBref[stack.nextfreeBref]);
       if(!NILPTR(brotherval))
@@ -189,14 +172,9 @@ while(True)
       }
     } else
     {
-      DEBUG1(3,"#process1 %lu\n",
-               (Ulong) BRADDR2NUM(stree,currentnode.address));
-      PROCESSBRANCH1(currentnode.address,info);
       if(godown)
       {
         STOREINARRAY(&stack,Bref,128,currentnode.address);
-        DEBUG1(3,"#push[%lu]=",(Ulong) (stack.nextfreeBref-1));
-        DEBUG1(3,"%lu\n",(Ulong) BRADDR2NUM(stree,currentnode.address));
         child = GETCHILD(currentnode.address);
         SETCURRENT(child);    // current comes from child
       } else
@@ -223,7 +201,6 @@ static Sint insertinleaflist(Uint leafindex,/*@unused@*/ Bref lcpnode,
 {
     ArrayUint *leaflist = (ArrayUint *) info;
 
-    DEBUG1(3,"insertinleaflist %lu\n",(Ulong) leafindex);
     CHECKARRAYSPACE(leaflist,Uint,256);
     leaflist->spaceUint[leaflist->nextfreeUint++] = leafindex;
     return 0;

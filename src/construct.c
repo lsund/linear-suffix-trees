@@ -10,23 +10,7 @@
 
 #define FUNCLEVEL 4
 
-#define DEBUGDEFAULT DEBUG1(FUNCLEVEL,">%s\n",__func__);\
-    DEBUGCODE(5,showstree(stree))
-
 #define VALIDINIT     0
-
-#ifdef DEBUG
-
-
-static void showvalues(void)
-{
-    SHOWVAL(SMALLINTS);
-    SHOWVAL(LARGEINTS);
-    SHOWVAL(MAXDISTANCE);
-    SHOWVAL(MAXTEXTLEN);
-}
-
-#endif
 
 //}
 
@@ -49,8 +33,6 @@ static void showvalues(void)
 // directly refer into the table, these have to be adjusted after reallocation.
 static void spaceforbranchtab(Suffixtree *stree)
 {
-    DEBUG1(FUNCLEVEL,">%s\n",__func__);
-
     if(stree->nextfreebranch >= stree->firstnotallocated)
     {
         Uint tmpheadnode,
@@ -60,10 +42,6 @@ static void spaceforbranchtab(Suffixtree *stree)
         {
             extra = MULTBYSMALLINTS(MINEXTRA);
         }
-        DEBUG1(2,"#all suffixes up to suffix %lu have been scanned\n",
-                (Ulong) stree->nextfreeleafnum);
-        DEBUG1(2,"#current space peak %f\n",MEGABYTES(getspacepeak()));
-        DEBUG1(2,"#to get %lu extra space do ",(Ulong) extra);
         stree->currentbranchtabsize += extra;
         tmpheadnode = BRADDR2NUM(stree,stree->headnode);
         if(stree->chainstart != NULL)
@@ -89,17 +67,13 @@ void insertleaf(Suffixtree *stree)
 {
     Uint *ptr, newleaf;
 
-    DEBUGDEFAULT;
     newleaf = MAKELEAF(stree->nextfreeleafnum);
-    DEBUGCODE(1,stree->insertleafcalls++);
     if(stree->headnodedepth == 0)                // head is the root
     {
         if(stree->tailptr != stree->sentinel)      // no \$-edge initially
         {
             stree->rootchildren[(Uint) *(stree->tailptr)] = newleaf;
             *(stree->nextfreeleafptr) = VALIDINIT;
-            DEBUG2(4,"%c-edge from root points to leaf %lu\n",
-                    *(stree->tailptr),(Ulong) stree->nextfreeleafnum);
         }
     } else
     {
@@ -131,7 +105,6 @@ void insertbranchnode(Suffixtree *stree)
 {
     Uint *ptr, *insertnodeptr, *insertleafptr, insertnodeptrbrother;
 
-    DEBUGDEFAULT;
     spaceforbranchtab(stree);
     if(stree->headnodedepth == 0)      // head is the root
     {
@@ -139,8 +112,6 @@ void insertbranchnode(Suffixtree *stree)
         stree->rootchildren[(Uint) *(stree->headstart)]
             = MAKEBRANCHADDR(stree->nextfreebranchnum);
         *(stree->nextfreebranch+1) = VALIDINIT;
-        DEBUG2(4,"%c-edge from root points to branch node with address %lu\n",
-                *(stree->headstart),(Ulong) stree->nextfreebranchnum);
     } else
     {
         if(stree->insertprev == UNDEFREFERENCE)  // new branch = first child
@@ -161,7 +132,6 @@ void insertbranchnode(Suffixtree *stree)
     }
     if(ISLEAF(stree->insertnode))   // split edge is leaf edge
     {
-        DEBUGCODE(1,stree->splitleafedge++);
         insertleafptr = stree->leaftab + GETLEAFINDEX(stree->insertnode);
         if (stree->tailptr == stree->sentinel ||
                 *(stree->headend+1) < *(stree->tailptr))
@@ -180,7 +150,6 @@ void insertbranchnode(Suffixtree *stree)
         }
     } else  // split edge leads to branching node
     {
-        DEBUGCODE(1,stree->splitinternaledge++);
         insertnodeptr = stree->branchtab + GETBRANCHINDEX(stree->insertnode);
         insertnodeptrbrother = GETBROTHER(insertnodeptr);
         if (stree->tailptr == stree->sentinel ||
@@ -205,7 +174,6 @@ void insertbranchnode(Suffixtree *stree)
     SETMAXBRANCHDEPTH(stree->currentdepth);
     stree->nextfreeleafnum++;
     stree->nextfreeleafptr++;
-    DEBUGCODE(1,stree->nodecount++);
 }
 
 // Finding the Head-Locations
@@ -222,7 +190,6 @@ void rescan(Suffixtree *stree) // skip-count
          nodedepth, edgelen, wlen, leafindex, headposition;
     wchar_t headchar, edgechar;
 
-    DEBUGDEFAULT;
     if(stree->headnodedepth == 0)   // head is the root
     {
         headchar = *(stree->headstart);  // headstart is assumed to be not empty
@@ -327,7 +294,6 @@ void scanprefix(Suffixtree *stree)
          distance = 0, prevnode, prefixlen, headposition;
     wchar_t *leftborder = (wchar_t *) NULL, tailchar, edgechar = 0;
 
-    DEBUGDEFAULT;
     if(stree->headnodedepth == 0)   // headnode is root
     {
 
@@ -453,7 +419,6 @@ void completelarge(Suffixtree *stree)
 {
     Uint distance, *backwards;
 
-    DEBUGDEFAULT;
     if(stree->smallnotcompleted > 0)
     {
         backwards = stree->nextfreebranch;
@@ -474,7 +439,6 @@ void linkrootchildren(Suffixtree *stree)
 {
     Uint *rcptr, *prevnodeptr, prev = UNDEFREFERENCE;
 
-    DEBUGDEFAULT;
     stree->alphasize = 0;
     for(rcptr = stree->rootchildren;
             rcptr <= stree->rootchildren + MAX_CHARS; rcptr++)
@@ -565,19 +529,6 @@ void initSuffixtree(Suffixtree *stree,wchar_t *text,Uint textlen)
     stree->largenode                  = stree->smallnode              = 0;
 
 
-#ifdef DEBUG
-    stree->showsymbolstree = NULL;
-    stree->alphabet = NULL;
-    stree->nodecount = 1;
-    stree->splitleafedge =
-        stree->splitinternaledge =
-        stree->artificial =
-        stree->multiplications = 0;
-    stree->insertleafcalls = 1;
-    stree->maxset = stree->branchtab + LARGEINTS - 1;
-    stree->largelinks = stree->largelinkwork = stree->largelinklinkwork = 0;
-#endif
-
 }
 
 void freestree(Suffixtree *stree)
@@ -600,9 +551,6 @@ Uint getlargelinkconstruction(Suffixtree *stree)
 {
     wchar_t secondchar;
 
-    DEBUG2(FUNCLEVEL,">%s(%lu)\n",
-            __func__,
-            (Ulong) BRADDR2NUM(stree,stree->headnode));
     if(stree->headnodedepth == 1)
     {
         return 0;        // link refers to root

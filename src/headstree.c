@@ -12,8 +12,6 @@ Sint constructheadstree(Suffixtree *stree,wchar_t *text,Uint
       fprintf(stderr, "Text too large");
   }
 
-  DEBUGCODE(3,showvalues());
-
   initSuffixtree(stree,text,textlen);
   while(stree->tailptr < stree->sentinel ||
         stree->headnodedepth != 0 || stree->headend != NULL)
@@ -55,9 +53,6 @@ Sint constructheadstree(Suffixtree *stree,wchar_t *text,Uint
         {
           if(stree->smallnotcompleted == MAXDISTANCE)  // artifical large node
           {
-            DEBUGCODE(1,stree->artificial++);
-            DEBUG1(3,"#artifical large node %lu\n",
-                      (Ulong) stree->nextfreebranchnum);
             SETSUFFIXLINK(stree->nextfreebranchnum + LARGEINTS);
             completelarge(stree);
           } else
@@ -84,45 +79,12 @@ Sint constructheadstree(Suffixtree *stree,wchar_t *text,Uint
     {
       insertbranchnode(stree);  // case (b)
     }
-    DEBUGCODE(5,showtable(stree,False));
   }
   stree->chainstart = NULL;
   linkrootchildren(stree);
 
 //\Ignore{
 
-  DEBUG1(2,"#integers for branchnodes %lu\n",
-           (Ulong) stree->nextfreebranchnum);
-  DEBUG4(2,"#small %lu large %lu textlen %lu all %lu ",
-            (Ulong) stree->smallnode,(Ulong) stree->largenode,
-            (Ulong) stree->textlen,
-            (Ulong) (stree->smallnode+stree->largenode));
-  DEBUG1(2,"ratio %f\n",
-         (double) (stree->smallnode+stree->largenode)/stree->nextfreeleafnum);
-  DEBUG1(2,"#splitleafedge = %lu\n",(Ulong) stree->splitleafedge);
-  DEBUG1(2,"#splitinternaledge = %lu\n",(Ulong) stree->splitinternaledge);
-  DEBUG1(2,"#insertleafcalls = %lu\n",(Ulong) stree->insertleafcalls);
-  DEBUG1(2,"#artificial = %lu\n",(Ulong) stree->artificial);
-  DEBUG1(2,"#multiplications = %lu\n",(Ulong) stree->multiplications);
-  DEBUGCODE(4,showtable(stree,True));
-  DEBUGCODE(3,showstree(stree));
-#ifdef DEBUG
-  {
-    DEBUG3(2,"#largelinks %lu largelinklinkwork %lu largelinkwork %lu ",
-              (Ulong) stree->largelinks,
-              (Ulong) stree->largelinklinkwork,
-              (Ulong) stree->largelinkwork);
-    DEBUG2(2,"#ratio1 %.4f ratio2 %.4f\n",
-              (double) stree->largelinkwork/stree->largelinks,
-              (double) stree->largelinkwork/stree->textlen);
-  }
-#endif
-  DEBUG2(2,"#%6lu %6lu\n",(Ulong) stree->smallnode,
-                          (Ulong) stree->largenode);
-  DEBUGCODE(2,showspace());
-  DEBUGCODE(1,checkstree(stree));
-
-//}
   return 0;
 }
 

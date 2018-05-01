@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "types.h"
-#include "debug.h"
+#include "basedef.h"
 
 //}
 
@@ -124,7 +124,6 @@ static void addspace(Uint space)
   if(currentspace > spacepeak)
   {
     spacepeak = currentspace;
-    DEBUG1(2,"# spacepeak = %.2f reached\n",MEGABYTES(spacepeak));
   }
 }
 
@@ -146,8 +145,6 @@ static void subtractspace(Uint space)
 {
   Uint i, blocknum;
 
-  DEBUG2(2,"\n# allocandusespaceviaptr(file=%s,line=%lu)\n",file,
-                      (Ulong) line);
   if(nextfreeblock > 0)
   {
       if (!blocks) {
@@ -192,11 +189,6 @@ static void subtractspace(Uint space)
     }
   subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
   addspace(size*number);
-  DEBUG3(2,"# allocandusespaceviaptr:block %lu: %lu cells of size %lu\n",
-            (Ulong) blocknum,(Ulong) number,(Ulong) size);
-  DEBUG2(2,"# previously allocated for this block (%lu,%lu)\n",
-            (Ulong) blocks[blocknum].numberofcells,
-            (Ulong) blocks[blocknum].sizeofcells);
   blocks[blocknum].numberofcells = number;
   blocks[blocknum].sizeofcells = size;
   blocks[blocknum].fileallocated = file;
@@ -210,7 +202,6 @@ static void subtractspace(Uint space)
   {
     ALLOCVIAFATAL("not enough memory");
   }
-  DEBUG0(2,"# allocandusespaceviaptr Okay\n");
 if (!blocks[blocknum].spaceptr) {
     fprintf(stderr, "Not supposed to be null");
 }
@@ -226,7 +217,6 @@ void freespaceviaptr(char *file,Uint line,void *ptr)
 {
   Uint blocknum;
 
-  DEBUG2(2,"\n# freespaceviaptr(file=%s,line=%lu):\n",file,(Ulong) line);
   if(ptr == NULL)
   {
     fprintf(stderr,"freespaceviaptr(file=%s,line=%lu): Cannot free NULL-ptr\n",
@@ -252,13 +242,6 @@ if (!blocks) {
   }
   free(blocks[blocknum].spaceptr);
   subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
-  DEBUG3(2,"# freespaceviaptr:block %lu: %lu cells of size %lu\n",
-            (Ulong) blocknum,
-            (Ulong) blocks[blocknum].numberofcells,
-            (Ulong) blocks[blocknum].sizeofcells);
-  DEBUG2(2,"# this block was allocated in file \"%s\", line %lu\n",
-            blocks[blocknum].fileallocated,
-            (Ulong) blocks[blocknum].lineallocated);
   blocks[blocknum].numberofcells = 0;
   blocks[blocknum].sizeofcells = 0;
   blocks[blocknum].fileallocated = NULL;
@@ -280,7 +263,6 @@ void wrapspace(void)
 {
   Uint blocknum;
 
-  DEBUG0(2,"# wrapspace\n");
       if (!blocks) {
           fprintf(stderr, "Not supposed to be null");
       }
@@ -288,10 +270,6 @@ void wrapspace(void)
   {
     if(blocks[blocknum].spaceptr != NULL)
     {
-      DEBUG3(2,"# free block %lu: %lu cells of size %lu\n",
-                (Ulong) blocknum,
-                (Ulong) blocks[blocknum].numberofcells,
-                (Ulong) blocks[blocknum].sizeofcells);
       free(blocks[blocknum].spaceptr);
       blocks[blocknum].spaceptr = NULL;
     }
@@ -400,24 +378,3 @@ Uint getspacepeak(void)
 {
   return spacepeak;
 }
-
-/*EE
-  The following function delivers the space limit of the machine
-  in megabytes. This only works if the variable
-  \texttt{WITHSYSCONF} is defined. This is currently the case for
-  Linux and Solaris.
-*/
-
-#ifdef WITHSYSCONF
-#ifdef DEBUG
-void showmemsize(void)
-{
-  Sint pagesize = (Sint) sysconf((int) _SC_PAGESIZE);
-  Sint physpages = (Sint) sysconf((int) _SC_PHYS_PAGES);
-
-  DEBUG1(1,"# pagesize = %ld\n",(Slong) pagesize);
-  DEBUG1(1,"# number of physical pages = %ld\n",(Slong) physpages);
-  DEBUG1(1,"# memory size = %.0f MB\n",MEGABYTES(pagesize * physpages));
-}
-#endif
-#endif

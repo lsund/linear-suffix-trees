@@ -6,7 +6,6 @@
   code base.
 */
 
-#include "debug.h"
 #include "stree.h"
 #include "access.h"
 

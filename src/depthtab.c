@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include "debug.h"
 #include "types.h"
 #include "stree.h"
 #include "spaceman.h"

@@ -17,7 +17,6 @@
 
 #include "construct.h"
 #include "access.h"
-#include "debug.h"
 #include "spaceman.h"
 #include "clock.h"
 #include "externs.h"
@@ -94,10 +93,6 @@ Uint getlargelinkconstruction(Suffixtree *stree);
 #define MAKEBRANCHADDR(V)         (V)
 #define SETBRANCHNODEOFFSET       /* nothing */
 
-#ifdef DEBUG
-#define CHILDREFERSTOLEAF(B)   ISLEAF(*(B))
-#endif
-
 #define ROOT(ST)            ((ST)->branchtab)
 
 // Is the location the root?
@@ -116,18 +111,7 @@ Uint getlargelinkconstruction(Suffixtree *stree);
 #define ACCESSFIRSTCHILD     (UintConst(1) << 3)
 #define ACCESSBRANCHBROTHER  (UintConst(1) << 4)
 
-#ifdef DEBUG
-#define SHOWVAL(S)    fprintf(stderr,"#%s %lu\n",#S,(Ulong) S)
-#define SETVAL(E,VAL) *(E) = VAL;\
-                      if((E) > stree->maxset)\
-                      {\
-                        stree->maxset = E;\
-                      }
-#else
-
 #define SETVAL(E,VAL) *(E) = VAL
-
-#endif
 
 // Retrieves the depth and headposition of the branching vertex PT.
 #define GETBOTH(DP,HP,PT) \
@@ -257,69 +241,8 @@ Uint getlargelinkconstruction(Suffixtree *stree);
 
 #define LEADLEVEL 2
 
-#ifdef DEBUG
-#define SHOWINDEX(NODE)\
-        if((NODE) == UNDEFINEDREFERENCE)\
-        {\
-          DEBUG0(LEADLEVEL,"UNDEFINEDREFERENCE");\
-        } else\
-        {\
-          if(NILPTR(NODE))\
-          {\
-            DEBUG0(LEADLEVEL,"NILPTR");\
-          } else\
-          {\
-            if(ISLEAF(NODE))\
-            {\
-              DEBUG1(LEADLEVEL,"Leaf %lu",(Ulong) GETLEAFINDEX(NODE));\
-            } else\
-            {\
-              if(ISLARGE(stree->branchtab[GETBRANCHINDEX(NODE)]))\
-              {\
-                DEBUG1(LEADLEVEL,"Large %lu",(Ulong) GETBRANCHINDEX(NODE));\
-              } else\
-              {\
-                DEBUG1(LEADLEVEL,"Small %lu",(Ulong) NODE);\
-              }\
-            }\
-          }\
-        }
-#else
 #define SHOWINDEX(NODE) /* Nothing */
-#endif
 
-#ifdef DEBUG
-void showtable(Suffixtree *stree,Bool final);
-void checkstree(Suffixtree *stree);
-void showstate(Suffixtree *stree);
-void showstree(Suffixtree *stree);
-void enumlocations(Suffixtree *stree,void(*processloc)(Suffixtree *stree,Location *));
-void checklocation(Suffixtree *stree,Location *loc);
-#endif
-
-#ifdef DEBUG
-#define CHECKADDR(ST,A)\
-        if((A).toleaf)\
-        {\
-          if(LEAFADDR2NUM(ST,(A).address) > (ST)->textlen)\
-          {\
-            printf("%s,%lu:",__FILE__,(Ulong) __LINE__);\
-            printf("leafaddr = %lu invalid\n",\
-                    (Ulong) LEAFADDR2NUM(ST,(A).address));\
-            exit(EXIT_FAILURE);\
-          }\
-        } else\
-        {\
-          if(BRADDR2NUM(ST,(A).address) >= (ST)->nextfreebranchnum)\
-          {\
-            printf("%s,%lu:",__FILE__,(Ulong) __LINE__);\
-            printf("branchaddr = %lu invalid\n",\
-                    (Ulong) BRADDR2NUM(ST,(A).address));\
-            exit(EXIT_FAILURE);\
-          }\
-        }
-#else
 #define CHECKADDR(ST,A) /* Nothing */
-#endif
 
 #endif

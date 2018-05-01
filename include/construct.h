@@ -4,7 +4,6 @@
 
 #include "bitvector.h"
 #include "spaceman.h"
-#include "debug.h"
 #include "stree.h"
 #include "basedef.h"
 #include "streetyp.h"

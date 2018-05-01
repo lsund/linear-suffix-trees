@@ -7,7 +7,6 @@
 */
 
 #include "bitvector.h"
-#include "debug.h"
 #include "stree.h"
 
 void overallstree(Suffixtree *stree,Bool skiproot,
@@ -78,8 +77,6 @@ void overmaximalstree(Suffixtree *stree,
     }
     if(!ISIBITSET(stree->nonmaximal,headposition))
     {
-      DEBUG2(3,"processnode(%lu,%lu):",(Ulong) depth,
-                                       (Ulong) headposition);
       processnode(stree,btptr,depth,headposition,info);
     }
     btptr = nextptr;

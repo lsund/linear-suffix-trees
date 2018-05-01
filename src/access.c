@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "stree.h"
-#include "debug.h"
 #include "arraydef.h"
 #include "spaceman.h"
 #include "basedef.h"
@@ -40,7 +39,7 @@ static void int2ref(Suffixtree *stree,Reference *ref,Uint i)
   }
 }
 
-void getleafinfostree(Suffixtree *stree,Leafinfo *leafinfo,Lref lptr)
+void getleafinfostree(Suffixtree *stree, Reference *leafinfo, Lref lptr)
 {
   Uint node = LEAFBROTHERVAL(*lptr);
 
@@ -175,58 +174,6 @@ void showpathstree(Suffixtree *stree,Bref bnode,
   }
 }
 
-#ifdef DEBUG
-void showsimplelocstree(Suffixtree *stree,Simpleloc *loc)
-{
-  Uint bnode;
-
-  if(loc->textpos == stree->textlen)
-  {
-    printf("(~,");
-  } else
-  {
-    printf("(%s,",stree->showsymbolstree(stree->text[loc->textpos],stree->alphabet));
-  }
-  if(loc->remain > 0)
-  {
-    printf("(%lu,",(Ulong) loc->remain);
-  }
-  if(loc->nextnode.toleaf)
-  {
-    printf("Leaf %lu",(Ulong) LEAFADDR2NUM(stree,loc->nextnode.address));
-  } else
-  {
-    bnode = BRADDR2NUM(stree,loc->nextnode.address);
-    if(ISLARGE(*(loc->nextnode.address)))
-    {
-      printf("Large %lu",(Ulong) bnode);
-    } else
-    {
-      printf("Small %lu",(Ulong) bnode);
-    }
-  }
-  if(loc->remain > 0)
-  {
-    (void) putchar(')');
-  }
-  (void) putchar(')');
-}
-
-void showsimplelocliststree(Suffixtree *stree,ArraySimpleloc *ll)
-{
-  Uint i;
-
-  for(i=0; i<ll->nextfreeSimpleloc; i++)
-  {
-    showsimplelocstree(stree,ll->spaceSimpleloc+i);
-    if(i < ll->nextfreeSimpleloc-1)
-    {
-      (void) putchar(',');
-    }
-  }
-  (void) putchar('\n');
-}
-#endif
 
 // use the following functions only for the root location.
 
@@ -271,7 +218,6 @@ void succlocationsstree(Suffixtree *stree,Bool nosentinel,Simpleloc *loc,
        remain, *succptr, *largeptr, *nodeptr;
   Simpleloc *llptr;
 
-  DEBUG0(3,"succlocationsstree\n");
   ll->nextfreeSimpleloc = 0;
   CHECKARRAYSPACE(ll,Simpleloc,stree->alphasize+1);
   if(loc->remain > 0)
