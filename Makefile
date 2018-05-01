@@ -22,7 +22,6 @@ OBJ=         obj/construct.o\
              obj/clock.o\
              obj/scanpref.o\
              obj/linkloc.o\
-             obj/iterator.o\
              obj/normaltree.o
 
 TEST_OBJ = obj/test_search.o
