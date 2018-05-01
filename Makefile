@@ -8,15 +8,6 @@
 # Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
 
 
-
-# STREESMALL means that the maximal sequence length is 2 MB
-# STREELARGE means that the maximal sequence length is 134 MB
-# STREEHUGE  means that the maximal sequence length is 500 MB
-
-# SIZEFLAG=-DSTREESMALL
-# SIZEFLAG=-DSTREELARGE
-SIZEFLAG=-DSTREEHUGE
-
 INCLUDE=-I'include'
 
 CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
@@ -51,10 +42,7 @@ OBJ=         obj/construct.o\
              obj/addleafcount.o\
              obj/iterator.o\
              obj/normaltree.o\
-             obj/progresstree.o\
-             obj/streehuge.o
-             # obj/streelarge.o
-             # obj/streesmall.o
+             obj/progresstree.o
 
 TEST_OBJ = obj/test_search.o
 
