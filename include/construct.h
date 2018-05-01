@@ -6,7 +6,6 @@
 #include "spaceman.h"
 #include "stree.h"
 #include "basedef.h"
-#include "streetyp.h"
 
 void initSuffixtree(Suffixtree *stree, wchar_t *text, Uint textlen);
 

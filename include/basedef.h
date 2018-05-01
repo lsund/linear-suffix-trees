@@ -1,6 +1,11 @@
 #ifndef PREPROCDEF_H
 #define PREPROCDEF_H
 
+#include "bitvector.h"
+
+#define MAX_ALLOC           5000000
+
+#define LEAFBIT             SECONDBIT      // mark leaf address
 
 ///////////////////////////////////////////////////////////////////////////////
 // Fields

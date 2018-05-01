@@ -1,7 +1,7 @@
 #ifndef ACCESS_H
 #define ACCESS_H
 
-#include "streetyp.h"
+#include "stree.h"
 
 void getbranchinfostree(Suffixtree *stree,Uint whichinfo,
                         Branchinfo *branchinfo,Bref btptr);

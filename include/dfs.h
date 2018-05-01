@@ -2,7 +2,7 @@
 #ifndef DFS_H
 #define DFS_H
 
-#include "streetyp.h"
+#include "stree.h"
 
 Sint depthfirststree(Suffixtree *stree,Reference *startnode,
         Sint (*processleaf)(Uint,Bref,void *),

@@ -2,7 +2,7 @@
 #define SCAN_H
 
 #include "types.h"
-#include "streetyp.h"
+#include "stree.h"
 
 wchar_t *scanprefixfromnodestree(
             Suffixtree *stree,
