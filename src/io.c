@@ -19,67 +19,22 @@
 
 #include "io.h"
 
-// The table of filehandles
-static Filehandle *filehandle = NULL;
-
-// Number of allocated filehandles
-static Uint allocatedFilehandle = 0;
-
-// Number of open files
-static Uint currentopen = 0;
-
-// The following three tables store important information to
-// generate meaningfull error messages.
-static Uint filedesc(
-        char *file,
-        Uint line,
-        Bool existing,
-        FILE *fp
-    )
-{
-
-    int fd;
-    fd = fileno(fp);
-    if (fd == -1) {
-        fprintf(stderr,"cannot find filedescriptor: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    if (existing) {
-        if (allocatedFilehandle <= (Uint) fd) {
-            fprintf(stderr,"file %s, line %lu: cannot open file: fd=%lu, "
-                    "not enough file handles available\n",
-                    file,
-                    (Ulong) line,
-                    (Ulong) fd);
-            exit(EXIT_FAILURE);
-        } else {
-            if (filehandle[fd].createfile == NULL)
-            {
-                fprintf(stderr,"file %s, line %lu: cannot open file: fd=%lu, "
-                        "file handle not occurpied\n",
-                        file,
-                        (Ulong) line,
-                        (Ulong) fd);
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-    return (Uint) fd;
-}
+Wchar *wtext;
+Uint textlen;
 
 // Open file in readmode, return file descriptor. The length of the file is
 // stored in `textlen`. If `writefile` is true if the file should also be
 // opened for triting.
-static int fileOpen(char *name, Uint *textlen, Bool writefile)
+static int fileOpen(char *name, Uint *textlen, bool writefile)
 {
     int fd;
     struct stat buf;
 
-    if((fd = open(name,(writefile) ? O_RDWR : O_RDONLY)) == -1) {
-        fprintf(stderr, "fileOpen: Cannot open \"%s\"",name);
+    if ((fd = open(name,(writefile) ? O_RDWR : O_RDONLY)) == -1) {
+        fprintf(stderr, "fileOpen: Cannot open \"%s\"", name);
         return -1;
     }
-    if(fstat(fd,&buf) == -1) {
+    if (fstat(fd,&buf) == -1) {
         fprintf(stderr, "file \"%s\": fstat(fd = %d) failed",name,fd);
         return -2;
     }
@@ -87,121 +42,10 @@ static int fileOpen(char *name, Uint *textlen, Bool writefile)
     return fd;
 }
 
-// Allocates `len` bytes starting at offset in the file `fd` into memory.
-caddr_t fileParts(int fd, Uint offset, Uint len, Bool writemap)
+Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Wchar ***wordsp)
 {
-    caddr_t addr;
-
-    addr = (caddr_t) mmap(
-                        (caddr_t) 0,
-                        (size_t) len,
-                        writemap ? (PROT_READ | PROT_WRITE) : PROT_READ,
-                        MAP_PRIVATE,fd,(off_t) offset
-                    );
-    if (addr == MAP_FAILED) {
-        fprintf(stderr, "fileParts(fd = %d, left = %ld, len = %ld, %s) failed",
-                fd,
-                (long) offset,
-                (long) len,
-                writemap ? "writable map" : "readable map");
-        return NULL;
-    }
-    return addr;
-}
-
-
-// Frees the text specified
-void freetextspace(wchar_t *text, Uint textlen) {
-  (void) munmap((caddr_t) text,(size_t) textlen);
-}
-
-
-// Return the pointer to the contents of a file, as a string.
-caddr_t file2String(char *name, Uint *textlen)
-{
-    int fd;
-
-    fd = fileOpen(name, textlen, False);
-    if(fd < 0) {
-        return NULL;
-    }
-    return fileParts(fd, 0, *textlen, False);
-}
-
-int file2Array(char *name, Uint *textlen, int size, char ***wordsp)
-{
-    char **words = *wordsp;
-    int fd = fileOpen(name, textlen, False);
-    if (fd < 0) {
-        return -1;
-    }
-    int max_line_len = 1001;
-
-    /* Allocate lines of text */
-    if (words == NULL) {
-        fprintf(stderr,"Out of memory (1).\n");
-        exit(1);
-    }
-
-    FILE *fp = fopen(name, "r");
-    if (fp == NULL)
-    {
-        fprintf(stderr,"Error opening file.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    int i;
-    for (i = 0; 1; i++)
-    {
-        int j;
-
-        /* Have we gone over our line allocation? */
-        if (i >= size)
-        {
-            int new_size;
-
-            /* Double our allocation and re-allocate */
-            new_size = size * 2;
-            words = (char **) realloc(words,sizeof(char*) * new_size);
-            if (!words)
-            {
-                fprintf(stderr,"Out of memory.\n");
-                exit(3);
-            }
-            size = new_size;
-        }
-
-        /* Allocate space for the next line */
-        words[i] = malloc(max_line_len);
-
-        if (words[i] == NULL)
-        {
-            fprintf(stderr,"Out of memory (3).\n");
-            exit(4);
-        }
-
-        if (!fgets(words[i], max_line_len - 1, fp)) {
-            break;
-        }
-
-        /* Get rid of CR or LF at end of line */
-        for (j=strlen(words[i])-1; j>=0 && (words[i][j]=='\n' || words[i][j]=='\r'); j--) {
-            ;
-        }
-        words[i][j + 1]='\0';
-    }
-
-    *wordsp = words;
-
-    fclose(fp);
-
-    return i;
-}
-
-Uint file_to_strings(char *name, Uint *textlen, Uint nlines, wchar_t ***wordsp)
-{
-    wchar_t **words = *wordsp;
-    int fd = fileOpen(name, textlen, False);
+    Wchar **words = *wordsp;
+    int fd = fileOpen(name, textlen, false);
 
     if (fd < 0) {
         return -1;
@@ -220,18 +64,18 @@ Uint file_to_strings(char *name, Uint *textlen, Uint nlines, wchar_t ***wordsp)
         Uint j;
 
         /* Allocate space for the next line */
-        words[i] = (wchar_t *) malloc(max_line_len * sizeof(wchar_t));
+        words[i] = (Wchar *) malloc(max_line_len * sizeof(Wchar));
 
         if (words[i] == NULL) {
             fprintf(stderr,"Out of memory (3).\n");
             exit(4);
         }
 
-        char c;
+        wint_t c;
         j = 0;
         do  {
-            c = fgetc(fp);
-            if (c == EOF) {
+            c = fgetwc(fp);
+            if (c == WEOF) {
 
                 *wordsp = words;
                 fclose(fp);
@@ -250,8 +94,18 @@ Uint file_to_strings(char *name, Uint *textlen, Uint nlines, wchar_t ***wordsp)
 }
 
 
+// Opens the path for appending, erasing any prior content of the same file
 FILE *open_append(const char *path)
 {
     fclose(fopen(path, WRITEMODE));
     return fopen(path, APPENDMODE);
 }
+
+
+// Frees the text specified
+void freetextspace()
+{
+  (void) munmap((caddr_t) wtext, (size_t) textlen);
+}
+
+

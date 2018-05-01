@@ -12,6 +12,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <wchar.h>
+#include <stdbool.h>
 #include "spaceman.h"
 #include "types.h"
 #include "error.h"
@@ -54,7 +56,7 @@ typedef struct filehandle {
 
 caddr_t fileParts(int fd,Uint offset,Uint len,Bool writemap);
 
-void freetextspace(wchar_t *text, Uint textlen);
+void freetextspace();
 
 caddr_t genfile2String(char *name, Uint *textlen,
                                   Bool writefile, Bool writemap);
@@ -69,5 +71,6 @@ FILE *createfilehandle(char *file, Uint line, char *path, char *mode);
 FILE *open_append(const char *path);
 
 Uint file_to_strings(char *name, Uint *textlen, Uint nlines, wchar_t ***wordsp);
+
 #endif
 
