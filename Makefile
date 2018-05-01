@@ -26,7 +26,6 @@ OBJ=         obj/construct.o\
              obj/depthtab.o\
              obj/dfs.o\
              obj/oversucc.o\
-             obj/addleafcount.o\
              obj/iterator.o\
              obj/normaltree.o
 
