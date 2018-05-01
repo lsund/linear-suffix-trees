@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     Suffixtree stree;
     char *filename;
 
-    if (argc != 2) {
-        fprintf(stderr, "Need exactly one argument");
+    if (argc != 3) {
+        fprintf(stderr, "Need exactly two arguments");
         return EXIT_FAILURE;
     }
 
@@ -58,13 +58,17 @@ int main(int argc, char *argv[])
         (float) 100 * textlen / (float) getmaxtextlenstree()
     );
 
-    if(constructprogressstree(&stree,text,textlen,NULL,NULL,NULL) != 0) {
-        fprintf(stderr,"%s %s: %s\n",argv[0],filename, messagespace());
-        return EXIT_FAILURE;
+    if (strcmp(argv[2], "stats") == 0) {
+        if(constructprogressstree(&stree,text,textlen,NULL,NULL,NULL) != 0) {
+            fprintf(stderr,"%s %s: %s\n",argv[0],filename, messagespace());
+            return EXIT_FAILURE;
+        }
+    } else {
+        if(constructstree(&stree,text,textlen) != 0) {
+            fprintf(stderr,"%s", messagespace());
+            return EXIT_FAILURE;
+        }
     }
-    /*
-       addleafcountsstree(&stree);
-       */
     freestree(&stree);
 
     fprintf(stderr,"# TIME %s %s %.2f\n",argv[0],filename,getruntime());

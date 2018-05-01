@@ -49,11 +49,11 @@ TEST_OBJ = obj/test_search.o
 dirs:
 	mkdir -p obj bin
 
-stats: clean dirs mccreight
-	./bin/mccreight data/data.xml
+stats: clean dirs mcc
+	./bin/mcc data/data.xml stats
 
-plain: clean dirs loc
-	./bin/loc data/data.xml
+plain: clean dirs mcc
+	./bin/mcc data/data.xml plain
 
 runtest: clean test
 	./bin/test
@@ -61,11 +61,8 @@ runtest: clean test
 test: dirs ${OBJ} ${TEST_OBJ}
 	${CC} ${CFLAGS} ${OBJ} ${TEST_OBJ} test/test.c -o bin/test
 
-mccreight: ${OBJ}
-	${CC} ${CFLAGS} ${OBJ} src/stree.c -o bin/$@
-
-loc: ${OBJ}
-	${CC} ${CFLAGS} ${OBJ} src/loc.c -o bin/$@
+mcc: ${OBJ}
+	${CC} ${CFLAGS} ${OBJ} src/main.c -o bin/$@
 
 obj/%.o:src/%.c
 	$(CC) $(CFLAGS) -c src/$*.c -o $@
