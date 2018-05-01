@@ -23,7 +23,7 @@ static Uint lcp(wchar_t *start1,wchar_t *end1,wchar_t *start2,wchar_t *end2)
     return (Uint) (ptr1-start1);
 }
 
-wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
+wchar_t *scan(Suffixtree *stree, Location *loc, Uint * btptr, wchar_t *left,
         wchar_t *right)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth,
@@ -40,8 +40,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
         GETBOTH(nodedepth, headposition, nodeptr);
     }
 
-    loc->nextnode.toleaf = False;
-    loc->nextnode.address = nodeptr;
+    loc->nextnode = nodeptr;
     loc->locstring.start = headposition;
     loc->locstring.length = nodedepth;
     loc->remain = 0;
@@ -75,8 +74,7 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                 loc->previousnode = stree->inner_vertices.first;
                 loc->edgelen = stree->textlen - leafindex + 1;
                 loc->remain = loc->edgelen - prefixlen;
-                loc->nextnode.toleaf = True;
-                loc->nextnode.address = stree->leaf_vertices.first + leafindex;
+                loc->nextnode = stree->leaf_vertices.first + leafindex;
                 loc->locstring.start = leafindex;
                 loc->locstring.length = prefixlen;
                 if(prefixlen == (Uint) (right - lptr + 1))
@@ -123,11 +121,10 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
                                     leftborder+1,stree->sentinel-1);
                         }
                         loc->firstptr = leftborder;
-                        loc->previousnode = loc->nextnode.address;
+                        loc->previousnode = loc->nextnode;
                         loc->edgelen = stree->textlen - (nodedepth + leafindex) + 1;
                         loc->remain = loc->edgelen - prefixlen;
-                        loc->nextnode.toleaf = True;
-                        loc->nextnode.address = stree->leaf_vertices.first + leafindex;
+                        loc->nextnode = stree->leaf_vertices.first + leafindex;
                         loc->locstring.start = leafindex;
                         loc->locstring.length = nodedepth + prefixlen;
                         if(prefixlen == (Uint) (right - lptr + 1)) {
@@ -180,20 +177,19 @@ wchar_t *scan(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left,
             prefixlen = 1 + lcp(lptr+1,right,
                     leftborder+1,leftborder+edgelen-1);
         }
-        loc->nextnode.toleaf = False;
         loc->locstring.start = headposition;
         loc->locstring.length = nodedepth + prefixlen;
         if(prefixlen == edgelen)
         {
             lptr += edgelen;
             nodedepth += edgelen;
-            loc->nextnode.address = nodeptr;
+            loc->nextnode = nodeptr;
             loc->remain = 0;
         } else
         {
             loc->firstptr = leftborder;
-            loc->previousnode = loc->nextnode.address;
-            loc->nextnode.address = nodeptr;
+            loc->previousnode = loc->nextnode;
+            loc->nextnode = nodeptr;
             loc->edgelen = edgelen;
             loc->remain = loc->edgelen - prefixlen;
             if(prefixlen == (Uint) (right - lptr + 1))

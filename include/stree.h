@@ -1,10 +1,13 @@
 /*
-  Copyright (c) 2003 by Stefan Kurtz and The Institute for
-  Genomic Research.  This is OSI Certified Open Source Software.
-  Please see the file LICENSE for licensing information and
-  the file ACKNOWLEDGEMENTS for names of contributors to the
-  code base.
-*/
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
+
 
 #ifndef STREE_H
 #define STREE_H
@@ -27,29 +30,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Types
 
-// A reference consists of an `address` pointing to a leaf or a branching node.
-// The boolean toleaf is true iff `address` points to a leaf.
-typedef struct
-{
-  Bool toleaf;
-  Uint *address;
-} Reference;
-
-// Reference to a branching node
-typedef Uint * Bref;
-
-// Reference to a leaf
+// Reference to leaf node
 typedef Uint * Lref;
 
 // For each branching node we store six values
 typedef struct
 {
-  Uint headposition;        // the head position of the branching node
-  Uint depth;               // the depth of the branching node
-  Bref suffixlink;          // the suffix link is always to a branching node
-  Reference firstchild;     // the reference to the first child
-  Reference branchbrother;  // the reference to the right brother;
-                            // if this doesn't exist then it's \texttt{NULL}
+    Uint headposition;        // the head position of the branching node
+    Uint depth;               // the depth of the branching node
+    Uint *suffixlink;          // the suffix link is always to a branching node
+    Uint *firstchild;     // the reference to the first child
+    Uint * branchbrother;  // the reference to the right brother;
+    // if this doesn't exist then it's \texttt{NULL}
 } Branchinfo;
 
 
@@ -79,64 +71,62 @@ typedef struct suffixtree
     Table inner_vertices;
     Table leaf_vertices;
 
-  Uint textlen;               // the length of the input string
+    Uint textlen;               // the length of the input string
 
-  Uint *rootchildren;         // references to successors of root
+    Uint *rootchildren;         // references to successors of root
 
-  wchar_t *text;               // points to the input string
-  wchar_t *sentinel;           // points to the position of the \(\$\)-symbol
+    wchar_t *text;               // points to the input string
+    wchar_t *sentinel;           // points to the position of the \(\$\)-symbol
 
-  Uint headnodedepth;         // the depth of the headnode
-  Uint insertnode;            // the node the split edge leads to
-  Uint insertprev;            // the edge preceeding the split edge
-  Uint smallnotcompleted;     // the number of small nodes in the current chain
+    Uint headnodedepth;         // the depth of the headnode
+    Uint insertnode;            // the node the split edge leads to
+    Uint insertprev;            // the edge preceeding the split edge
+    Uint smallnotcompleted;     // the number of small nodes in the current chain
 
-  Uint onsuccpath;            // refers to node on success path of headnode
-  Uint currentdepth;          // depth of the new branch node
-  Uint branchnodeoffset;      // number of leafs in tree
-  Uint alphasize;             // the number of different characters in t
-  Uint maxbranchdepth;        // maximal depth of branching node
-  Uint largenode;             // number of large nodes
-  Uint smallnode;             // number of small nodes
-  Uint *setlink;              // address of a nil-reference
-  Uint *chainstart;           // address of the node current chains starts at
+    Uint onsuccpath;            // refers to node on success path of headnode
+    Uint currentdepth;          // depth of the new branch node
+    Uint branchnodeoffset;      // number of leafs in tree
+    Uint alphasize;             // the number of different characters in t
+    Uint maxbranchdepth;        // maximal depth of branching node
+    Uint largenode;             // number of large nodes
+    Uint smallnode;             // number of small nodes
+    Uint *setlink;              // address of a nil-reference
+    Uint *chainstart;           // address of the node current chains starts at
 
-  Uint *headnode;             // left component of head location
+    Uint *headnode;             // left component of head location
 
-  Uint *alloc_leftbound;    // refers to the last address, such that at
-                              // least \texttt{LARGEINTS} integers are
-                              // available. So a large node can be stored in
-                              // the available amount of space.
-  Uint *nonmaximal;           // bit table: if node with headposition \(i\) is
-                              // not maximal, then \(nonmaximal[i]\) is set.
-  Uint *leafcounts;           // holds counts of the number of leafs in subtree
-                              // indexed by headposition
-  Bool setatnewleaf;          // nil-reference is stored in new leaf
-  wchar_t *headstart;          // these references represent the right component
-  wchar_t *headend;            // of the head location \((\overline{u},v)\).
-                              // \emph{headstart} refers to the first character
-                              // of \(v\), and \emph{headend} to the last
-                              // character. In case, \(v=\varepsilon\),
-                              // \(\emph{headend}=\emph{NULL}\).
-  wchar_t *tailptr;            // points to the tail
+    Uint *alloc_leftbound;    // refers to the last address, such that at
+    // least \texttt{LARGEINTS} integers are
+    // available. So a large node can be stored in
+    // the available amount of space.
+    Uint *nonmaximal;           // bit table: if node with headposition \(i\) is
+    // not maximal, then \(nonmaximal[i]\) is set.
+    Uint *leafcounts;           // holds counts of the number of leafs in subtree
+    // indexed by headposition
+    Bool setatnewleaf;          // nil-reference is stored in new leaf
+    wchar_t *headstart;          // these references represent the right component
+    wchar_t *headend;            // of the head location \((\overline{u},v)\).
+    // \emph{headstart} refers to the first character
+    // of \(v\), and \emph{headend} to the last
+    // character. In case, \(v=\varepsilon\),
+    // \(\emph{headend}=\emph{NULL}\).
+    wchar_t *tailptr;            // points to the tail
 
 #if (wchar_tBYTES == 2) || (wchar_tBYTES == 4)
-  Sint lastcharindex;
+    Sint lastcharindex;
 #endif
 
 } Suffixtree;
 
-DECLAREARRAYSTRUCT(Bref);
-
 // A location is implemented by the type `Location`
 typedef struct
 {
-  String locstring;     // string represented by location
-  Bref previousnode;    // reference to previous node (which is branching)
-  wchar_t *firstptr;     // pointer to first character of edge label
-  Uint edgelen;         // length of edge
-  Uint remain;          // number of remaining characters on edge
-  Reference nextnode;   // reference to node the edge points to
+    String locstring;     // string represented by location
+    Uint *previousnode;    // reference to previous node (which is branching)
+    wchar_t *firstptr;     // pointer to first character of edge label
+    Uint edgelen;         // length of edge
+    Uint remain;          // number of remaining characters on edge
+    Uint *nextnode;   // reference to node the edge points to
 } Location;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to
@@ -158,9 +148,9 @@ typedef struct
 
 // A SimpleLoc is a subset of a Location
 typedef struct {
-  Uint remain;
-  Uint textpos;  // these last two items are redundant and can be computed
-  Reference nextnode;
+    Uint remain;
+    Uint textpos;  // these last two items are redundant and can be computed
+    Uint *nextnode;
 } Simpleloc;     // \Typedef{Simpleloc}
 
 DECLAREARRAYSTRUCT(Simpleloc);
@@ -168,16 +158,16 @@ DECLAREARRAYSTRUCT(Simpleloc);
 // A path in the suffix tree is stored with the `Pathinfo` struct
 typedef struct
 {
-  Uint depth, headposition;
-  Bref ref;
+    Uint depth, headposition;
+    Uint *ref;
 } Pathinfo;
 
 DECLAREARRAYSTRUCT(Pathinfo);
 
 typedef struct
 {
-  Bool secondtime;
-  ArrayBref stack;
+    Bool secondtime;
+    ArrayUint stack;
 } DFSstate;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -230,12 +220,12 @@ void freestree(Suffixtree *stree);
 #define MAXDISTANCE         MAXINDEX       // maximal distance value
 
 /*
-  We use the least significant bit to discriminate references to leafs
-  and branching nodes. Since base addresses are even, the unset least
-  significant bit of a reference identifies a base address. For a leaf
-  reference we shift the leaf number one to the right and
-  set the least significant bit.
-*/
+   We use the least significant bit to discriminate references to leafs
+   and branching nodes. Since base addresses are even, the unset least
+   significant bit of a reference identifies a base address. For a leaf
+   reference we shift the leaf number one to the right and
+   set the least significant bit.
+   */
 
 #define ISLEAF(V)                 ((V) & LEAFBIT)
 #define ISLARGE(V)                (!((V) & SMALLBIT))
@@ -260,13 +250,13 @@ void freestree(Suffixtree *stree);
 #define SETBROTHER(B,VAL)         SETVAL(B+1,VAL)
 
 #define SETDISTANCE(B,VAL)        SETVAL(B+2,VAL);\
-                                  SETVAL(B,(*(B)) | SMALLBIT)
+    SETVAL(B,(*(B)) | SMALLBIT)
 #define SETDEPTHHEADPOS(DP,HP)    SETVAL(stree->inner_vertices.next_free+2,DP);\
-                                  SETVAL(stree->inner_vertices.next_free+3,HP)
+    SETVAL(stree->inner_vertices.next_free+3,HP)
 
 #define SETNEWCHILD(B,VAL)        SETVAL(B,VAL)
 #define SETNEWCHILDBROTHER(CH,BR) SETVAL(stree->inner_vertices.next_free,CH);\
-                                  SETVAL(stree->inner_vertices.next_free+1,BR)
+    SETVAL(stree->inner_vertices.next_free+1,BR)
 
 #define SETSUFFIXLINK(SL)         SETVAL(stree->inner_vertices.next_free+4,SL)
 
@@ -281,7 +271,7 @@ void freestree(Suffixtree *stree);
 
 // Is the location the root?
 #define ROOTLOCATION(LOC)\
-        (((LOC)->locstring.length == 0) ? True : False)
+    (((LOC)->locstring.length == 0) ? True : False)
 
 // Index of a branch and leaf relative to the first address
 #define INDEX_INNER(ST,A)      ((Uint) ((A) - ROOT(ST)))
@@ -299,129 +289,129 @@ void freestree(Suffixtree *stree);
 
 // Retrieves the depth and headposition of the branching vertex PT.
 #define GETBOTH(DP,HP,PT) \
-        if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-        {\
-          distance = 1 + \
-                     DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-          DP = stree->currentdepth + distance;\
-          HP = stree->leaf_vertices.next_free_num - distance;\
-        } else\
-        {\
-          if(ISLARGE(*(PT)))\
-          {\
-            DP = GETDEPTH(PT);\
-            HP = GETHEADPOS(PT);\
-          } else\
-          {\
-            distance = GETDISTANCE(PT);\
-            GETCHAINEND(largeptr,PT,distance);\
-            DP = GETDEPTH(largeptr) + distance;\
-            HP = GETHEADPOS(largeptr) - distance;\
-          }\
-        }
+    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
+{\
+    distance = 1 + \
+    DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
+    DP = stree->currentdepth + distance;\
+    HP = stree->leaf_vertices.next_free_num - distance;\
+} else\
+{\
+    if(ISLARGE(*(PT)))\
+    {\
+        DP = GETDEPTH(PT);\
+        HP = GETHEADPOS(PT);\
+    } else\
+    {\
+        distance = GETDISTANCE(PT);\
+        GETCHAINEND(largeptr,PT,distance);\
+        DP = GETDEPTH(largeptr) + distance;\
+        HP = GETHEADPOS(largeptr) - distance;\
+    }\
+}
 
 #define GETONLYHEADPOS(HP,PT) \
-        if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-        {\
-          distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-          HP = stree->leaf_vertices.next_free_num - distance;\
-        } else\
-        {\
-          if(ISLARGE(*(PT)))\
-          {\
-            HP = GETHEADPOS(PT);\
-          } else\
-          {\
-            distance = GETDISTANCE(PT);\
-            GETCHAINEND(largeptr,PT,distance);\
-            HP = GETHEADPOS(largeptr) - distance;\
-          }\
-        }
+    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
+{\
+    distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
+    HP = stree->leaf_vertices.next_free_num - distance;\
+} else\
+{\
+    if(ISLARGE(*(PT)))\
+    {\
+        HP = GETHEADPOS(PT);\
+    } else\
+    {\
+        distance = GETDISTANCE(PT);\
+        GETCHAINEND(largeptr,PT,distance);\
+        HP = GETHEADPOS(largeptr) - distance;\
+    }\
+}
 
 #define GETONLYDEPTH(DP,PT) \
-        if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-        {\
-          distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-          DP = stree->currentdepth  + distance;\
-        } else\
-        {\
-          if(ISLARGE(*(PT)))\
-          {\
-            DP = GETDEPTH(PT);\
-          } else\
-          {\
-            distance = GETDISTANCE(PT);\
-            GETCHAINEND(largeptr,PT,distance);\
-            DP = GETDEPTH(largeptr) + distance;\
-          }\
-        }
+    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
+{\
+    distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
+    DP = stree->currentdepth  + distance;\
+} else\
+{\
+    if(ISLARGE(*(PT)))\
+    {\
+        DP = GETDEPTH(PT);\
+    } else\
+    {\
+        distance = GETDISTANCE(PT);\
+        GETCHAINEND(largeptr,PT,distance);\
+        DP = GETDEPTH(largeptr) + distance;\
+    }\
+}
 
 #define GETDEPTHAFTERHEADPOS(DP,PT) \
-        if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-        {\
-          DP = stree->currentdepth + distance;\
-        } else\
-        {\
-          if(ISLARGE(*(PT)))\
-          {\
-            DP = GETDEPTH(PT);\
-          } else\
-          {\
-            DP = GETDEPTH(largeptr) + distance;\
-          }\
-        }
+    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
+{\
+    DP = stree->currentdepth + distance;\
+} else\
+{\
+    if(ISLARGE(*(PT)))\
+    {\
+        DP = GETDEPTH(PT);\
+    } else\
+    {\
+        DP = GETDEPTH(largeptr) + distance;\
+    }\
+}
 
 #define GETHEADPOSAFTERDEPTH(HP,PT) \
-        if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-        {\
-          HP = stree->leaf_vertices.next_free_num - distance;\
-        } else\
-        {\
-          if(ISLARGE(*(PT)))\
-          {\
-            HP = GETHEADPOS(PT);\
-          } else\
-          {\
-            HP = GETHEADPOS(largeptr) - distance;\
-          }\
-        }
+    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
+{\
+    HP = stree->leaf_vertices.next_free_num - distance;\
+} else\
+{\
+    if(ISLARGE(*(PT)))\
+    {\
+        HP = GETHEADPOS(PT);\
+    } else\
+    {\
+        HP = GETHEADPOS(largeptr) - distance;\
+    }\
+}
 
 #define NEXTNODE(PT)\
-        if(ISLARGE(*(PT)))\
-        {\
-          PT += LARGEINTS;\
-        } else\
-        {\
-          PT += SMALLINTS;\
-        }
+    if(ISLARGE(*(PT)))\
+{\
+    PT += LARGEINTS;\
+} else\
+{\
+    PT += SMALLINTS;\
+}
 
 #define FOLLOWSUFFIXLINK\
-        if(ISLARGE(*(stree->headnode)))\
-        {\
-          stree->headnode = stree->inner_vertices.first + GETSUFFIXLINK(stree->headnode);\
-        } else\
-        {\
-          stree->headnode += SMALLINTS;\
-        }\
-        stree->headnodedepth--
+    if(ISLARGE(*(stree->headnode)))\
+{\
+    stree->headnode = stree->inner_vertices.first + GETSUFFIXLINK(stree->headnode);\
+} else\
+{\
+    stree->headnode += SMALLINTS;\
+}\
+stree->headnodedepth--
 
 #define RECALLSUCC(S)             /* Nothing */
 
 // Set the address for a nil-reference. In the case the reference is a new
 // leaf, this is marked
 #define RECALLNEWLEAFADDRESS(A)   stree->setlink = A;\
-                                  stree->setatnewleaf = True
+                                                   stree->setatnewleaf = True
 #define RECALLLEAFADDRESS(A)      stree->setlink = A;\
-                                  stree->setatnewleaf = False
+                                                   stree->setatnewleaf = False
 #define RECALLBRANCHADDRESS(A)    stree->setlink = (A) + 1;\
-                                  stree->setatnewleaf = False
+                                                   stree->setatnewleaf = False
 
 #define SETNILBIT                 *(stree->setlink) = NILBIT
 
 #define SETMAXBRANCHDEPTH(D)      if((D) > stree->maxbranchdepth)\
-                                  {\
-                                    stree->maxbranchdepth = D;\
-                                  }
+{\
+    stree->maxbranchdepth = D;\
+}
 
 #define LEADLEVEL 2
 

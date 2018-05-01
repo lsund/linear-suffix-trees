@@ -7,7 +7,7 @@
 wchar_t *scan(
             Suffixtree *stree,
             Location *loc,              // The location of the prefix (out)
-            Bref btptr,                 // Branch reference
+            Uint *btptr,                 // Branch reference
             wchar_t *left,               // The start
             wchar_t *right,              // The end
             Uint rescanlength
