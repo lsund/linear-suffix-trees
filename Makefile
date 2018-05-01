@@ -23,8 +23,6 @@ OBJ=         obj/construct.o\
              obj/seterror.o\
              obj/scanpref.o\
              obj/linkloc.o\
-             obj/depthtab.o\
-             obj/dfs.o\
              obj/oversucc.o\
              obj/iterator.o\
              obj/normaltree.o
