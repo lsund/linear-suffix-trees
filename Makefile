@@ -20,7 +20,6 @@ OBJ=         obj/construct.o\
              obj/space.o\
              obj/io.o\
              obj/clock.o\
-             obj/seterror.o\
              obj/scanpref.o\
              obj/linkloc.o\
              obj/iterator.o\

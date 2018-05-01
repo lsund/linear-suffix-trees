@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Creating a suffix tree for text of length %lu\n", textlen);
 
     if(constructstree(&stree,text,textlen) != 0) {
-        fprintf(stderr,"%s", messagespace());
+        fprintf(stderr,"Could not create suffix tree");
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
