@@ -14,16 +14,6 @@ CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
 
 #-DSTARTFACTOR=0.5
 
-PROTOFILES=  access.c\
-             scanpref.c\
-             linkloc.c\
-             depthtab.c\
-             dfs.c \
-             overmax.c\
-             oversucc.c\
-             addleafcount.c\
-             iterator.c
-
 OBJ=         obj/construct.o\
              obj/naive_search.o\
              obj/access.o\
@@ -35,23 +25,18 @@ OBJ=         obj/construct.o\
              obj/linkloc.o\
              obj/depthtab.o\
              obj/dfs.o\
-             obj/overmax.o\
              obj/oversucc.o\
              obj/addleafcount.o\
              obj/iterator.o\
-             obj/normaltree.o\
-             obj/progresstree.o
+             obj/normaltree.o
 
 TEST_OBJ = obj/test_search.o
 
 dirs:
 	mkdir -p obj bin
 
-stats: clean dirs mcc
-	./bin/mcc data/data.xml stats
-
-plain: clean dirs mcc
-	./bin/mcc data/data.xml plain
+run: clean dirs mcc
+	./bin/mcc data/data.xml
 
 runtest: clean test
 	./bin/test

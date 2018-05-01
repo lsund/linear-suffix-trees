@@ -10,9 +10,7 @@
 
 #define FUNCLEVEL 4
 
-#define VALIDINIT     0
-
-//}
+#define VALIDINIT 0
 
 
 // For a string of length \(n\) we initially allocate space for
