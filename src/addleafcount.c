@@ -11,9 +11,9 @@
 #include "spaceman.h"
 #include "arraydef.h"
 #include "streetyp.h"
-#include "streemac.h"
 #include "dfs.h"
 #include "access.h"
+#include "stree.h"
 
 typedef struct
 {

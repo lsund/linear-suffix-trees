@@ -31,4 +31,6 @@ void insertbranchnode(Suffixtree *stree);
 // the end of the algorithm in one sweep.
 void linkrootchildren(Suffixtree *stree);
 
+void freestree(Suffixtree *stree);
+
 #endif

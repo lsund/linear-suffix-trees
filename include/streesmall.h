@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <limits.h>
 
-#include "streemac.h"
 #include "debug.h"
 #include "streetyp.h"
 

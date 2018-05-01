@@ -6,4 +6,6 @@
 void getbranchinfostree(Suffixtree *stree,Uint whichinfo,
                         Branchinfo *branchinfo,Bref btptr);
 
+Uint getmaxtextlenstree(void);
+
 #endif

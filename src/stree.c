@@ -9,15 +9,7 @@
  */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <wchar.h>
-#include "debug.h"
-#include "spaceman.h"
-#include "clock.h"
-#include "streelarge.h"
-#include "externs.h"
+#include "stree.h"
 
 wchar_t *text;
 

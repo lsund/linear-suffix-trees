@@ -6,10 +6,39 @@
   code base.
 */
 
-#ifndef STREEACC_H
-#define STREEACC_H
+#ifndef STREE_H
+#define STREE_H
 
+#include "construct.h"
 #include "streelarge.h"
+#include "access.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <wchar.h>
+#include "debug.h"
+#include "spaceman.h"
+#include "clock.h"
+#include "streelarge.h"
+#include "externs.h"
+
+#define ROOT(ST)            ((ST)->branchtab)
+
+// Is the location the root?
+#define ROOTLOCATION(LOC)\
+        (((LOC)->locstring.length == 0) ? True : False)
+
+// Index of a branch and leaf relative to the first address
+#define BRADDR2NUM(ST,A)      ((Uint) ((A) - ROOT(ST)))
+#define LEAFADDR2NUM(ST,A)    ((Uint) ((A) - (ST)->leaftab))
+
+// For each branching node we store five integers. These can be accessed by
+// some or-combination.
+#define ACCESSDEPTH          UintConst(1)
+#define ACCESSHEADPOS        (UintConst(1) << 1)
+#define ACCESSSUFFIXLINK     (UintConst(1) << 2)
+#define ACCESSFIRSTCHILD     (UintConst(1) << 3)
+#define ACCESSBRANCHBROTHER  (UintConst(1) << 4)
 
 #ifdef DEBUG
 #define SHOWVAL(S)    fprintf(stderr,"#%s %lu\n",#S,(Ulong) S)
@@ -206,7 +235,34 @@ void enumlocations(Suffixtree *stree,void(*processloc)(Suffixtree *stree,Locatio
 void checklocation(Suffixtree *stree,Location *loc);
 #endif
 
+#ifdef DEBUG
+#define CHECKADDR(ST,A)\
+        if((A).toleaf)\
+        {\
+          if(LEAFADDR2NUM(ST,(A).address) > (ST)->textlen)\
+          {\
+            printf("%s,%lu:",__FILE__,(Ulong) __LINE__);\
+            printf("leafaddr = %lu invalid\n",\
+                    (Ulong) LEAFADDR2NUM(ST,(A).address));\
+            exit(EXIT_FAILURE);\
+          }\
+        } else\
+        {\
+          if(BRADDR2NUM(ST,(A).address) >= (ST)->nextfreebranchnum)\
+          {\
+            printf("%s,%lu:",__FILE__,(Ulong) __LINE__);\
+            printf("branchaddr = %lu invalid\n",\
+                    (Ulong) BRADDR2NUM(ST,(A).address));\
+            exit(EXIT_FAILURE);\
+          }\
+        }
+#else
+#define CHECKADDR(ST,A) /* Nothing */
+#endif
+
 Sint constructstree(Suffixtree *stree,SYMBOL *text,Uint textlen);
+
+Sint constructprogressstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
 
 #endif
 

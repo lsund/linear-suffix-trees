@@ -14,9 +14,9 @@
 #include <limits.h>
 
 #include "types.h"
-#include "streemac.h"
 #include "debug.h"
 #include "streetyp.h"
+#include "stree.h"
 
 /*
   This header file defines the constants and macros used for the improved
