@@ -4,7 +4,7 @@
 #include "types.h"
 #include "stree.h"
 
-wchar_t *scanprefixfromnodestree(
+wchar_t *scan(
             Suffixtree *stree,
             Location *loc,              // The location of the prefix (out)
             Bref btptr,                 // Branch reference

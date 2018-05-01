@@ -6,8 +6,8 @@
   code base.
 */
 
-#ifndef SPACEDEF_H
-#define SPACEDEF_H
+#ifndef SPACEMAN_H
+#define SPACEMAN_H
 #include "types.h"
 
 void *allocandusespaceviaptr(

@@ -4,8 +4,6 @@
 #include <string.h>
 
 #include "types.h"
-#include "init.h"
-#include "eval.h"
 
 extern wchar_t *sentinel, *text, characters[UCHAR_MAX + 1];
 

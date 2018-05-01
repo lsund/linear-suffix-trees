@@ -1,5 +1,5 @@
-#ifndef PREPROCDEF_H
-#define PREPROCDEF_H
+#ifndef BASEDEF_H
+#define BASEDEF_H
 
 #include "bitvector.h"
 

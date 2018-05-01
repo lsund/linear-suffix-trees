@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <wchar.h>
 #include <limits.h>
+#include <stdbool.h>
 
 #include "basedef.h"
 #include "spaceman.h"
@@ -21,6 +22,7 @@
 #include "externs.h"
 #include "types.h"
 #include "arraydef.h"
+#include "bitvector.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Types
@@ -178,6 +180,29 @@ void setdepthheadposition(Suffixtree *stree,Uint depth, Uint headposition);
 void setsuffixlink(Suffixtree *stree,Uint slink);
 
 Uint getlargelinkconstruction(Suffixtree *stree);
+
+void init(Suffixtree *stree, wchar_t *text, Uint textlen);
+
+// Slow-scan
+void scanprefix(Suffixtree *stree);
+
+// skip-count
+void rescan(Suffixtree *stree);
+
+// Insert a large node
+void completelarge(Suffixtree *stree);
+
+// Insert a leaf edge from the current base vertex
+void insertleaf(Suffixtree *stree);
+
+// Insert inner veretx and split appropriate edges
+void insertbranchnode(Suffixtree *stree);
+
+// Construct the successor chain for the children of the root. This is done of
+// the end of the algorithm in one sweep.
+void linkrootchildren(Suffixtree *stree);
+
+void freestree(Suffixtree *stree);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Macros
