@@ -16,10 +16,9 @@
 #include "externs.h"
 #include "debug.h"
 #include "basedef.h"
-/* #include "streesmall.h" */
-#include "streelarge.h"
 #include "stree.h"
 #include "scan.h"
+#include "stree.h"
 
 #define ANSI_COLOR_RED      "\x1b[31m"
 #define ANSI_COLOR_RESET    "\x1b[0m"

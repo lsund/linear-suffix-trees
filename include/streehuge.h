@@ -14,17 +14,16 @@
 
 #ifndef STREEHUGE_H
 #define STREEHUGE_H
+
+#include "types.h"
+#include "debug.h"
+#include "streetyp.h"
+#include "stree.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
-/*
-  This header file defines the constants and macros for
-  a linked list implementation technique for suffix trees as described
-  in \cite{KUR:1999}. The implementation technique requires
-  one integer for each leaf, three integers for each small node and
-  five integers for each large node. For more details, see \cite{KUR:1999}.
-*/
+#define MAX_ALLOC           5000000
 
 #define SMALLINTS           3                  // # of integers for small node
 #define LARGEINTS           5                  // # of integers for large node
@@ -34,7 +33,7 @@
 #define LEAFBIT             SECONDBIT      // mark leaf address
 #define SMALLBIT            FIRSTBIT       // mark small node
 #define NILBIT              FIRSTBIT       // mark nil reference in brother
-#define MAXINDEX            (NILBIT-1)     // all except for first bit
+#define MAXINDEX            (NILBIT - 1)     // all except for first bit
 #define MAXDISTANCE         MAXINDEX       // maximal distance value
 
 /*
@@ -89,5 +88,10 @@
 #define CHILDREFERSTOLEAF(B)   ISLEAF(*(B))
 #endif
 
+void setdepthheadposition(Suffixtree *stree,Uint depth, Uint headposition);
+
+void setsuffixlink(Suffixtree *stree,Uint slink);
+
+Uint getlargelinkconstruction(Suffixtree *stree);
 
 #endif

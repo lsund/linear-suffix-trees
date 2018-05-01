@@ -7,8 +7,7 @@
 #include "debug.h"
 #include "stree.h"
 #include "basedef.h"
-/* #include "streesmall.h" */
-#include "streelarge.h"
+#include "streetyp.h"
 
 void initSuffixtree(Suffixtree *stree, SYMBOL *text, Uint textlen);
 

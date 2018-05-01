@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     filename = argv[1];
 
     FILE *in = fopen(filename, "r");
-    text = malloc(sizeof(wchar_t) * MAXTEXTLEN);
+    text = malloc(sizeof(wchar_t) * MAX_ALLOC);
 
     if(text == NULL) {
         fprintf(stderr,"%s: cannot open file \"%s\" ",argv[0],filename);

@@ -10,7 +10,6 @@
 #include "spaceman.h"
 #include "debug.h"
 #include "stree.h"
-#include "streelarge.h"
 
 #define SETCURRENT(V)\
         if(ISLEAF(V))\

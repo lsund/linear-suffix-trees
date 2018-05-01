@@ -15,7 +15,6 @@
 #include "stree.h"
 #include "spaceman.h"
 #include "externs.h"
-#include "streelarge.h"
 
 wchar_t *text;
 

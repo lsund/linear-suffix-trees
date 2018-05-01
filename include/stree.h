@@ -10,7 +10,6 @@
 #define STREE_H
 
 #include "construct.h"
-#include "streelarge.h"
 #include "access.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,8 +18,10 @@
 #include "debug.h"
 #include "spaceman.h"
 #include "clock.h"
-#include "streelarge.h"
 #include "externs.h"
+/* #include "streesmall.h" */
+/* #include "streelarge.h" */
+#include "streehuge.h"
 
 #define ROOT(ST)            ((ST)->branchtab)
 
@@ -265,5 +266,3 @@ Sint constructstree(Suffixtree *stree,SYMBOL *text,Uint textlen);
 Sint constructprogressstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
 
 #endif
-
-//}

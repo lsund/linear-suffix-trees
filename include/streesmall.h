@@ -15,18 +15,11 @@
 
 #include "debug.h"
 #include "streetyp.h"
+#include "stree.h"
 
-/*
-  This header file defines the constants and macros used for the improved
-  linked list implementation technique for suffix trees as described
-  in \cite{KUR:BAL:1999}. The implementation technique requires
-  one integer for each leaf, two integers for each small node and
-  3 integers for each large node, provided
-  \(n\leq 2^{21}-1=2~\emph{megabytes}\).
-  For more details, see \cite{KUR:1998,KUR:BAL:1999} and the bit layout,
-  as depicted in the file \texttt{bitlayout.ps}.
-*/
-
+// Linked list implementation
+// one integer for each leaf, two integers for each small node and four
+// integers for each large vertex
 #define SMALLINTS           2
 #define LARGEINTS           3
 #define MULTBYSMALLINTS(V)  ((V) << 1)

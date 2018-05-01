@@ -33,25 +33,6 @@ static void showvalues(void)
 
 //}
 
-/*
-   This file contains code for the improved linked list implementation,
-   as described in \cite{KUR:1998,KUR:BAL:1999}. It can be
-   compiled with two options:
-   \begin{itemize}
-   \item
-   for short strings of length \(\leq 2^{21}-1=2\) megabytes,
-   we recommend the option
-   \texttt{STREESMALL}. This results in a representation which requires
-   \(2\) integers for each small node, and three integers for each large node.
-   See also the header file \texttt{streesmall.h}.
-   \item
-   for long strings of length \(\leq 2^{27}-1=12\) megabytes, we
-   recommend the option
-   \texttt{STREELARGE}. This results in a representation which requires
-   \(2\) integers for each small node, and four integers for each large node.
-   See also the header file \texttt{streelarge.h}.
-   \end{itemize}
-   */
 
 // For a string of length \(n\) we initially allocate space for
 // \(\texttt{STARTFACTOR}\cdot\texttt{SMALLINTS}\cdot n\) integers to store
@@ -105,33 +86,6 @@ static void spaceforbranchtab(Suffixtree *stree)
             = stree->branchtab + stree->currentbranchtabsize - LARGEINTS;
     }
 }
-
-#ifdef STREEHUGE
-
-static Uint getlargelinkconstruction(Suffixtree *stree)
-{
-    SYMBOL secondchar;
-
-    DEBUG2(FUNCLEVEL,">%s(%lu)\n",
-            __func__,
-            (Ulong) BRADDR2NUM(stree,stree->headnode));
-    if(stree->headnodedepth == 1)
-    {
-        return 0;        // link refers to root
-    }
-    if(stree->headnodedepth == 2)  // determine second char of egde
-    {
-        if(stree->headend == NULL)
-        {
-            secondchar = *(stree->tailptr-1);
-        } else {
-            secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
-        }
-        return stree->rootchildren[(Uint) secondchar];
-    }
-    return *(stree->headnode+4);
-}
-#endif
 
 
 void insertleaf(Suffixtree *stree)
