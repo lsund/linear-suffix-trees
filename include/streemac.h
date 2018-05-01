@@ -12,12 +12,8 @@
 #include "types.h"
 #include "symboldef.h"
 
-/*
-  For each branching node we store five integers, see \cite{KUR:1999}.
-  An or-combination of the following bits allow to access any subset of
-  these five integers via the function \texttt{getbranchinfostree}.
-*/
-
+// For each branching node we store five integers. These can be accessed by
+// some or-combination.
 #define ACCESSDEPTH          UintConst(1)
 #define ACCESSHEADPOS        (UintConst(1) << 1)
 #define ACCESSSUFFIXLINK     (UintConst(1) << 2)

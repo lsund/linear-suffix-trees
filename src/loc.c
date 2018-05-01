@@ -12,8 +12,7 @@
 #include <wchar.h>
 #include "debug.h"
 #include "types.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 #include "spaceman.h"
 #include "externs.h"
 #include "streelarge.h"
@@ -44,7 +43,10 @@ int main(int argc, char *argv[])
         textlen++;
     }
     text[textlen + 1] = '\0';
-    CONSTRUCTSTREE(&stree,text,textlen,return EXIT_FAILURE);
+    if(constructstree(&stree,text,textlen) != 0) {
+        fprintf(stderr,"%s", messagespace());
+        return EXIT_FAILURE;
+    }
 #ifdef DEBUG
     enumlocations(&stree, checklocation);
 #endif

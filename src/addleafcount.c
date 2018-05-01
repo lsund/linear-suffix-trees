@@ -8,9 +8,12 @@
 
 #include "types.h"
 #include "debug.h"
-#include "streedef.h"
 #include "spaceman.h"
 #include "arraydef.h"
+#include "streetyp.h"
+#include "streemac.h"
+#include "dfs.h"
+#include "access.h"
 
 typedef struct
 {

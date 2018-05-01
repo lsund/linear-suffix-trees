@@ -12,8 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 #include "debug.h"
 #include "arraydef.h"
 #include "spaceman.h"

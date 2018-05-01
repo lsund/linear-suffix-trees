@@ -6,8 +6,7 @@
   code base.
 */
 
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 
 #define P3(F,A,B,C)   F(A,B,C)
 #define PNO(F,A,B,C)  /* Nothing */
@@ -37,7 +36,7 @@ void oversuccsstree(Suffixtree *stree,Bref bnode,
 
   node = GETCHILD(bnode);
   if(processleaf != NULL)
-  { 
+  {
     if(processbranch != NULL)
     {
       PROCESS(P3,P3);

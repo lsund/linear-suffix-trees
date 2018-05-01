@@ -6,9 +6,9 @@
   code base.
 */
 
-#include "streedef.h"
 #include "debug.h"
-#include "streeacc.h"
+#include "stree.h"
+#include "access.h"
 
 void rescanstree(
         Suffixtree *stree,

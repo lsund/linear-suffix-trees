@@ -9,8 +9,7 @@
 #include "arraydef.h"
 #include "spaceman.h"
 #include "debug.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 
 #define SETCURRENT(V)\
     if(ISLEAF(V))\

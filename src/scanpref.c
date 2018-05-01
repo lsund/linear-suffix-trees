@@ -9,8 +9,7 @@
  */
 
 #include "debug.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 #include "basedef.h"
 
 static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)

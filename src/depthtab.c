@@ -10,8 +10,7 @@
 #include <sys/types.h>
 #include "debug.h"
 #include "types.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 #include "spaceman.h"
 
 #define ADDAMOUNT 128

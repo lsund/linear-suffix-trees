@@ -8,8 +8,7 @@
 
 #include "bitvector.h"
 #include "debug.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 
 void overallstree(Suffixtree *stree,Bool skiproot,
                   void(*processnode)(Suffixtree *,Bref,Uint,Uint,void *),

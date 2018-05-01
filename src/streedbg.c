@@ -11,8 +11,7 @@
 #include "intbits.h"
 #include "visible.h"
 #include "debug.h.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 #include "streeproto.h"
 
 #define SETLEAFUSED(V)   SETIBIT(leafused,V)

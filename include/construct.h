@@ -5,8 +5,7 @@
 #include "bitvector.h"
 #include "spaceman.h"
 #include "debug.h"
-#include "streedef.h"
-#include "streeacc.h"
+#include "stree.h"
 #include "basedef.h"
 /* #include "streesmall.h" */
 #include "streelarge.h"
