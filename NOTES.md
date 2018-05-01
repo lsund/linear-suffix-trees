@@ -1,10 +1,10 @@
 # for scanning prefixes
 
-`SYMBOL *scanprefixfromnodestree` Starts at some specific node
+`wchar_t *scanprefixfromnodestree` Starts at some specific node
 
-`SYMBOL *scanprefixstree`
+`wchar_t *scanprefixstree`
 
-`SYMBOL *findprefixpathstree`
+`wchar_t *findprefixpathstree`
 
 # Modules
 

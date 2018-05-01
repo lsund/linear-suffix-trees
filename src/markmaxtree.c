@@ -12,7 +12,7 @@
 #define CHECKSTEP            /* Nothing */
 #define FINALPROGRESS        /* Nothing */
 
-Sint constructmarkmaxstree(Suffixtree *stree,SYMBOL *text,Uint textlen)
+Sint constructmarkmaxstree(Suffixtree *stree,wchar_t *text,Uint textlen)
 {
 
     Uint distance, headposition = 0, *largeptr,

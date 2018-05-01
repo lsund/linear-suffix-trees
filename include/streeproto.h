@@ -17,10 +17,10 @@
 extern "C" {
 #endif
 
-Sint constructstree(Suffixtree *stree,SYMBOL *text,Uint textlen);
-Sint constructmarkmaxstree(Suffixtree *stree,SYMBOL *text,Uint textlen);
-Sint constructheadstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void(*processhead)(Suffixtree *,Uint,void *),void *processheadinfo);
-Sint constructprogressstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
+Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen);
+Sint constructmarkmaxstree(Suffixtree *stree,wchar_t *text,Uint textlen);
+Sint constructheadstree(Suffixtree *stree,wchar_t *text,Uint textlen,void(*processhead)(Suffixtree *,Uint,void *),void *processheadinfo);
+Sint constructprogressstree(Suffixtree *stree,wchar_t *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
 
 void freestree(Suffixtree *stree);
 #ifdef __cplusplus
@@ -32,16 +32,16 @@ void getleafinfostree(Suffixtree *stree, Leafinfo *leafinfo, Lref lptr);
 void getbranchinfostree(Suffixtree *stree, Uint whichinfo, Branchinfo *branchinfo, Bref btptr);
 void getheadstringstree(Suffixtree *stree, String *str);
 Uint getmaxtextlenstree(void);
-void showpathstree(Suffixtree *stree, Bref bnode, void (*showchar)(SYMBOL, void *), void *info);
+void showpathstree(Suffixtree *stree, Bref bnode, void (*showchar)(wchar_t, void *), void *info);
 void rootsucclocationsstree(Suffixtree *stree, ArraySimpleloc *ll);
 void succlocationsstree(Suffixtree *stree, unsigned char nosentinel, Simpleloc *loc, ArraySimpleloc *ll);
 /* scanpref.c */
-SYMBOL *scanprefixfromnodestree(Suffixtree *stree, Location *loc, Bref btptr, SYMBOL *left, SYMBOL *right, Uint rescanlength);
-SYMBOL *scanprefixstree(Suffixtree *stree, Location *outloc, Location *inloc, SYMBOL *left, SYMBOL *right, Uint rescanlength);
-SYMBOL *findprefixpathfromnodestree(Suffixtree *stree, ArrayPathinfo *path, Location *loc, Bref btptr, SYMBOL *left, SYMBOL *right, Uint rescanlength);
-SYMBOL *findprefixpathstree(Suffixtree *stree, ArrayPathinfo *path, Location *outloc, Location *inloc, SYMBOL *left, SYMBOL *right, Uint rescanlength);
+wchar_t *scanprefixfromnodestree(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left, wchar_t *right, Uint rescanlength);
+wchar_t *scanprefixstree(Suffixtree *stree, Location *outloc, Location *inloc, wchar_t *left, wchar_t *right, Uint rescanlength);
+wchar_t *findprefixpathfromnodestree(Suffixtree *stree, ArrayPathinfo *path, Location *loc, Bref btptr, wchar_t *left, wchar_t *right, Uint rescanlength);
+wchar_t *findprefixpathstree(Suffixtree *stree, ArrayPathinfo *path, Location *outloc, Location *inloc, wchar_t *left, wchar_t *right, Uint rescanlength);
 /* linkloc.c */
-void rescanstree(Suffixtree *stree, Location *loc, Bref btptr, SYMBOL *left, SYMBOL *right);
+void rescanstree(Suffixtree *stree, Location *loc, Bref btptr, wchar_t *left, wchar_t *right);
 void linklocstree(Suffixtree *stree, Location *outloc, Location *inloc);
 /* depthtab.c */
 void showdepthtab(ArrayUint *dt);

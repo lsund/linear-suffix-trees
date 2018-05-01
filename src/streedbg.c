@@ -30,10 +30,10 @@
           processloc(stree,&loc);\
         }
 
-static void showthesymbolstring(FILE *fp,SYMBOL *tlast,SYMBOL *left,
-                                SYMBOL *right)
+static void showthesymbolstring(FILE *fp,wchar_t *tlast,wchar_t *left,
+                                wchar_t *right)
 {
-  SYMBOL *ptr;
+  wchar_t *ptr;
 
   for(ptr=left; ptr<=right; ptr++)
   {
@@ -51,7 +51,7 @@ static void showthesymbolstring(FILE *fp,SYMBOL *tlast,SYMBOL *left,
   }
 }
 
-static char *showsymbol(SYMBOL c)
+static char *showsymbol(wchar_t c)
 {
   static char outbuf[100+1];
 
@@ -74,7 +74,7 @@ void showtable(Suffixtree *stree,Bool final)
        nodeaddress, succ, depth, child, brother,
        headposition, suffixlink;
   Uint leafindex, edgelen;
-  SYMBOL *leftpointer;
+  wchar_t *leftpointer;
 
   for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX;
@@ -271,7 +271,7 @@ void checkstree(Suffixtree *stree)
       {
         fprintf(stderr,"Node %lu: outgoing '%s'-edge of length %lu\n",
                         (Ulong) BRADDR2NUM(stree,btptr),
-                        showsymbol((SYMBOL) currentfirstchar),
+                        showsymbol((wchar_t) currentfirstchar),
                         (Ulong)edgelen);
         exit(EXIT_FAILURE);
       }
@@ -279,9 +279,9 @@ void checkstree(Suffixtree *stree)
       {
         fprintf(stderr,"Node %lu: '%s'-edge +",
                        (Ulong) BRADDR2NUM(stree,btptr),
-                       showsymbol((SYMBOL) prevfirstchar));
+                       showsymbol((wchar_t) prevfirstchar));
         fprintf(stderr," '%s'-edge not in correct order\n",
-                       showsymbol((SYMBOL) currentfirstchar));
+                       showsymbol((wchar_t) currentfirstchar));
         exit(EXIT_FAILURE);
       }
       prevfirstchar = currentfirstchar;
@@ -371,7 +371,7 @@ static void showsubtree(Suffixtree *stree,Uint indent,Uint *btptr)
 {
   Uint *largeptr, *succptr, leafindex, succdepth, edgelen, succ, distance,
        depth, headposition;
-  SYMBOL *leftpointer;
+  wchar_t *leftpointer;
 
   GETBOTH(depth,headposition,btptr);
   succ = GETCHILD(btptr);
@@ -405,7 +405,7 @@ static void showsubtree(Suffixtree *stree,Uint indent,Uint *btptr)
 void showstree(Suffixtree *stree)
 {
   Uint *btptr, *rcptr, *largeptr, distance, headposition, succdepth;
-  SYMBOL *leftpointer;
+  wchar_t *leftpointer;
 
   for(rcptr = stree->rootchildren;
       rcptr <= stree->rootchildren + LARGESTCHARINDEX;
@@ -501,10 +501,10 @@ static void loc2stringstree(Suffixtree *stree, String *s, Location *loc)
                     (size_t) s->length) != 0)
         {
             fprintf(stderr,"compare of strings failed: \"");
-            (void) fwrite(stree->text+s->start, sizeof(SYMBOL),
+            (void) fwrite(stree->text+s->start, sizeof(wchar_t),
                     (size_t) s->length,stderr);
             fprintf(stderr,"\" != \"");
-            (void) fwrite(stree->text + loc->locstring.start, sizeof(SYMBOL),
+            (void) fwrite(stree->text + loc->locstring.start, sizeof(wchar_t),
                     (size_t) loc->locstring.length,stderr);
             fprintf(stderr,"\"\n");
             exit(EXIT_FAILURE);
@@ -610,7 +610,7 @@ void checklocation(Suffixtree *stree, Location *loc)
 {
   Uint rescanlength;
   String lstr, llstr;
-  SYMBOL *rest;
+  wchar_t *rest;
   Location scanprefixloc, rescanloc, linklocloc;
 
   loc2stringstree(stree, &lstr,loc);
@@ -635,7 +635,7 @@ void checklocation(Suffixtree *stree, Location *loc)
     }
     if(comparelocs(stree,loc,&scanprefixloc) == -1) {
       fprintf(stderr,"compare loc and scanprefixloc for string \"");
-      (void) fwrite(stree->text+lstr.start,sizeof(SYMBOL),
+      (void) fwrite(stree->text+lstr.start,sizeof(wchar_t),
                     (size_t) lstr.length,stderr);
       fprintf(stderr,"\"\n");
       showlocation(stderr,stree, loc);
@@ -649,7 +649,7 @@ void checklocation(Suffixtree *stree, Location *loc)
               stree->text+lstr.start+lstr.length-1);
   if(comparelocs(stree,loc,&rescanloc) == -1) {
     fprintf(stderr,"compare loc and rescanloc for string \"");
-    (void) fwrite(stree->text+lstr.start,sizeof(SYMBOL),
+    (void) fwrite(stree->text+lstr.start,sizeof(wchar_t),
                   (size_t) lstr.length,stderr);
     fprintf(stderr,"\"\n");
     showlocation(stderr,stree,loc);
@@ -667,10 +667,10 @@ void checklocation(Suffixtree *stree, Location *loc)
               (size_t) llstr.length) != 0)
     {
       fprintf(stderr,"linkloc(");
-      (void) fwrite(stree->text+lstr.start,sizeof(SYMBOL),
+      (void) fwrite(stree->text+lstr.start,sizeof(wchar_t),
                     (size_t) lstr.length,stderr);
       fprintf(stderr,")=");
-      (void) fwrite(stree->text+llstr.start,sizeof(SYMBOL),
+      (void) fwrite(stree->text+llstr.start,sizeof(wchar_t),
                     (size_t) llstr.length,stderr);
       showlocation(stderr,stree,&linklocloc);
       fprintf(stderr," is wrong\n");

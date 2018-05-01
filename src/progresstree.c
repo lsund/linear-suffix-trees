@@ -4,7 +4,7 @@
 #define LEASTSHOWPROGRESS 100000
 #define NUMOFCALLS 100
 
-#define CONSTRUCT Sint constructprogressstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info)
+#define CONSTRUCT Sint constructprogressstree(Suffixtree *stree,wchar_t *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info)
 #define DECLAREEXTRA\
     Uint j = 0, step, nextstep;\
     stree->nonmaximal = NULL;\

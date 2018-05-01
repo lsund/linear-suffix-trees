@@ -1,6 +1,6 @@
 #include "construct.h"
 
-#define CONSTRUCT Sint constructstree(Suffixtree *stree,SYMBOL *text,Uint textlen)
+#define CONSTRUCT Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen)
 #define DECLAREEXTRA        stree->nonmaximal = NULL
 #define COMPLETELARGEFIRST  completelarge(stree)
 #define COMPLETELARGESECOND completelarge(stree)

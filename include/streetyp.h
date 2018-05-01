@@ -11,7 +11,6 @@
 
 #include "types.h"
 #include "arraydef.h"
-#include "symboldef.h"
 
 // A reference consists of an `address` pointing to a leaf or a branching node.
 // The boolean toleaf is true iff `address` points to a leaf.
@@ -49,7 +48,7 @@ typedef Reference Leafinfo;
 //
 // The important are the following:
 //
-// SYMBOL *text;     // points to the input string
+// wchar_t *text;     // points to the input string
 // Uint textlen;     // the length of the input string
 // Uint *branchtab;  // stores the infos for the branching nodes
 // Uint *leaftab;    // stores the brother-references of the leaves
@@ -63,8 +62,8 @@ typedef struct suffixtree
   Uint *branchtab;            // table TBranch
   Uint *rootchildren;         // references to successors of root
 
-  SYMBOL *text;               // points to the input string
-  SYMBOL *sentinel;           // points to the position of the \(\$\)-symbol
+  wchar_t *text;               // points to the input string
+  wchar_t *sentinel;           // points to the position of the \(\$\)-symbol
 
   Uint nextfreeleafnum;       // the number of the next leaf
   Uint headnodedepth;         // the depth of the headnode
@@ -94,16 +93,16 @@ typedef struct suffixtree
   Uint *leafcounts;           // holds counts of the number of leafs in subtree
                               // indexed by headposition
   Bool setatnewleaf;          // nil-reference is stored in new leaf
-  SYMBOL *headstart;          // these references represent the right component
-  SYMBOL *headend;            // of the head location \((\overline{u},v)\).
+  wchar_t *headstart;          // these references represent the right component
+  wchar_t *headend;            // of the head location \((\overline{u},v)\).
                               // \emph{headstart} refers to the first character
                               // of \(v\), and \emph{headend} to the last
                               // character. In case, \(v=\varepsilon\),
                               // \(\emph{headend}=\emph{NULL}\).
-  SYMBOL *tailptr;            // points to the tail
+  wchar_t *tailptr;            // points to the tail
 
 #ifdef DEBUG
-  char * (*showsymbolstree)(SYMBOL,wchar_t *);
+  char * (*showsymbolstree)(wchar_t,wchar_t *);
   wchar_t *alphabet;
   Uint splitleafedge,
        splitinternaledge,
@@ -117,7 +116,7 @@ typedef struct suffixtree
        *maxset;
   void *generalcounter;
 #endif
-#if (SYMBOLBYTES == 2) || (SYMBOLBYTES == 4)
+#if (wchar_tBYTES == 2) || (wchar_tBYTES == 4)
   Sint lastcharindex;
 #endif
 
@@ -131,7 +130,7 @@ typedef struct
 {
   String locstring;     // string represented by location
   Bref previousnode;    // reference to previous node (which is branching)
-  SYMBOL *firstptr;     // pointer to first character of edge label
+  wchar_t *firstptr;     // pointer to first character of edge label
   Uint edgelen;         // length of edge
   Uint remain;          // number of remaining characters on edge
   Reference nextnode;   // reference to node the edge points to

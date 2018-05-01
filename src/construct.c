@@ -220,7 +220,7 @@ void rescan(Suffixtree *stree) // skip-count
 {
     Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode,
          nodedepth, edgelen, wlen, leafindex, headposition;
-    SYMBOL headchar, edgechar;
+    wchar_t headchar, edgechar;
 
     DEBUGDEFAULT;
     if(stree->headnodedepth == 0)   // head is the root
@@ -309,9 +309,9 @@ void rescan(Suffixtree *stree) // skip-count
    pointers \emph{tailptr} and \emph{sentinel}.
    */
 
-static Uint taillcp(Suffixtree *stree,SYMBOL *start1, SYMBOL *end1)
+static Uint taillcp(Suffixtree *stree,wchar_t *start1, wchar_t *end1)
 {
-    SYMBOL *ptr1 = start1, *ptr2 = stree->tailptr + 1;
+    wchar_t *ptr1 = start1, *ptr2 = stree->tailptr + 1;
     while(ptr1 <= end1 && ptr2 < stree->sentinel && *ptr1 == *ptr2)
     {
         ptr1++;
@@ -325,7 +325,7 @@ void scanprefix(Suffixtree *stree)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node,
          distance = 0, prevnode, prefixlen, headposition;
-    SYMBOL *leftborder = (SYMBOL *) NULL, tailchar, edgechar = 0;
+    wchar_t *leftborder = (wchar_t *) NULL, tailchar, edgechar = 0;
 
     DEBUGDEFAULT;
     if(stree->headnodedepth == 0)   // headnode is root
@@ -511,7 +511,7 @@ void linkrootchildren(Suffixtree *stree)
 }
 
 
-void initSuffixtree(Suffixtree *stree,SYMBOL *text,Uint textlen)
+void initSuffixtree(Suffixtree *stree,wchar_t *text,Uint textlen)
 {
     Uint i;
 
@@ -598,7 +598,7 @@ void freestree(Suffixtree *stree)
 
 Uint getlargelinkconstruction(Suffixtree *stree)
 {
-    SYMBOL secondchar;
+    wchar_t secondchar;
 
     DEBUG2(FUNCLEVEL,">%s(%lu)\n",
             __func__,

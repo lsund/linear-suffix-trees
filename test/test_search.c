@@ -17,7 +17,7 @@ static bool search_pattern(Suffixtree *stree, wchar_t *patt)
 {
     Location loc;
     Uint pattlen = strlenw(patt);
-    SYMBOL *rem = scanprefixfromnodestree(
+    wchar_t *rem = scanprefixfromnodestree(
             stree, &loc, stree->branchtab, patt, patt + pattlen, 0
     );
     return !rem || rem[0] == 0;

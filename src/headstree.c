@@ -1,7 +1,7 @@
 
 #include "construct.h"
 
-Sint constructheadstree(Suffixtree *stree,SYMBOL *text,Uint
+Sint constructheadstree(Suffixtree *stree,wchar_t *text,Uint
         textlen,void(*processhead)(Suffixtree *,Uint,void *),void
         *processheadinfo)
 {

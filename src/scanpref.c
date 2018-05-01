@@ -12,9 +12,9 @@
 #include "stree.h"
 #include "basedef.h"
 
-static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
+static Uint lcp(wchar_t *start1,wchar_t *end1,wchar_t *start2,wchar_t *end2)
 {
-    register SYMBOL *ptr1 = start1, *ptr2 = start2;
+    register wchar_t *ptr1 = start1, *ptr2 = start2;
 
     while(ptr1 <= end1 &&
             ptr2 <= end2 &&
@@ -26,19 +26,19 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
     return (Uint) (ptr1-start1);
 }
 
-SYMBOL *scanprefixfromnodestree(
+wchar_t *scanprefixfromnodestree(
             Suffixtree *stree,
             Location *loc,              // The location of the prefix (out)
             Bref btptr,                 // Branch reference
-            SYMBOL *left,               // The start
-            SYMBOL *right,              // The end
+            wchar_t *left,               // The start
+            wchar_t *right,              // The end
             Uint rescanlength
         )
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth,
          node = 0, distance = 0, prefixlen, headposition, tmpnodedepth,
          edgelen, remainingtoskip;
-    SYMBOL *lptr, *leftborder = NULL, firstchar, edgechar = 0;
+    wchar_t *lptr, *leftborder = NULL, firstchar, edgechar = 0;
 
     DEBUG1(4,"scanprefixfromnodestree starts at node %lu\n",
             (Ulong) BRADDR2NUM(stree, btptr));
@@ -221,12 +221,12 @@ SYMBOL *scanprefixfromnodestree(
     }
 }
 
-SYMBOL *scanprefixstree(
+wchar_t *scanprefixstree(
             Suffixtree *stree,
             Location *outloc,
             Location *inloc,
-            SYMBOL *left,
-            SYMBOL *right,
+            wchar_t *left,
+            wchar_t *right,
             Uint rescanlength
         )
 {
@@ -301,18 +301,18 @@ SYMBOL *scanprefixstree(
             left+prefixlen,right,rescanlength);
 }
 
-/*@null@*/SYMBOL *findprefixpathfromnodestree(Suffixtree *stree,
+/*@null@*/wchar_t *findprefixpathfromnodestree(Suffixtree *stree,
         ArrayPathinfo *path,
         Location *loc,
         Bref btptr,
-        SYMBOL *left,
-        SYMBOL *right,
+        wchar_t *left,
+        wchar_t *right,
         Uint rescanlength)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth,
          edgelen, node, distance = 0, prefixlen, headposition,
          remainingtoskip, tmpnodedepth;
-    SYMBOL *leftborder = (SYMBOL *) NULL, *lptr, firstchar, edgechar = 0;
+    wchar_t *leftborder = (wchar_t *) NULL, *lptr, firstchar, edgechar = 0;
 
     lptr = left;
     nodeptr = btptr;
@@ -502,12 +502,12 @@ SYMBOL *scanprefixstree(
     }
 }
 
-SYMBOL *findprefixpathstree(Suffixtree *stree,
+wchar_t *findprefixpathstree(Suffixtree *stree,
         ArrayPathinfo *path,
         Location *outloc,
         Location *inloc,
-        SYMBOL *left,
-        SYMBOL *right,
+        wchar_t *left,
+        wchar_t *right,
         Uint rescanlength)
 {
     Uint prefixlen, remainingtoskip;

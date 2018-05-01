@@ -22,9 +22,9 @@
 #include "clock.h"
 #include "externs.h"
 
-Sint constructstree(Suffixtree *stree,SYMBOL *text,Uint textlen);
+Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen);
 
-Sint constructprogressstree(Suffixtree *stree,SYMBOL *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
+Sint constructprogressstree(Suffixtree *stree,wchar_t *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
 
 void setdepthheadposition(Suffixtree *stree,Uint depth, Uint headposition);
 

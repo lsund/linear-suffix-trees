@@ -163,7 +163,7 @@ Uint getmaxtextlenstree(void)
 }
 
 void showpathstree(Suffixtree *stree,Bref bnode,
-                   void (*showchar)(SYMBOL,void *),void *info)
+                   void (*showchar)(wchar_t,void *),void *info)
 {
   Branchinfo branchinfo;
   Uint i;

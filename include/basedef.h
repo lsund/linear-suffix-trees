@@ -40,7 +40,7 @@
 #define MOD4(N)      ((N) & 3)
 #define MOD8(N)      ((N) & 7)
 
-#if SYMBOLBYTES == 1
+#if wchar_tBYTES == 1
 #define LARGESTCHARINDEX          UCHAR_MAX
 #else
 #define LARGESTCHARINDEX          stree->lastcharindex

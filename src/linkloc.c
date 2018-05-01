@@ -14,13 +14,13 @@ void rescanstree(
         Suffixtree *stree,
         Location *loc,
         Bref btptr,
-        SYMBOL *left,
-        SYMBOL *right
+        wchar_t *left,
+        wchar_t *right
     )
 {
   Uint *nodeptr, *largeptr = NULL, leafindex, nodedepth,
        node, distance = 0, prefixlen, headposition, tmpnodedepth;
-  SYMBOL *lptr;
+  wchar_t *lptr;
 
   lptr = left;
   nodeptr = btptr;

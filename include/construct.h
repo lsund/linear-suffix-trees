@@ -9,7 +9,7 @@
 #include "basedef.h"
 #include "streetyp.h"
 
-void initSuffixtree(Suffixtree *stree, SYMBOL *text, Uint textlen);
+void initSuffixtree(Suffixtree *stree, wchar_t *text, Uint textlen);
 
 // Slow-scan
 void scanprefix(Suffixtree *stree);
