@@ -92,12 +92,12 @@ void insertleaf(STree *stree)
             if(IS_LEAF(stree->insertprev))   // previous node is leaf
             {
                 ptr = stree->leaf_vertices.first + LEAF_INDEX(stree->insertprev);
-                *(stree->leaf_vertices.next_free) = LEAFBROTHERVAL(*ptr);
+                *(stree->leaf_vertices.next_free) = *ptr;
                 SETLEAFBROTHER(ptr,newleaf);
             } else   // previous node is branching node
             {
-                ptr = stree->inner_vertices.first + GETBRANCHINDEX(stree->insertprev);
-                *(stree->leaf_vertices.next_free) = GETBROTHER(ptr);
+                ptr = stree->inner_vertices.first + LEAF_INDEX(stree->insertprev);
+                *(stree->leaf_vertices.next_free) = SIBLING(ptr);
                 SETBROTHER(ptr,newleaf);
             }
         }
@@ -130,7 +130,7 @@ void insertbranchnode(STree *stree)
                 SETLEAFBROTHER(ptr,MAKEBRANCHADDR(stree->inner_vertices.next_free_num));
             } else                     // new branch = brother of branching node
             {
-                SETBROTHER(stree->inner_vertices.first + GETBRANCHINDEX(stree->insertprev),
+                SETBROTHER(stree->inner_vertices.first + LEAF_INDEX(stree->insertprev),
                         MAKEBRANCHADDR(stree->inner_vertices.next_free_num));
             }
         }
@@ -142,21 +142,21 @@ void insertbranchnode(STree *stree)
                 *(stree->headend+1) < *(stree->tailptr))
         {
             SETNEWCHILDBROTHER(MAKELARGE(stree->insertnode),  // first child=oldleaf
-                    LEAFBROTHERVAL(*insertleafptr));  // inherit brother
+                    *insertleafptr);  // inherit brother
             RECALLNEWLEAFADDRESS(stree->leaf_vertices.next_free);
             SETLEAFBROTHER(insertleafptr,                     // new leaf =
                     MAKELEAF(stree->leaf_vertices.next_free_num)); // right brother of old leaf
         } else
         {
             SETNEWCHILDBROTHER(MAKELARGELEAF(stree->leaf_vertices.next_free_num),  // first child=new leaf
-                    LEAFBROTHERVAL(*insertleafptr));  // inherit brother
+                    *insertleafptr);  // inherit brother
             *(stree->leaf_vertices.next_free) = stree->insertnode;  // old leaf = right brother of of new leaf
             RECALLLEAFADDRESS(insertleafptr);
         }
     } else  // split edge leads to branching node
     {
-        insertnodeptr = stree->inner_vertices.first + GETBRANCHINDEX(stree->insertnode);
-        insertnodeptrbrother = GETBROTHER(insertnodeptr);
+        insertnodeptr = stree->inner_vertices.first + LEAF_INDEX(stree->insertnode);
+        insertnodeptrbrother = SIBLING(insertnodeptr);
         if (stree->tailptr == stree->sentinel ||
                 *(stree->headend+1) < *(stree->tailptr))
         {
@@ -203,7 +203,7 @@ void rescan(STree *stree) // skip-count
             stree->insertnode = node;
             return;
         }
-        nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
+        nodeptr = stree->inner_vertices.first + LEAF_INDEX(node);
         GETONLYDEPTH(nodedepth,nodeptr);
         wlen = (Uint) (stree->headend - stree->headstart + 1);
         if(nodedepth > wlen)    // cannot reach the successor node
@@ -238,10 +238,10 @@ void rescan(STree *stree) // skip-count
                     return;
                 }
                 prevnode = node;
-                node = LEAFBROTHERVAL(stree->leaf_vertices.first[leafindex]);
+                node = stree->leaf_vertices.first[leafindex];
             } else   // successor is branch node
             {
-                nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
+                nodeptr = stree->inner_vertices.first + LEAF_INDEX(node);
                 GETONLYHEADPOS(headposition,nodeptr);
                 edgechar = stree->text[stree->headnodedepth + headposition];
                 if(edgechar == headchar) // correct edge found
@@ -249,7 +249,7 @@ void rescan(STree *stree) // skip-count
                     break;
                 }
                 prevnode = node;
-                node = GETBROTHER(nodeptr);
+                node = SIBLING(nodeptr);
             }
         }
 
@@ -322,7 +322,7 @@ void scanprefix(STree *stree)
             stree->insertnode = node;
             return;
         }
-        nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
+        nodeptr = stree->inner_vertices.first + LEAF_INDEX(node);
         GETBOTH(nodedepth,headposition,nodeptr);  // get info for branch node
         leftborder = stree->text + headposition;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + nodedepth - 1);
@@ -348,10 +348,10 @@ void scanprefix(STree *stree)
                 prevnode = node;
                 if(IS_LEAF(node))
                 {
-                    node = LEAFBROTHERVAL(stree->leaf_vertices.first[LEAF_INDEX(node)]);
+                    node = stree->leaf_vertices.first[LEAF_INDEX(node)];
                 } else
                 {
-                    node = GETBROTHER(stree->inner_vertices.first + GETBRANCHINDEX(node));
+                    node = SIBLING(stree->inner_vertices.first + LEAF_INDEX(node));
                 }
             } while(!IS_NOTHING(node));
             stree->insertnode = NILBIT;
@@ -372,10 +372,10 @@ void scanprefix(STree *stree)
                     break;
                 }
                 prevnode = node;
-                node = LEAFBROTHERVAL(stree->leaf_vertices.first[leafindex]);
+                node = stree->leaf_vertices.first[leafindex];
             } else  // successor is branch node
             {
-                nodeptr = stree->inner_vertices.first + GETBRANCHINDEX(node);
+                nodeptr = stree->inner_vertices.first + LEAF_INDEX(node);
                 GETONLYHEADPOS(headposition,nodeptr);
                 leftborder = stree->text + (stree->headnodedepth + headposition);
                 if((edgechar = *leftborder) >= tailchar)  // edge will not come later
@@ -383,7 +383,7 @@ void scanprefix(STree *stree)
                     break;
                 }
                 prevnode = node;
-                node = GETBROTHER(nodeptr);
+                node = SIBLING(nodeptr);
             }
         } while(!IS_NOTHING(node));
         if(IS_NOTHING(node) || edgechar > tailchar)  // edge not found
@@ -460,7 +460,7 @@ void linkrootchildren(STree *stree)
                     stree->leaf_vertices.first[LEAF_INDEX(prev)] = *rcptr;
                 } else
                 {
-                    prevnodeptr = stree->inner_vertices.first + GETBRANCHINDEX(prev);
+                    prevnodeptr = stree->inner_vertices.first + LEAF_INDEX(prev);
                     SETBROTHER(prevnodeptr,*rcptr);
                 }
             }
@@ -472,7 +472,7 @@ void linkrootchildren(STree *stree)
         stree->leaf_vertices.first[LEAF_INDEX(prev)] = MAKELEAF(stree->textlen);
     } else
     {
-        prevnodeptr = stree->inner_vertices.first + GETBRANCHINDEX(prev);
+        prevnodeptr = stree->inner_vertices.first + LEAF_INDEX(prev);
         SETBROTHER(prevnodeptr,MAKELEAF(stree->textlen));
     }
     stree->leaf_vertices.first[stree->textlen] = NILBIT;

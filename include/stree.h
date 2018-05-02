@@ -223,14 +223,13 @@ void freestree(STree *stree);
 #define MAKELARGELEAF(V)          MAKELEAF(V)
 
 #define LEAF_INDEX(V)           ((V) & ~(LEAFBIT | SMALLBIT))
-#define GETBRANCHINDEX(V)         LEAF_INDEX(V)
 
 #define IS_NOTHING(P)                 ((P) & NILBIT)
 #define UNDEFREFERENCE            (~((Uint) 0))
 #define MAXTEXTLEN                ((MAXINDEX/((LARGEINTS+SMALLINTS)/2)) - 3)
 
 #define GETCHILD(B)               ((*(B)) & MAXINDEX)
-#define GETBROTHER(B)             (*((B)+1))
+#define SIBLING(B)             (*((B)+1))
 #define GETDISTANCE(B)            (*((B)+2))
 #define GETDEPTH(B)               (*((B)+2))
 #define GETHEADPOS(B)             (*((B)+3))
@@ -249,13 +248,14 @@ void freestree(STree *stree);
 
 #define SETSUFFIXLINK(SL)         SETVAL(stree->inner_vertices.next_free+4,SL)
 
-#define LEAFBROTHERVAL(V)         (V)
 #define SETLEAFBROTHER(B,VAL)     *(B) = (VAL)
 
 #define GETCHAINEND(C, B, D)      C = (B) + MULTBYSMALLINTS(D)
 #define MAKEBRANCHADDR(V)         (V)
 #define SETBRANCHNODEOFFSET       /* nothing */
 
+
+#define ROOT_CHILD(ST, C)   ((ST)->rootchildren[(Uint) (C)])
 #define ROOT(ST)            ((ST)->inner_vertices.first)
 
 #define IS_ROOT(ST, V)          ((ST)->inner_vertices.first == V)

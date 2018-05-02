@@ -15,7 +15,7 @@
 // Private
 
 
-static Uint get_both(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep)
+static Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep)
 {
     Uint distance = 0;
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
@@ -45,6 +45,41 @@ static Uint get_both(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint 
 }
 
 
+static void get_head(
+                STree *stree, Uint *head, Uint *vertexp, Uint *largep, Uint *distance)
+{
+    if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
+        *distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - vertexp));
+        *head = stree->leaf_vertices.next_free_num - *distance;
+    } else
+    {
+        if(ISLARGE(*(vertexp))) {
+            *head = GETHEADPOS(vertexp);
+        } else {
+            *distance = GETDISTANCE(vertexp);
+            GETCHAINEND(largep,vertexp, *distance);
+            *head = GETHEADPOS(largep) - *distance;
+        }
+    }
+}
+
+static void get_depth(
+        STree *stree, Uint *vertexp, Uint *distance, Uint *depth, Uint *largep)
+{
+    if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
+        *distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - vertexp));
+        *depth = stree->currentdepth  + *distance;
+    } else {
+        if(ISLARGE(*vertexp)) {
+            *depth = GETDEPTH(vertexp);
+        } else {
+            *distance = GETDISTANCE(vertexp);
+            GETCHAINEND(largep, vertexp, *distance);
+            *depth = GETDEPTH(largep) + *distance;
+        }
+    }
+}
+
 static void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
 {
     loc->next          = vertexp;
@@ -54,32 +89,57 @@ static void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
 }
 
 
-static void make_loc(STree *stree, Uint leaf_index, Uint plen, Loc *loc)
+static void make_loc(STree *stree, Uint leaf_index, Uint plen, Loc *loc, Wchar *first)
 {
+    loc->string.start  = leaf_index;
+    loc->string.length = plen;
     loc->prev          = stree->inner_vertices.first;
     loc->edgelen       = stree->textlen - leaf_index + 1;
     loc->remain        = loc->edgelen - plen;
     loc->next          = stree->leaf_vertices.first + leaf_index;
-    loc->string.start  = leaf_index;
-    loc->string.length = plen;
+    loc->first         = first;
 }
 
 
-static Uint prefixlen(STree *stree, Loc *loc, Wchar *leftp, Wchar *right, Uint remain)
+
+static void update_loc(Uint *next, Uint start, Uint plen, Wchar *first, Uint depth, Uint edgelen, Loc *loc)
+{
+    loc->string.start  = start;
+    loc->string.length = depth + plen;
+    loc->prev          = loc->next;
+    loc->edgelen       = edgelen;
+    loc->remain        = loc->edgelen - plen;
+    loc->first         = first;
+    loc->next          = next;
+}
+
+
+static void skip_edge(
+        Loc *loc, Uint *vertexp, Wchar **patt, Uint *depth, Uint head, Uint plen, Uint edgelen)
+{
+    loc->string.start  = head;
+    loc->string.length = *depth + plen;
+    *patt              += edgelen;
+    *depth              += edgelen;
+    loc->next          = vertexp;
+    loc->remain        = 0;
+}
+
+static Uint prefixlen(STree *stree, Wchar *start, Wchar *patt, Wchar *right, Uint remain)
 {
     if (remain > 0) {
+        Wchar *patt_start = patt + remain;
         Wchar *patt_end = right;
-        Wchar *loc_end = stree->sentinel - 1;
-        Wchar *patt_start = leftp + remain;
-        Wchar *loc_start = loc->first + remain;
-        Uint lcp_res = lcp(patt_start, patt_end, loc_start, loc_end);
+        Wchar *text_start = start + remain;
+        Wchar *text_end = stree->sentinel - 1;
+        Uint lcp_res = lcp(patt_start, patt_end, text_start, text_end);
         return remain + lcp_res;
     } else {
+        Wchar *patt_start = patt + 1;
         Wchar *patt_end = right;
-        Wchar *loc_end = stree->sentinel - 1;
-        Wchar *patt_start = leftp + 1;
-        Wchar *loc_start = loc->first + 1;
-        Uint lcp_res = lcp(patt_start, patt_end, loc_start, loc_end);
+        Wchar *text_start = start + 1;
+        Wchar *text_end = stree->sentinel - 1;
+        Uint lcp_res = lcp(patt_start, patt_end, text_start, text_end);
         return 1 + lcp_res;
     }
 }
@@ -88,44 +148,43 @@ static Uint prefixlen(STree *stree, Loc *loc, Wchar *leftp, Wchar *right, Uint r
 // Public
 
 
-Wchar *scan(STree *stree, Loc *loc, Uint * start_vertex, Wchar *start_left, Wchar *right)
+Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar *right)
 {
-    Uint *largep = NULL, distance = 0, plen, tmpdepth, edgelen;
-    Wchar firstchar, edgechar = 0;
 
-    Wchar *leftp = start_left;
-    Uint *vertexp = start_vertex;
+    Wchar *patt    = patt_start;
+    Uint *vertexp   = start_vertex;
+    Uint *largep    = NULL;
+    Uint head       = 0;
+    Uint depth      = 0;
+    Uint distance   = 0;
+    Uint remain     = 0;
+    Wchar firstchar = 0;
+    Uint edgelen    = 0;
 
-    Uint head, depth;
-    if(IS_ROOT(stree, vertexp)) {
-        depth = 0;
-        head  = 0;
-    } else {
-        distance = get_both(stree, &depth, &head, vertexp, largep);
+    if(!IS_ROOT(stree, vertexp)) {
+        distance = get_depth_head(stree, &depth, &head, vertexp, largep);
     }
 
     init_loc(vertexp, head, depth, loc);
 
-    Uint remain = 0;
-
     while(True) {
 
-        if (leftp > right) {
+        if (patt > right) {
             return NULL;
         }
 
-        firstchar = *leftp;
-
+        firstchar       = *patt;
         Uint vertex     = 0;
         Uint leaf_index = 0;
         Wchar *leftb    = NULL;
+        Uint plen       = 0;
 
         if(IS_ROOT(stree, vertexp)) {
 
-            vertex = stree->rootchildren[(Uint) firstchar];
+            vertex = ROOT_CHILD(stree, firstchar);
 
             if (IS_UNDEF(vertex)) {
-                return leftp;
+                return patt;
             }
 
             if(IS_LEAF(vertex)) {
@@ -133,127 +192,113 @@ Wchar *scan(STree *stree, Loc *loc, Uint * start_vertex, Wchar *start_left, Wcha
                 leaf_index = LEAF_INDEX(vertex);
                 loc->first = stree->text + leaf_index;
 
-                plen = prefixlen(stree, loc, leftp, right, remain);
-                make_loc(stree, leaf_index, plen, loc);
+                plen = prefixlen(stree, loc->first, patt, right, remain);
+                make_loc(stree, leaf_index, plen, loc, loc->first);
 
-                if(MATCHED(plen, right, leftp)) {
+                if(MATCHED(plen, right, patt)) {
                     return NULL;
                 }
 
-                return leftp + plen;
+                return patt + plen;
 
             }
-            vertexp = stree->inner_vertices.first + GETBRANCHINDEX(vertex);
-            GETONLYHEADPOS(head, vertexp);
+
+            vertexp = stree->inner_vertices.first + LEAF_INDEX(vertex);
+            get_head(stree, &head, vertexp, largep, &distance);
             leftb = stree->text + head;
-        } else
-        {
+
+        } else {
+
+            Wchar edgechar;
             vertex = GETCHILD(vertexp);
+
             while(True) {
 
-                if(IS_NOTHING(vertex)) {
-                    return leftp;
+                if (IS_NOTHING(vertex)) {
+                    return patt;
                 }
-                if(IS_LEAF(vertex))
-                {
+
+                if (IS_LEAF(vertex)) {
+
                     leaf_index = LEAF_INDEX(vertex);
                     leftb = stree->text + (depth + leaf_index);
+
                     if(leftb == stree->sentinel) {
-                        return leftp;
+                        return patt;
                     }
+
                     edgechar = *leftb;
                     if(edgechar > firstchar) {
-                        return leftp;
+                        return patt;
                     }
-                    if(edgechar == firstchar)
-                    {
-                        if(remain > 0)
-                        {
-                            plen = remain +
-                                lcp(leftp+remain,right,
-                                        leftb+remain,stree->sentinel-1);
-                        } else
-                        {
-                            plen = 1 + lcp(leftp+1,right,
-                                    leftb+1,stree->sentinel-1);
-                        }
-                        loc->first = leftb;
-                        loc->prev = loc->next;
-                        loc->edgelen = stree->textlen - (depth + leaf_index) + 1;
-                        loc->remain = loc->edgelen - plen;
-                        loc->next = stree->leaf_vertices.first + leaf_index;
-                        loc->string.start = leaf_index;
-                        loc->string.length = depth + plen;
-                        if(plen == (Uint) (right - leftp + 1)) {
+
+                    if(edgechar == firstchar) {
+
+                        Uint edgelen = stree->textlen - (depth + leaf_index) + 1;
+                        Uint *next = stree->leaf_vertices.first + leaf_index;
+                        plen = prefixlen(stree, leftb, patt, right, remain);
+                        update_loc(next, leaf_index, plen, leftb, depth, edgelen, loc);
+
+                        if(MATCHED(plen, right, patt)) {
                             return NULL;
+                        } else {
+                            return patt + plen;
                         }
-                        return leftp + plen;
                     }
-                    vertex = LEAFBROTHERVAL(stree->leaf_vertices.first[leaf_index]);
-                } else
-                {
-                    vertexp = stree->inner_vertices.first + GETBRANCHINDEX(vertex);
-                    GETONLYHEADPOS(head,vertexp);
-                    leftb = stree->text + (depth + head);
+
+                    vertex = stree->leaf_vertices.first[leaf_index];
+
+                } else {
+
+                    vertexp  = stree->inner_vertices.first + LEAF_INDEX(vertex);
+                    get_head(stree, &head, vertexp, largep, &distance);
+
+                    leftb    = stree->text + (depth + head);
                     edgechar = *leftb;
-                    if (edgechar > firstchar)
-                    {
-                        return leftp;
+
+                    if (edgechar > firstchar) {
+                        return patt;
                     }
-                    if(edgechar == firstchar)
-                    {
-                        /*@innerbreak@*/ break;
+                    if(edgechar == firstchar) {
+                        break;
                     }
-                    vertex = GETBROTHER(vertexp);
+
+                    vertex = SIBLING(vertexp);
                 }
             }
         }
-        GETONLYDEPTH(tmpdepth,vertexp);
+
+        Uint tmpdepth;
+        get_depth(stree, vertexp, &distance, &tmpdepth, largep);
         edgelen = tmpdepth - depth;
-        if(remain > 0)
-        {
-            if(remain >= edgelen)
-            {
+
+        if(remain > 0) {
+            if(remain >= edgelen) {
                 plen = edgelen;
                 remain -= plen;
-            } else
-            {
-            if (!leftb) {
-                fprintf(stderr, "Not supposed to be null");
-            }
-                plen = remain +
-                    lcp(leftp+remain,right,
-                            leftb+remain,leftb+edgelen-1);
+            } else {
+                Uint lcp_res = lcp(patt + remain, right, leftb +remain, leftb + edgelen-1);
+                plen = remain + lcp_res;
                 remain = 0;
             }
-        } else
-        {
-            if (!leftb) {
-                fprintf(stderr, "Not supposed to be null");
-            }
-            plen = 1 + lcp(leftp+1,right,
-                    leftb+1,leftb+edgelen-1);
+        } else {
+            plen = 1 + lcp(patt + 1, right, leftb + 1, leftb+edgelen - 1);
         }
-        loc->string.start = head;
-        loc->string.length = depth + plen;
-        if(plen == edgelen)
-        {
-            leftp += edgelen;
-            depth += edgelen;
-            loc->next = vertexp;
-            loc->remain = 0;
-        } else
-        {
-            loc->first = leftb;
-            loc->prev = loc->next;
-            loc->next = vertexp;
-            loc->edgelen = edgelen;
-            loc->remain = loc->edgelen - plen;
-            if(plen == (Uint) (right - leftp + 1))
-            {
+
+
+        if(plen == edgelen) {
+
+            skip_edge(loc, vertexp, &patt, &depth, head, plen, edgelen);
+
+        } else {
+
+            update_loc(vertexp, head, plen, leftb, depth, edgelen, loc);
+
+            if(MATCHED(plen, right, patt)) {
                 return NULL;
             }
-            return leftp + plen;
+
+            return patt + plen;
         }
     }
 }
