@@ -1,48 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <string.h>
-
 #include "types.h"
 
-extern wchar_t *sentinel, *text, characters[UCHAR_MAX + 1];
-
-extern Uint textlen, alphasize;
-
-void showstring(wchar_t *left, wchar_t *right);
-
-void showpattern(wchar_t *w, Uint wlen);
-
-void printtime();
-
-Uint randlen(Uint m_min, Uint m_max);
-
-// Macros for checking argument numbers
-
-// Check if the number of arguments is exactly N
-#define CHECKARGNUM(N,S)\
-        if (argc != N)\
-        {\
-          fprintf(stderr,"Usage: %s %s\n",argv[0],S);\
-          exit(EXIT_FAILURE);\
-        }
-
-// Read an integer from a string
-#define PARSEINTARG(S)\
-        if(sscanf(S,"%ld",&readint) != 1 || readint < 0)\
-        {\
-          fprintf(stderr,"invalid argument \"%s\": " \
-                         "non-negative number expected\n",S);\
-          exit(EXIT_FAILURE);\
-        }
-
-// Read a floating point value from a string
-#define PARSEFLOATARG(S)\
-        if(sscanf(S,"%f",&readfloat) != 1)\
-        {\
-          fprintf(stderr,"invalid argument \"%s\":"\
-                         " floating point number expected\n",S);\
-          exit(EXIT_FAILURE);\
-        }
+Uint lcp(wchar_t *start1, wchar_t *end1, wchar_t *start2, wchar_t *end2);
 
 #endif

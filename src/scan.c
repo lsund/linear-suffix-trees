@@ -8,22 +8,9 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-#include "stree.h"
-#include "basedef.h"
+#include "scan.h"
 
-static Uint lcp(wchar_t *start1,wchar_t *end1,wchar_t *start2,wchar_t *end2)
-{
-    register wchar_t *ptr1 = start1, *ptr2 = start2;
-
-    while(ptr1 <= end1 && ptr2 <= end2 && *ptr1 == *ptr2)
-    {
-        ptr1++;
-        ptr2++;
-    }
-    return (Uint) (ptr1-start1);
-}
-
-wchar_t *scan(Suffixtree *stree, Location *loc, Uint * btptr, wchar_t *left,
+wchar_t *scan(STree *stree, Location *loc, Uint * btptr, wchar_t *left,
         wchar_t *right)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth,

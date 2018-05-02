@@ -116,7 +116,7 @@ typedef struct suffixtree
     Sint lastcharindex;
 #endif
 
-} Suffixtree;
+} STree;
 
 // A location is implemented by the type `Location`
 typedef struct
@@ -173,38 +173,38 @@ typedef struct
 ///////////////////////////////////////////////////////////////////////////////
 // Functions
 
-Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen);
+Sint construct(STree *stree,wchar_t *text,Uint textlen);
 
-Sint constructprogressstree(Suffixtree *stree,wchar_t *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
+Sint constructprogressstree(STree *stree,wchar_t *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
 
-void setdepthheadposition(Suffixtree *stree,Uint depth, Uint headposition);
+void setdepthheadposition(STree *stree,Uint depth, Uint headposition);
 
-void setsuffixlink(Suffixtree *stree,Uint slink);
+void setsuffixlink(STree *stree,Uint slink);
 
-Uint getlargelinkconstruction(Suffixtree *stree);
+Uint getlargelinkconstruction(STree *stree);
 
-void init(Suffixtree *stree, wchar_t *text, Uint textlen);
+void init(STree *stree, wchar_t *text, Uint textlen);
 
 // Slow-scan
-void scanprefix(Suffixtree *stree);
+void scanprefix(STree *stree);
 
 // skip-count
-void rescan(Suffixtree *stree);
+void rescan(STree *stree);
 
 // Insert a large node
-void completelarge(Suffixtree *stree);
+void completelarge(STree *stree);
 
 // Insert a leaf edge from the current base vertex
-void insertleaf(Suffixtree *stree);
+void insertleaf(STree *stree);
 
 // Insert inner veretx and split appropriate edges
-void insertbranchnode(Suffixtree *stree);
+void insertbranchnode(STree *stree);
 
 // Construct the successor chain for the children of the root. This is done of
 // the end of the algorithm in one sweep.
-void linkrootchildren(Suffixtree *stree);
+void linkrootchildren(STree *stree);
 
-void freestree(Suffixtree *stree);
+void freestree(STree *stree);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Macros

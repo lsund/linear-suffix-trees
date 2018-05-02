@@ -15,7 +15,7 @@
 #include "stree.h"
 
 
-Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen);
+Sint construct(STree *stree, wchar_t *text, Uint textlen);
 
 
 #endif

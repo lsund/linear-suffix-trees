@@ -13,11 +13,11 @@ size_t strlenw(Wchar *s)
 wchar_t *text;
 Uint textlen, max_codepoint;
 
-static bool search_pattern(Suffixtree *stree, wchar_t *patt)
+static bool search_pattern(STree *stree, wchar_t *patt)
 {
     Location loc;
     Uint pattlen = strlenw(patt);
-    wchar_t *rem = scan(stree, &loc, ROOT(stree), patt, patt + pattlen, 0);
+    wchar_t *rem = scan(stree, &loc, ROOT(stree), patt, patt + pattlen);
     return !rem || rem[0] == 0;
 }
 
@@ -43,8 +43,8 @@ char *test_count(char *patternfile, char *textfile, Uint count)
     fclose(in);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
-    Suffixtree stree;
-    constructstree(&stree, text, textlen);
+    STree stree;
+    construct(&stree, text, textlen);
 
 
     Uint exists_n = 0;
@@ -86,8 +86,8 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     fclose(in);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
-    Suffixtree stree;
-    constructstree(&stree, text, textlen);
+    STree stree;
+    construct(&stree, text, textlen);
 
 
     int exists_n = 0, rexists_n = 0;

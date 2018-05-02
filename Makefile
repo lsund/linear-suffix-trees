@@ -12,14 +12,13 @@ INCLUDE=-I'include'
 
 CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
 
-#-DSTARTFACTOR=0.5
-
 OBJ=         obj/stree.o\
              obj/naive_search.o\
              obj/space.o\
              obj/io.o\
              obj/clock.o\
              obj/scan.o\
+             obj/util.o\
              obj/construct.o
 
 TEST_OBJ = obj/test_search.o

@@ -19,7 +19,7 @@ Uint textlen;
 
 int main(int argc, char *argv[])
 {
-    Suffixtree stree;
+    STree stree;
     char *filename = argv[1];
 
     if (argc != 2) {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
     fprintf(stdout, "Creating a suffix tree for text of length %lu\n", textlen);
 
-    if(constructstree(&stree, text, textlen) != 0) {
+    if(construct(&stree, text, textlen) != 0) {
         fprintf(stderr,"Could not create suffix tree");
         return EXIT_FAILURE;
     }

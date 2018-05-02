@@ -16,37 +16,37 @@
 // Private
 
 
-static bool last_suffix(Suffixtree *stree)
+static bool last_suffix(STree *stree)
 {
     return stree->tailptr >= stree->sentinel;
 }
 
 
-static bool head_is_node(Suffixtree *stree)
+static bool head_is_node(STree *stree)
 {
     return stree->headend == NULL;
 }
 
 
-static bool root_depth(Suffixtree *stree)
+static bool root_depth(STree *stree)
 {
     return stree->headnodedepth == 0;
 }
 
 
-static bool head_is_root(Suffixtree *stree)
+static bool head_is_root(STree *stree)
 {
     return root_depth(stree) && head_is_node(stree);
 }
 
 
-static bool empty_head(Suffixtree *stree)
+static bool empty_head(STree *stree)
 {
     return stree->headstart == stree->headend;
 }
 
 
-static void insert_vertex(Suffixtree *stree)
+static void insert_vertex(STree *stree)
 {
     if(head_is_node(stree)) {
         insertleaf(stree);
@@ -60,7 +60,7 @@ static void insert_vertex(Suffixtree *stree)
 // Public
 
 
-Sint constructstree(Suffixtree *stree,wchar_t *text,Uint textlen)
+Sint construct(STree *stree,wchar_t *text,Uint textlen)
 {
     stree->nonmaximal = NULL;
 

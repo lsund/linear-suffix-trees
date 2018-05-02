@@ -30,19 +30,19 @@ static Uint extra_alloc(Uint textlen)
 }
 
 
-static bool no_space(Suffixtree *stree)
+static bool no_space(STree *stree)
 {
     return stree->inner_vertices.next_free >= stree->alloc_leftbound;
 }
 
 
-static Uint *push_leftbound(Suffixtree *stree)
+static Uint *push_leftbound(STree *stree)
 {
     return stree->inner_vertices.first + stree->inner_vertices.size - LARGEINTS;
 }
 
 // Allocate space for branch vertices
-static void allocate_inner_vertices(Suffixtree *stree)
+static void allocate_inner_vertices(STree *stree)
 {
     if(no_space(stree)) {
 
@@ -69,7 +69,7 @@ static void allocate_inner_vertices(Suffixtree *stree)
 }
 
 
-void insertleaf(Suffixtree *stree)
+void insertleaf(STree *stree)
 {
     Uint *ptr, newleaf;
 
@@ -107,7 +107,7 @@ stree->leaf_vertices.next_free_num++;
 stree->leaf_vertices.next_free++;
 }
 
-void insertbranchnode(Suffixtree *stree)
+void insertbranchnode(STree *stree)
 {
     Uint *ptr, *insertnodeptr, *insertleafptr, insertnodeptrbrother;
 
@@ -190,7 +190,7 @@ void insertbranchnode(Suffixtree *stree)
 // character of each edge.
 //
 
-void rescan(Suffixtree *stree) // skip-count
+void rescan(STree *stree) // skip-count
 {
     Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode,
          nodedepth, edgelen, wlen, leafindex, headposition;
@@ -282,7 +282,7 @@ void rescan(Suffixtree *stree) // skip-count
    pointers \emph{tailptr} and \emph{sentinel}.
    */
 
-static Uint taillcp(Suffixtree *stree,wchar_t *start1, wchar_t *end1)
+static Uint taillcp(STree *stree,wchar_t *start1, wchar_t *end1)
 {
     wchar_t *ptr1 = start1, *ptr2 = stree->tailptr + 1;
     while(ptr1 <= end1 && ptr2 < stree->sentinel && *ptr1 == *ptr2)
@@ -294,7 +294,7 @@ static Uint taillcp(Suffixtree *stree,wchar_t *start1, wchar_t *end1)
 }
 
 // Scans a prefix of the current tail down from a given node
-void scanprefix(Suffixtree *stree)
+void scanprefix(STree *stree)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node,
          distance = 0, prevnode, prefixlen, headposition;
@@ -421,7 +421,7 @@ void scanprefix(Suffixtree *stree)
     }
 }
 
-void completelarge(Suffixtree *stree)
+void completelarge(STree *stree)
 {
     Uint distance, *backwards;
 
@@ -441,7 +441,7 @@ void completelarge(Suffixtree *stree)
     stree->largenode++;
 }
 
-void linkrootchildren(Suffixtree *stree)
+void linkrootchildren(STree *stree)
 {
     Uint *rcptr, *prevnodeptr, prev = UNDEFREFERENCE;
 
@@ -481,7 +481,7 @@ void linkrootchildren(Suffixtree *stree)
 }
 
 
-void init(Suffixtree *stree,wchar_t *text,Uint textlen)
+void init(STree *stree,wchar_t *text,Uint textlen)
 {
     Uint i;
 
@@ -533,7 +533,7 @@ void init(Suffixtree *stree,wchar_t *text,Uint textlen)
 
 }
 
-void freestree(Suffixtree *stree)
+void freestree(STree *stree)
 {
     FREE(stree->leaf_vertices.first);
     FREE(stree->rootchildren);
@@ -549,7 +549,7 @@ void freestree(Suffixtree *stree)
 }
 
 
-Uint getlargelinkconstruction(Suffixtree *stree)
+Uint getlargelinkconstruction(STree *stree)
 {
     wchar_t secondchar;
 
