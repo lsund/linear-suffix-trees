@@ -33,17 +33,7 @@ char *test_count(char *patternfile, char *textfile, Uint count)
 {
     Uint patternslen;
     setlocale(LC_ALL, "en_US.utf8");
-    FILE *in = fopen(textfile, "r");
-    text = malloc(sizeof(Wchar) * MAX_ALLOC);
-    wint_t c;
-    textlen = 0;
-    while ((c = fgetwc(in)) != WEOF) {
-        text[textlen] = c;
-        textlen++;
-    }
-    text[textlen + 1] = '\0';
-    /* max_codepoint = get_max(wtext, textlen); */
-    fclose(in);
+    file_to_string(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
     STree stree;
@@ -76,17 +66,7 @@ char *compare_vs_naive(char *patternfile, char *textfile)
 
     Uint patternslen;
     setlocale(LC_ALL, "en_US.utf8");
-    FILE *in = fopen(textfile, "r");
-    text = malloc(sizeof(Wchar) * MAX_ALLOC);
-    wint_t c;
-    textlen = 0;
-    while ((c = fgetwc(in)) != WEOF) {
-        text[textlen] = c;
-        textlen++;
-    }
-    text[textlen + 1] = '\0';
-    /* max_codepoint = get_max(wtext, textlen); */
-    fclose(in);
+    file_to_string(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
     STree stree;

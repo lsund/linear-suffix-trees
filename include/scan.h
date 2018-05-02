@@ -6,6 +6,7 @@
 #include "basedef.h"
 #include "util.h"
 #include "location.h"
+#include "stree_aux.h"
 
 Wchar *scan(
             STree *stree,
