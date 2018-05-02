@@ -8,7 +8,6 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-
 #include "stree.h"
 
 Wchar *text;
@@ -245,10 +244,10 @@ void rescan(STree *stree) // skip-count
             } else   // successor is branch node
             {
                 nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-                GETONLYHEADPOS(headposition,nodeptr);
+                get_head(stree, nodeptr, &largep, &distance, &headposition);
                 edgechar = stree->text[stree->headnodedepth + headposition];
-                if(edgechar == headchar) // correct edge found
-                {
+                // Correct edge found
+                if(edgechar == headchar) {
                     break;
                 }
                 prevnode = node;
@@ -326,7 +325,7 @@ void scanprefix(STree *stree)
             return;
         }
         nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-        GETBOTH(nodedepth,headposition,nodeptr);  // get info for branch node
+        get_depth_head(stree, &nodedepth, &headposition, nodeptr, largep);
         leftborder = stree->text + headposition;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + nodedepth - 1);
         (stree->tailptr)+= prefixlen;
@@ -379,7 +378,7 @@ void scanprefix(STree *stree)
             } else  // successor is branch node
             {
                 nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-                GETONLYHEADPOS(headposition,nodeptr);
+                get_head(stree, nodeptr, &largep, &distance, &headposition);
                 leftborder = stree->text + (stree->headnodedepth + headposition);
                 if((edgechar = *leftborder) >= tailchar)  // edge will not come later
                 {

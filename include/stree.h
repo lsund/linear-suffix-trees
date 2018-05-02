@@ -26,7 +26,7 @@
 #include "types.h"
 #include "arraydef.h"
 #include "bitvector.h"
-#include "streedata.h"
+#include "stree_aux.h"
 
 // A path in the suffix tree is stored with the `Pathinfo` struct
 typedef struct
@@ -78,16 +78,6 @@ void freestree(STree *stree);
 ///////////////////////////////////////////////////////////////////////////////
 // Macros
 
-#define SMALLINTS           3                  // # of integers for small node
-#define LARGEINTS           5                  // # of integers for large node
-#define MULTBYSMALLINTS(V)  ((V) * SMALLINTS)  // multiply by SMALLINTS
-#define DIVBYSMALLINTS(V)   ((V) / SMALLINTS)  // div by SMALLINTS
-
-#define SMALLBIT            FIRSTBIT       // mark small node
-#define NILBIT              FIRSTBIT       // mark nil reference in brother
-#define MAXINDEX            (NILBIT - 1)     // all except for first bit
-#define MAXDISTANCE         MAXINDEX       // maximal distance value
-
 /*
    We use the least significant bit to discriminate references to leafs
    and branching nodes. Since base addresses are even, the unset least
@@ -100,7 +90,6 @@ void freestree(STree *stree);
 #define IS_LAST(ST, C)          (C) == (ST)->sentinel
 
 #define IS_LEAF(V)                 ((V) & LEAFBIT)
-#define ISLARGE(V)                (!((V) & SMALLBIT))
 #define MAKELEAF(V)               ((V) | LEAFBIT)
 #define MAKELARGE(V)              (V)
 #define MAKELARGELEAF(V)          MAKELEAF(V)
@@ -115,9 +104,6 @@ void freestree(STree *stree);
 
 #define CHILD(B)               ((*(B)) & MAXINDEX)
 #define SIBLING(B)             (*((B)+1))
-#define GETDISTANCE(B)            (*((B)+2))
-#define GETDEPTH(B)               (*((B)+2))
-#define GETHEADPOS(B)             (*((B)+3))
 #define GETSUFFIXLINK(B)          getlargelinkconstruction(stree)
 #define SETCHILD(B,VAL)           SETVAL(B,((*(B)) & SMALLBIT) | (VAL))
 #define SETBROTHER(B,VAL)         SETVAL(B+1,VAL)
@@ -135,7 +121,6 @@ void freestree(STree *stree);
 
 #define SETLEAFBROTHER(B,VAL)     *(B) = (VAL)
 
-#define GETCHAINEND(C, B, D)      C = (B) + MULTBYSMALLINTS(D)
 #define MAKEBRANCHADDR(V)         (V)
 #define SETBRANCHNODEOFFSET       /* nothing */
 
@@ -164,47 +149,6 @@ void freestree(STree *stree);
 #define ACCESSBRANCHBROTHER  (UintConst(1) << 4)
 
 #define SETVAL(E,VAL) *(E) = VAL
-
-// Retrieves the depth and headposition of the branching vertex PT.
-#define GETBOTH(DP,HP,PT) \
-    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-{\
-    distance = 1 + \
-    DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-    DP = stree->currentdepth + distance;\
-    HP = stree->leaf_vertices.next_free_num - distance;\
-} else\
-{\
-    if(ISLARGE(*(PT)))\
-    {\
-        DP = GETDEPTH(PT);\
-        HP = GETHEADPOS(PT);\
-    } else\
-    {\
-        distance = GETDISTANCE(PT);\
-        GETCHAINEND(largep,PT,distance);\
-        DP = GETDEPTH(largep) + distance;\
-        HP = GETHEADPOS(largep) - distance;\
-    }\
-}
-
-#define GETONLYHEADPOS(HP,PT) \
-    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-{\
-    distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-    HP = stree->leaf_vertices.next_free_num - distance;\
-} else\
-{\
-    if(ISLARGE(*(PT)))\
-    {\
-        HP = GETHEADPOS(PT);\
-    } else\
-    {\
-        distance = GETDISTANCE(PT);\
-        GETCHAINEND(largep,PT,distance);\
-        HP = GETHEADPOS(largep) - distance;\
-    }\
-}
 
 #define GETONLYDEPTH(DP,PT) \
     if(stree->chainstart != NULL && (PT) >= stree->chainstart)\

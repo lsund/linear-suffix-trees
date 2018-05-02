@@ -109,7 +109,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
             }
 
             vertexp = LEAF_REF(stree, vertex);
-            head    = get_head(stree, vertexp, largep, &distance);
+            get_head(stree, vertexp, &largep, &distance, &head);
             label   = LABEL_START(stree, head);
 
         } else {
@@ -152,7 +152,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                 } else {
 
                     vertexp  = LEAF_REF(stree, vertex);
-                    head     = get_head(stree, vertexp, largep, &distance);
+                    get_head(stree, vertexp, &largep, &distance, &head);
                     label    = LABEL_START(stree, depth + head);
                     edgechar = *label;
 
@@ -170,7 +170,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
         }
 
         Uint prevdepth = depth;
-        depth = get_depth(stree, vertexp, &distance, largep);
+        depth = get_depth(stree, vertexp, &distance, &largep);
         edgelen = depth - prevdepth;
 
         if(remain > 0) {
