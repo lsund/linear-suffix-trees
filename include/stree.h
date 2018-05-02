@@ -216,19 +216,24 @@ void freestree(STree *stree);
    set the least significant bit.
    */
 
+#define LABEL_START(ST, O)        (ST)->text + (O)
+#define IS_LAST(ST, C)          (C) == (ST)->sentinel
+
 #define IS_LEAF(V)                 ((V) & LEAFBIT)
 #define ISLARGE(V)                (!((V) & SMALLBIT))
 #define MAKELEAF(V)               ((V) | LEAFBIT)
 #define MAKELARGE(V)              (V)
 #define MAKELARGELEAF(V)          MAKELEAF(V)
 
-#define LEAF_INDEX(V)           ((V) & ~(LEAFBIT | SMALLBIT))
+#define LEAF_NUM(V)           ((V) & ~(LEAFBIT | SMALLBIT))
+#define LEAF_REF(ST, V)    (ST)->inner_vertices.first + LEAF_NUM((V))
+#define LEAF_VERTEX(ST, N) (ST)->leaf_vertices.first[(N)]
 
 #define IS_NOTHING(P)                 ((P) & NILBIT)
 #define UNDEFREFERENCE            (~((Uint) 0))
 #define MAXTEXTLEN                ((MAXINDEX/((LARGEINTS+SMALLINTS)/2)) - 3)
 
-#define GETCHILD(B)               ((*(B)) & MAXINDEX)
+#define CHILD(B)               ((*(B)) & MAXINDEX)
 #define SIBLING(B)             (*((B)+1))
 #define GETDISTANCE(B)            (*((B)+2))
 #define GETDEPTH(B)               (*((B)+2))
