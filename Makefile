@@ -18,6 +18,7 @@ OBJ=         obj/stree.o\
              obj/io.o\
              obj/clock.o\
              obj/scan.o\
+             obj/location.o\
              obj/util.o\
              obj/construct.o
 
