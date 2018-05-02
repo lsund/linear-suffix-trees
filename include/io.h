@@ -59,19 +59,14 @@ caddr_t fileParts(int fd,Uint offset,Uint len,Bool writemap);
 
 void freetextspace();
 
-caddr_t genfile2String(char *name, Uint *textlen,
-                                  Bool writefile, Bool writemap);
-
 void file_to_string(const char *filename);
 
-int file2Array(char *name, Uint *textlen, int nlines, char ***words);
-
-FILE *createfilehandle(char *file, Uint line, char *path, char *mode);
+int file2Array(char *name, Uint *filelen, int nlines, char ***words);
 
 // Opens the path for appending, erasing any prior content of the same file
 FILE *open_append(const char *path);
 
-Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Wchar ***wordsp);
+Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp);
 
 #endif
 

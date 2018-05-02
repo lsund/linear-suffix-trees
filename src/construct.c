@@ -11,6 +11,8 @@
 
 #include "stree.h"
 
+Wchar *text;
+Uint textlen;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Private
@@ -60,11 +62,11 @@ static void insert_vertex(STree *stree)
 // Public
 
 
-Sint construct(STree *stree,Wchar *text,Uint textlen)
+Sint construct(STree *stree)
 {
     stree->nonmaximal = NULL;
 
-    init(stree,text,textlen);
+    init(stree);
 
     while(!last_suffix(stree) || !head_is_root(stree)) {
 

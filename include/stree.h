@@ -46,17 +46,13 @@ typedef struct
 ///////////////////////////////////////////////////////////////////////////////
 // Functions
 
-Sint construct(STree *stree,Wchar *text,Uint textlen);
-
-Sint constructprogressstree(STree *stree,Wchar *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
-
 void setdepthheadposition(STree *stree,Uint depth, Uint headposition);
 
 void setsuffixlink(STree *stree,Uint slink);
 
 Uint getlargelinkconstruction(STree *stree);
 
-void init(STree *stree, Wchar *text, Uint textlen);
+void init(STree *stree);
 
 // Slow-scan
 void scanprefix(STree *stree);

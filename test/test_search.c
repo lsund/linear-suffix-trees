@@ -47,7 +47,7 @@ char *test_count(char *patternfile, char *textfile, Uint count)
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
     STree stree;
-    construct(&stree, text, textlen);
+    construct(&stree);
 
 
     Uint exists_n = 0;
@@ -90,7 +90,7 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
     STree stree;
-    construct(&stree, text, textlen);
+    construct(&stree);
 
 
     int exists_n = 0, rexists_n = 0;

@@ -17,11 +17,6 @@ typedef struct pattern {
 // only used during construction.
 //
 // The important are the following:
-//
-// Wchar *text;     // points to the input string
-// Uint textlen;     // the length of the input string
-// Uint *inner_vertices;  // stores the infos for the branching nodes
-// Uint *leaftab;    // stores the brother-references of the leaves
 
 typedef struct table {
 
@@ -40,8 +35,8 @@ typedef struct text {
 } Text;
 
 
-typedef struct suffixtree
-{
+typedef struct suffixtree {
+
     Uint textlen;               // the length of the input string
     Wchar *text;               // points to the input string
     Wchar *sentinel;           // points to the position of the \(\$\)-symbol
@@ -70,7 +65,7 @@ typedef struct suffixtree
     Uint *headnode;             // left component of head location
 
     Uint *alloc_leftbound;    // refers to the last address, such that at
-    // least \texttt{LARGEINTS} integers are
+    // least LARGEINTS integers are
     // available. So a large node can be stored in
     // the available amount of space.
     Uint *nonmaximal;           // bit table: if node with headposition \(i\) is

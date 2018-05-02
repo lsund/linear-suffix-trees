@@ -69,11 +69,6 @@
            ? UintConst(1) \
            : (UintConst(1) + DIVWORDSIZE((N) - UintConst(1))))
 
-/*
-  The following macro allocates a bitarray of \texttt{N} bits. All bits
-  are off.
-*/
-
 #define INITBITTABGENERIC(TAB,OLDTAB,NUMOFBITS)\
         {\
           Uint *tabptr, tabsize = NUMOFINTSFORBITS(NUMOFBITS);\
@@ -101,39 +96,13 @@
         }
 
 
-/*
-  \texttt{SETIBIT(TAB,I)} sets the \texttt{I}-th bit in bitarray
-  \texttt{TAB} to 1.
-*/
-
 #define SETIBIT(TAB,I)    (TAB)[DIVWORDSIZE(I)] |= ITHBIT(MODWORDSIZE(I))
-
-/*
-  \texttt{UNSSETIBIT(TAB,I)} sets the \texttt{I}-th bit in bitarray
-  \texttt{TAB} to 0.
-*/
 
 #define UNSETIBIT(TAB,I)  (TAB)[DIVWORDSIZE(I)] &= ~(ITHBIT(MODWORDSIZE(I)))
 
-/*
-  \texttt{ISIBITSET(TAB,I)} checks if the \texttt{I}-th bit in bitarray
-  \texttt{TAB} is 1.
-*/
-
 #define ISIBITSET(TAB,I)  ((TAB)[DIVWORDSIZE(I)] & ITHBIT(MODWORDSIZE(I)))
 
-//\IgnoreLatex{
-
-#ifdef __cplusplus
-  extern "C" {
-#endif
 
 char *intbits2string(Uint bs);
 
-#ifdef __cplusplus
-}
 #endif
-
-#endif
-
-//}

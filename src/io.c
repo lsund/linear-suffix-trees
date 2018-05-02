@@ -48,7 +48,7 @@ void file_to_string(const char *filename)
 }
 
 
-static int open_file(char *name, Uint *textlen, bool writefile)
+static int open_file(char *name, Uint *filelen, bool writefile)
 {
     struct stat buf;
     int fd = open(name,(writefile) ? O_RDWR : O_RDONLY);
@@ -64,14 +64,14 @@ static int open_file(char *name, Uint *textlen, bool writefile)
         return EXIT_FAILURE;
     }
 
-    *textlen = (Uint) buf.st_size;
+    *filelen = (Uint) buf.st_size;
     return fd;
 }
 
-Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Wchar ***wordsp)
+Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
 {
     Wchar **words = *wordsp;
-    int fd = open_file(name, textlen, false);
+    int fd = open_file(name, filelen, false);
 
     if (fd < 0) {
         return -1;

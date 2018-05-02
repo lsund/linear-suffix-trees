@@ -11,6 +11,9 @@
 
 #include "stree.h"
 
+Wchar *text;
+Uint textlen;
+
 
 static Uint max(Uint a, Uint b)
 {
@@ -18,13 +21,13 @@ static Uint max(Uint a, Uint b)
 }
 
 
-static Uint start_alloc(Uint textlen)
+static Uint start_alloc()
 {
     return max(0.5 * MULTBYSMALLINTS(textlen+1), 48);
 }
 
 
-static Uint extra_alloc(Uint textlen)
+static Uint extra_alloc()
 {
     return max(0.05 * MULTBYSMALLINTS(textlen + 1), 48);
 }
@@ -46,7 +49,7 @@ static void allocate_inner_vertices(STree *stree)
 {
     if(no_space(stree)) {
 
-        Uint extra = extra_alloc(stree->textlen);
+        Uint extra = extra_alloc();
         stree->inner_vertices.size += extra;
 
         Uint head = INDEX_INNER(stree, stree->headnode);
@@ -479,11 +482,11 @@ void linkrootchildren(STree *stree)
 }
 
 
-void init(STree *stree,Wchar *text,Uint textlen)
+void init(STree *stree)
 {
     Uint i;
 
-    stree->inner_vertices.size = start_alloc(textlen);
+    stree->inner_vertices.size = start_alloc();
 
     stree->leaf_vertices.first = ALLOC(NULL, Uint, textlen + 2);
 

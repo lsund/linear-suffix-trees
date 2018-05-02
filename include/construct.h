@@ -15,7 +15,7 @@
 #include "stree.h"
 
 
-Sint construct(STree *stree, Wchar *text, Uint textlen);
+Sint construct(STree *stree);
 
 
 #endif
