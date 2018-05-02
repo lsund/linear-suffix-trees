@@ -19,25 +19,51 @@
 
 #include "io.h"
 
-Wchar *wtext;
+wchar_t *text;
 Uint textlen;
 
-// Open file in readmode, return file descriptor. The length of the file is
-// stored in `textlen`. If `writefile` is true if the file should also be
-// opened for triting.
-static int fileOpen(char *name, Uint *textlen, bool writefile)
-{
-    int fd;
-    struct stat buf;
 
-    if ((fd = open(name,(writefile) ? O_RDWR : O_RDONLY)) == -1) {
+void file_to_string(const char *filename)
+{
+    FILE *in = fopen(filename, "r");
+    text = malloc(sizeof(wchar_t) * MAX_ALLOC);
+
+    if(text == NULL) {
+        fprintf(stderr,"Cannot open file %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+
+    Uint c;
+    textlen = 0;
+    while ((c = fgetwc(in)) != WEOF) {
+        text[textlen] = c;
+        textlen++;
+    }
+    text[textlen + 1] = '\0';
+
+    if(textlen == 0) {
+        fprintf(stderr,"file \"%s\" is empty\n", filename);
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+static int open_file(char *name, Uint *textlen, bool writefile)
+{
+    struct stat buf;
+    int fd = open(name,(writefile) ? O_RDWR : O_RDONLY);
+
+    if (fd == -1) {
         fprintf(stderr, "fileOpen: Cannot open \"%s\"", name);
-        return -1;
+        return EXIT_FAILURE;
     }
-    if (fstat(fd,&buf) == -1) {
-        fprintf(stderr, "file \"%s\": fstat(fd = %d) failed",name,fd);
-        return -2;
+
+    int statres = fstat(fd,&buf);
+    if (statres == -1) {
+        fprintf(stderr, "fstat(fd = %d) failed", fd);
+        return EXIT_FAILURE;
     }
+
     *textlen = (Uint) buf.st_size;
     return fd;
 }
@@ -45,7 +71,7 @@ static int fileOpen(char *name, Uint *textlen, bool writefile)
 Uint file_to_strings(char *name, Uint *textlen, Uint nlines, Wchar ***wordsp)
 {
     Wchar **words = *wordsp;
-    int fd = fileOpen(name, textlen, false);
+    int fd = open_file(name, textlen, false);
 
     if (fd < 0) {
         return -1;
@@ -105,7 +131,7 @@ FILE *open_append(const char *path)
 // Frees the text specified
 void freetextspace()
 {
-  (void) munmap((caddr_t) wtext, (size_t) textlen);
+  (void) munmap((caddr_t) text, (size_t) textlen);
 }
 
 

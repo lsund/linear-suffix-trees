@@ -17,6 +17,7 @@
 #include "spaceman.h"
 #include "types.h"
 #include "error.h"
+#include "basedef.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Macros
@@ -61,7 +62,7 @@ void freetextspace();
 caddr_t genfile2String(char *name, Uint *textlen,
                                   Bool writefile, Bool writemap);
 
-caddr_t file2String(char *name, Uint *textlen);
+void file_to_string(const char *filename);
 
 int file2Array(char *name, Uint *textlen, int nlines, char ***words);
 

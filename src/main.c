@@ -8,52 +8,35 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
+
 #include "construct.h"
+#include "io.h"
+
 
 wchar_t *text;
+Uint textlen;
 
-// This constructs a suffix tree
+
 int main(int argc, char *argv[])
 {
-    Uint textlen = 0;
     Suffixtree stree;
-    char *filename;
+    char *filename = argv[1];
 
     if (argc != 2) {
-        fprintf(stderr, "Need exactly one arguments");
+        fprintf(stderr, "Need exactly one argument");
         return EXIT_FAILURE;
     }
+
+    file_to_string(filename);
 
     initclock();
-    filename = argv[1];
 
-    FILE *in = fopen(filename, "r");
-    text = malloc(sizeof(wchar_t) * MAX_ALLOC);
+    fprintf(stdout, "Creating a suffix tree for text of length %lu\n", textlen);
 
-    if(text == NULL) {
-        fprintf(stderr,"%s: cannot open file \"%s\" ",argv[0],filename);
-        fprintf(stderr,"or file \"%s\" is empty\n",filename);
-        return EXIT_FAILURE;
-    }
-
-    Uint c;
-    textlen = 0;
-    while ((c = fgetwc(in)) != WEOF) {
-        text[textlen] = c;
-        textlen++;
-    }
-    text[textlen + 1] = '\0';
-
-    if(textlen == 0) {
-        fprintf(stderr,"%s: file \"%s\" is empty\n",argv[0],filename);
-        return EXIT_FAILURE;
-    }
-
-    fprintf(stderr,"Creating a suffix tree for text of length %lu\n", textlen);
-
-    if(constructstree(&stree,text,textlen) != 0) {
+    if(constructstree(&stree, text, textlen) != 0) {
         fprintf(stderr,"Could not create suffix tree");
         return EXIT_FAILURE;
     }
+
     return EXIT_SUCCESS;
 }
