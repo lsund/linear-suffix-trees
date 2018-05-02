@@ -121,39 +121,28 @@ typedef struct suffixtree
 // A location is implemented by the type `Loc`
 typedef struct
 {
-    String locstring;     // string represented by location
-    Uint *previousnode;    // reference to previous node (which is branching)
-    Wchar *firstptr;     // pointer to first character of edge label
-    Uint edgelen;         // length of edge
-    Uint remain;          // number of remaining characters on edge
-    Uint *nextnode;   // reference to node the edge points to
+    String string;     // string represented by location
+    Uint *prev;    // reference to previous node (which is branching)
+    Wchar *first;            // first character
+    Uint edgelen;           // length of edge
+    Uint remain;            // number of remaining characters on edge
+    Uint *next;   // reference to node the edge points to
 } Loc;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to
-// u in `nextnode`. Moreover, we store a position where u starts and its length
-// in `locstring`. If the location is of form (u, v, w, uvw), then the
+// u in `next`. Moreover, we store a position where u starts and its length
+// in `string`. If the location is of form (u, v, w, uvw), then the
 // components of the location satisfies the following values:
 //
-// 1. `previousnode` is a reference to u
-//
-// 2. firstptr points to the first symbol of the edge label vw
+// 1. `prev` is a reference to u
 //
 // 3. edgelen = |vw|
 //
 // 4. remain = |w|
 //
-// 5. nextnode is a reference to uvw
+// 5. next is a reference to uvw
 //
 // Since w is not empty, a location is a node location iff remain = 0.
-
-// A SimpleLoc is a subset of a Loc
-typedef struct {
-    Uint remain;
-    Uint textpos;  // these last two items are redundant and can be computed
-    Uint *nextnode;
-} Simpleloc;     // \Typedef{Simpleloc}
-
-DECLAREARRAYSTRUCT(Simpleloc);
 
 // A path in the suffix tree is stored with the `Pathinfo` struct
 typedef struct
@@ -227,16 +216,16 @@ void freestree(STree *stree);
    set the least significant bit.
    */
 
-#define ISLEAF(V)                 ((V) & LEAFBIT)
+#define IS_LEAF(V)                 ((V) & LEAFBIT)
 #define ISLARGE(V)                (!((V) & SMALLBIT))
 #define MAKELEAF(V)               ((V) | LEAFBIT)
 #define MAKELARGE(V)              (V)
 #define MAKELARGELEAF(V)          MAKELEAF(V)
 
-#define GETLEAFINDEX(V)           ((V) & ~(LEAFBIT | SMALLBIT))
-#define GETBRANCHINDEX(V)         GETLEAFINDEX(V)
+#define LEAF_INDEX(V)           ((V) & ~(LEAFBIT | SMALLBIT))
+#define GETBRANCHINDEX(V)         LEAF_INDEX(V)
 
-#define NILPTR(P)                 ((P) & NILBIT)
+#define IS_NOTHING(P)                 ((P) & NILBIT)
 #define UNDEFREFERENCE            (~((Uint) 0))
 #define MAXTEXTLEN                ((MAXINDEX/((LARGEINTS+SMALLINTS)/2)) - 3)
 
@@ -271,9 +260,11 @@ void freestree(STree *stree);
 
 #define IS_ROOT(ST, V)          ((ST)->inner_vertices.first == V)
 
+#define IS_UNDEF(V)          ((V) == UNDEFREFERENCE)
+
 // Is the location the root?
 #define ROOTLOCATION(LOC)\
-    (((LOC)->locstring.length == 0) ? True : False)
+    (((LOC)->string.length == 0) ? True : False)
 
 // Index of a branch and leaf relative to the first address
 #define INDEX_INNER(ST,A)      ((Uint) ((A) - ROOT(ST)))
@@ -306,9 +297,9 @@ void freestree(STree *stree);
     } else\
     {\
         distance = GETDISTANCE(PT);\
-        GETCHAINEND(largeptr,PT,distance);\
-        DP = GETDEPTH(largeptr) + distance;\
-        HP = GETHEADPOS(largeptr) - distance;\
+        GETCHAINEND(largep,PT,distance);\
+        DP = GETDEPTH(largep) + distance;\
+        HP = GETHEADPOS(largep) - distance;\
     }\
 }
 
@@ -325,8 +316,8 @@ void freestree(STree *stree);
     } else\
     {\
         distance = GETDISTANCE(PT);\
-        GETCHAINEND(largeptr,PT,distance);\
-        HP = GETHEADPOS(largeptr) - distance;\
+        GETCHAINEND(largep,PT,distance);\
+        HP = GETHEADPOS(largep) - distance;\
     }\
 }
 
@@ -343,8 +334,8 @@ void freestree(STree *stree);
     } else\
     {\
         distance = GETDISTANCE(PT);\
-        GETCHAINEND(largeptr,PT,distance);\
-        DP = GETDEPTH(largeptr) + distance;\
+        GETCHAINEND(largep,PT,distance);\
+        DP = GETDEPTH(largep) + distance;\
     }\
 }
 
@@ -359,7 +350,7 @@ void freestree(STree *stree);
         DP = GETDEPTH(PT);\
     } else\
     {\
-        DP = GETDEPTH(largeptr) + distance;\
+        DP = GETDEPTH(largep) + distance;\
     }\
 }
 

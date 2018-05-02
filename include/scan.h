@@ -14,4 +14,6 @@ Wchar *scan(
             Wchar *right              // The end
         );
 
+#define MATCHED(X, R, L)        (X) == (Uint) ((R) - (L) + 1)
+
 #endif
