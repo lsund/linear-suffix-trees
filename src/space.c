@@ -1,12 +1,12 @@
 /*
-   Copyright (c) 2003 by Stefan Kurtz and The Institute for
-   Genomic Research.  This is OSI Certified Open Source Software.
-   Please see the file LICENSE for licensing information and
-   the file ACKNOWLEDGEMENTS for names of contributors to the
-   code base.
-   */
-
-//\Ignore{
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,8 +17,6 @@
 #include "types.h"
 #include "basedef.h"
 #include "spaceman.h"
-
-//}
 
 /*EE
   This file contains functions to store pointers to dynamically allocated
@@ -41,37 +39,12 @@
   \end{enumerate}
   */
 
-/*EE
-  The following is a general macro to print fatal error messages.
-  */
-
-#define ALLOCVIAFATAL(M) \
-    fprintf(stderr,"file \"%s\", line %lu: "\
-            " allocandusespaceviaptr(%lu,%lu) failed:%s\n",\
-            file,(Ulong) line,(Ulong) size,\
-            (Ulong) number,M);\
-            exit(EXIT_FAILURE)
-
-typedef struct
-{
-    void *spaceptr;      // ptr to the spaceblock
-    Uint sizeofcells,    // size of cells of the block
-         numberofcells;  // number of cells in the block
-    char *fileallocated; // the filenames where the block was allocated
-    Uint lineallocated;  // the linenumber where the
-} Blockdescription;
-
-/*@null@*/ static Blockdescription *blocks = NULL;
+static Blockdescription *blocks = NULL;
 
 static Uint numberofblocks = 0, // numberofblocks
             nextfreeblock = 0,  // index of next free block
             currentspace = 0,   // currently allocated num of bytes
             spacepeak = 0;      // maximally allocated num of bytes
-
-/*
-   The following two tables store important information to
-   generate meaningfull error messages.
-   */
 
 /*
    The following function sets the soft limit on the data size to the hard
@@ -86,50 +59,33 @@ static void setmaxspace(void)
     int rc;
     struct rlimit rls;
 
-    /*@ignore@*/
-    if((rc = getrlimit(RLIMIT_DATA,&rls)) != 0)
-        /*@end@*/
-    {
+    if((rc = getrlimit(RLIMIT_DATA,&rls)) != 0) {
         fprintf(stderr,"cannot find rlimit[RLIMIT_DATA]\n");
         exit(EXIT_FAILURE);
     }
 
-    if(rls.rlim_cur < rls.rlim_max)
-    {
+    if(rls.rlim_cur < rls.rlim_max) {
         rls.rlim_cur = rls.rlim_max;
-        /*@ignore@*/
-        if((rc = setrlimit(RLIMIT_DATA, &rls)) != 0)
-            /*@end@*/
-        {
+        if((rc = setrlimit(RLIMIT_DATA, &rls)) != 0) {
             fprintf(stderr,"cannot set rlimit[RLIMIT_DATA]\n");
             exit(EXIT_FAILURE);
         }
     }
 }
 
-/*
-   The following two functions \texttt{addspace} and \texttt{subtractspace}
-   maintain the variables \texttt{currentspace} and \texttt{spacepeak}.
-   */
-
-static void addspace(Uint space)
-{
-    if(currentspace == 0)
-    {
+static void addspace(Uint space) {
+    if(currentspace == 0) {
         setmaxspace();
         currentspace = space;
-    } else
-    {
+    } else {
         currentspace += space;
     }
-    if(currentspace > spacepeak)
-    {
+    if(currentspace > spacepeak) {
         spacepeak = currentspace;
     }
 }
 
-static void subtractspace(Uint space)
-{
+static void subtractspace(Uint space) {
     currentspace -= space;
 }
 
@@ -140,14 +96,11 @@ static void subtractspace(Uint space)
   to \texttt{ptr}. If there is none, then the program exits with exit code 1.
   */
 
-/*@notnull@*/ void *allocandusespaceviaptr(char *file,Uint line,
-        /*@null@*/ void *ptr,
-        Uint size,Uint number)
+void *alloc_use(Uint line, void *ptr, Uint size,Uint number)
 {
     Uint i, blocknum;
 
-    if(nextfreeblock > 0)
-    {
+    if(nextfreeblock > 0) {
         if (!blocks) {
             fprintf(stderr, "Not supposed to be null");
         }
@@ -158,21 +111,17 @@ static void subtractspace(Uint space)
                 break;
             }
         }
-    } else
-    {
+    } else {
         blocknum = 0;
-    }
-    if(blocknum == nextfreeblock)
-    {
-        if(ptr == NULL)
-        {
+    } if(blocknum == nextfreeblock) {
+        if(ptr == NULL) {
             nextfreeblock += 64;
             blocks = (Blockdescription *) realloc(blocks,
                     (size_t) (sizeof(Blockdescription)*
                         nextfreeblock));
-            if(blocks == NULL)
-            {
-                ALLOCVIAFATAL("not enough space for the block descriptions available");
+            if(blocks == NULL) {
+                fprintf(stderr, "not enough space for the block descriptions available");
+                exit(EXIT_FAILURE);
             }
             for(i=blocknum; i < nextfreeblock; i++)
             {
@@ -182,7 +131,8 @@ static void subtractspace(Uint space)
             }
         } else
         {
-            ALLOCVIAFATAL("cannot find space block");
+            fprintf(stderr, "cannot find space block");
+            exit(EXIT_FAILURE);
         }
     }
     if (!blocks) {
@@ -192,7 +142,6 @@ static void subtractspace(Uint space)
     addspace(size*number);
     blocks[blocknum].numberofcells = number;
     blocks[blocknum].sizeofcells = size;
-    blocks[blocknum].fileallocated = file;
     blocks[blocknum].lineallocated = line;
     if(blocks[blocknum].spaceptr == NULL) {
         numberofblocks++;
@@ -200,7 +149,8 @@ static void subtractspace(Uint space)
     if((blocks[blocknum].spaceptr
                 = realloc(blocks[blocknum].spaceptr,(size_t) (size*number))) == NULL)
     {
-        ALLOCVIAFATAL("not enough memory");
+        fprintf(stderr, "not enough memory");
+        exit(EXIT_FAILURE);
     }
     if (!blocks[blocknum].spaceptr) {
         fprintf(stderr, "Not supposed to be null");
@@ -244,7 +194,6 @@ void freespaceviaptr(char *file,Uint line,void *ptr)
     subtractspace(blocks[blocknum].numberofcells * blocks[blocknum].sizeofcells);
     blocks[blocknum].numberofcells = 0;
     blocks[blocknum].sizeofcells = 0;
-    blocks[blocknum].fileallocated = NULL;
     blocks[blocknum].lineallocated = 0;
     blocks[blocknum].spaceptr = NULL;
     if(numberofblocks == 0)
@@ -277,7 +226,6 @@ void wrapspace(void)
                 blocks[blocknum].numberofcells);
         blocks[blocknum].sizeofcells = 0;
         blocks[blocknum].numberofcells = 0;
-        blocks[blocknum].fileallocated = NULL;
         blocks[blocknum].lineallocated = 0;
     }
 }
@@ -303,8 +251,7 @@ void activeblocks(void)
         if(blocks[blocknum].spaceptr != NULL)
         {
             fprintf(stderr,"# active block %lu: ",(Ulong) blocknum);
-            fprintf(stderr,"allocated in file \"%s\", line %lu\n",
-                    blocks[blocknum].fileallocated,
+            fprintf(stderr,"line %lu\n",
                     (Ulong) blocks[blocknum].lineallocated);
         }
     }
@@ -336,15 +283,6 @@ void checkspaceleak(void)
                     (Ulong) blocks[blocknum].numberofcells,
                     (Ulong) blocks[blocknum].sizeofcells);
             fprintf(stderr,"allocated: ");
-            if(blocks[blocknum].fileallocated == NULL)
-            {
-                fprintf(stderr,"cannot identify\n");
-            } else
-            {
-                fprintf(stderr,"file \"%s\", line %lu\n",
-                        blocks[blocknum].fileallocated,
-                        (Ulong) blocks[blocknum].lineallocated);
-            }
             exit(EXIT_FAILURE);
         }
     }
