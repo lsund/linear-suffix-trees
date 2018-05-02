@@ -117,42 +117,40 @@ static void update_loc(Uint *next, Uint start, Uint plen, Wchar *first, Uint dep
 
 
 static void skip_edge(
-        Loc *loc, Uint *vertexp, Wchar **patt, Uint *depth, Uint head, Uint plen, Uint edgelen)
+        Loc *loc, Uint *vertexp, Pattern *patt, Uint *depth, Uint head, Uint plen, Uint edgelen)
 {
     loc->string.start  = head;
     loc->string.length = *depth + plen;
-    *patt              += edgelen;
+    patt->start          += edgelen;
     *depth              += edgelen;
     loc->next          = vertexp;
     loc->remain        = 0;
 }
 
-static Uint prefixlen(STree *stree, Wchar *start, Wchar *patt, Wchar *right, Uint remain)
+static Uint prefixlen(STree *stree, Wchar *start, Pattern *patt, Uint remain)
 {
     if (remain > 0) {
-        Wchar *patt_start = patt + remain;
-        Wchar *patt_end = right;
+        Wchar *patt_start = patt->start + remain;
         Wchar *text_start = start + remain;
         Wchar *text_end = stree->sentinel - 1;
-        Uint lcp_res = lcp(patt_start, patt_end, text_start, text_end);
+        Uint lcp_res = lcp(patt_start, patt->end, text_start, text_end);
         return remain + lcp_res;
     } else {
-        Wchar *patt_start = patt + 1;
-        Wchar *patt_end = right;
+        Wchar *patt_start = patt->start + 1;
         Wchar *text_start = start + 1;
         Wchar *text_end = stree->sentinel - 1;
-        Uint lcp_res = lcp(patt_start, patt_end, text_start, text_end);
+        Uint lcp_res = lcp(patt_start, patt->end, text_start, text_end);
         return 1 + lcp_res;
     }
 }
 
 
-static Uint  match_leaf(STree *stree, Loc *loc, Uint vertex, Wchar *patt, Wchar *right, Uint remain)
+static Uint  match_leaf(STree *stree, Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 {
     Uint leafnum = LEAF_NUM(vertex);
     loc->first   = stree->text + leafnum;
 
-    return prefixlen(stree, loc->first, patt, right, remain);
+    return prefixlen(stree, loc->first, patt, remain);
 }
 
 
@@ -160,10 +158,11 @@ static Uint  match_leaf(STree *stree, Loc *loc, Uint vertex, Wchar *patt, Wchar 
 // Public
 
 
-Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar *right)
+Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 {
 
-    Wchar *patt    = patt_start;
+
+    /* Wchar *patt    = patt_start; */
     Uint *vertexp   = start_vertex;
     Uint *largep    = NULL;
     Uint head       = 0;
@@ -181,11 +180,11 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar
 
     while(True) {
 
-        if (patt > right) {
+        if (patt.start > patt.end) {
             return NULL;
         }
 
-        firstchar    = *patt;
+        firstchar    = *patt.start;
         Uint vertex  = 0;
         Uint leafnum = 0;
         Wchar *label = NULL;
@@ -196,17 +195,17 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar
             vertex = ROOT_CHILD(stree, firstchar);
 
             if (IS_UNDEF(vertex)) {
-                return patt;
+                return patt.start;
             }
 
             if(IS_LEAF(vertex)) {
 
-                plen = match_leaf(stree, loc, vertex, patt, right, remain);
+                plen = match_leaf(stree, loc, vertex, &patt, remain);
 
-                if(MATCHED(plen, right, patt)) {
+                if(MATCHED(plen, patt.end, patt.start)) {
                     return NULL;
                 } else {
-                    return patt + plen;
+                    return patt.start + plen;
                 }
             }
 
@@ -223,7 +222,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar
 
                 if (IS_NOTHING(vertex)) {
 
-                    return patt;
+                    return patt.start;
 
                 } else if (IS_LEAF(vertex)) {
 
@@ -231,21 +230,21 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar
                     label   = LABEL_START(stree, depth + leafnum);
 
                     if(IS_LAST(stree, label)) {
-                        return patt;
+                        return patt.start;
                     }
 
                     edgechar = *label;
                     if(edgechar > firstchar) {
-                        return patt;
+                        return patt.start;
                     }
 
                     if(edgechar == firstchar) {
 
-                        plen = prefixlen(stree, label, patt, right, remain);
-                        if(MATCHED(plen, right, patt)) {
+                        plen = prefixlen(stree, label, &patt, remain);
+                        if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
                         } else {
-                            return patt + plen;
+                            return patt.start + plen;
                         }
                     }
 
@@ -259,7 +258,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar
                     edgechar = *label;
 
                     if (edgechar > firstchar) {
-                        return patt;
+                        return patt.start;
                     }
 
                     if(edgechar == firstchar) {
@@ -271,36 +270,37 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Wchar *patt_start, Wchar
             }
         }
 
-        Uint tmpdepth = get_depth(stree, vertexp, &distance, largep);
-        edgelen = tmpdepth - depth;
+        Uint prevdepth = depth;
+        depth = get_depth(stree, vertexp, &distance, largep);
+        edgelen = depth - prevdepth;
 
         if(remain > 0) {
             if(remain >= edgelen) {
                 plen = edgelen;
                 remain -= plen;
             } else {
-                Uint lcp_res = lcp(patt + remain, right, label +remain, label + edgelen-1);
+                Uint lcp_res = lcp(patt.start + remain, patt.end, label +remain, label + edgelen-1);
                 plen = remain + lcp_res;
                 remain = 0;
             }
         } else {
-            plen = 1 + lcp(patt + 1, right, label + 1, label+edgelen - 1);
+            plen = 1 + lcp(patt.start + 1, patt.end, label + 1, label+edgelen - 1);
         }
 
 
         if(plen == edgelen) {
 
-            skip_edge(loc, vertexp, &patt, &depth, head, plen, edgelen);
+            skip_edge(loc, vertexp, &patt, &prevdepth, head, plen, edgelen);
 
         } else {
 
-            update_loc(vertexp, head, plen, label, depth, edgelen, loc);
+            update_loc(vertexp, head, plen, label, prevdepth, edgelen, loc);
 
-            if(MATCHED(plen, right, patt)) {
+            if(MATCHED(plen, patt.end, patt.start)) {
                 return NULL;
             }
 
-            return patt + plen;
+            return patt.start + plen;
         }
     }
 }

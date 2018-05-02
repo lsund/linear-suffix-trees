@@ -34,8 +34,7 @@
 typedef Uint * Lref;
 
 // For each branching node we store six values
-typedef struct
-{
+typedef struct branchinfo {
     Uint headposition;        // the head position of the branching node
     Uint depth;               // the depth of the branching node
     Uint *suffixlink;          // the suffix link is always to a branching node
@@ -43,6 +42,12 @@ typedef struct
     Uint * branchbrother;  // the reference to the right brother;
     // if this doesn't exist then it's \texttt{NULL}
 } Branchinfo;
+
+
+typedef struct pattern {
+    Wchar *start;
+    Wchar *end;
+} Pattern;
 
 
 // A suffix tree is implemented by the type SuffixTree. Most of the feilds are

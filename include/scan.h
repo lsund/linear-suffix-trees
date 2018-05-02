@@ -10,8 +10,7 @@ Wchar *scan(
             STree *stree,
             Loc *loc,              // The location of the prefix (out)
             Uint *btptr,                 // Branch reference
-            Wchar *left,               // The start
-            Wchar *right              // The end
+            Pattern patt
         );
 
 #define MATCHED(X, R, L)        (X) == (Uint) ((R) - (L) + 1)
