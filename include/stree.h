@@ -140,33 +140,7 @@ void freestree(STree *stree);
 #define INDEX_INNER(ST,A)      ((Uint) ((A) - ROOT(ST)))
 #define LEAFADDR2NUM(ST,A)    ((Uint) ((A) - (ST)->leaf_vertices.first))
 
-// For each branching node we store five integers. These can be accessed by
-// some or-combination.
-#define ACCESSDEPTH          UintConst(1)
-#define ACCESSHEADPOS        (UintConst(1) << 1)
-#define ACCESSSUFFIXLINK     (UintConst(1) << 2)
-#define ACCESSFIRSTCHILD     (UintConst(1) << 3)
-#define ACCESSBRANCHBROTHER  (UintConst(1) << 4)
-
 #define SETVAL(E,VAL) *(E) = VAL
-
-#define GETONLYDEPTH(DP,PT) \
-    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-{\
-    distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (PT)));\
-    DP = stree->currentdepth  + distance;\
-} else\
-{\
-    if(ISLARGE(*(PT)))\
-    {\
-        DP = GETDEPTH(PT);\
-    } else\
-    {\
-        distance = GETDISTANCE(PT);\
-        GETCHAINEND(largep,PT,distance);\
-        DP = GETDEPTH(largep) + distance;\
-    }\
-}
 
 #define GETDEPTHAFTERHEADPOS(DP,PT) \
     if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
@@ -199,20 +173,5 @@ stree->headnodedepth--
                                                    stree->setatnewleaf = True
 #define RECALLLEAFADDRESS(A)      stree->setlink = A;\
                                                    stree->setatnewleaf = False
-#define RECALLBRANCHADDRESS(A)    stree->setlink = (A) + 1;\
-                                                   stree->setatnewleaf = False
-
-#define SETNILBIT                 *(stree->setlink) = NILBIT
-
-#define SETMAXBRANCHDEPTH(D)      if((D) > stree->maxbranchdepth)\
-{\
-    stree->maxbranchdepth = D;\
-}
-
-#define LEADLEVEL 2
-
-#define SHOWINDEX(NODE) /* Nothing */
-
-#define CHECKADDR(ST,A) /* Nothing */
 
 #endif

@@ -152,13 +152,16 @@ void insertbranchnode(STree *stree)
             SETNEWCHILDBROTHER(MAKELARGELEAF(stree->leaf_vertices.next_free_num), // first child is new leaf
                     insertnodeptrbrother);        // inherit brother
             *(stree->leaf_vertices.next_free) = stree->insertnode;   // new branch is brother of new leaf
-            RECALLBRANCHADDRESS(insertnodeptr);
+            stree->setlink = insertnodeptr + 1;
+            stree->setatnewleaf = False;
         }
     }
-    SETNILBIT;
+    *(stree->setlink) = NILBIT;
     stree->currentdepth = stree->headnodedepth + (Uint) (stree->headend-stree->headstart+1);
     SETDEPTHHEADPOS(stree->currentdepth,stree->leaf_vertices.next_free_num);
-    SETMAXBRANCHDEPTH(stree->currentdepth);
+    if (stree->currentdepth > stree->maxbranchdepth) {
+        stree->maxbranchdepth = stree->currentdepth;
+    }
     stree->leaf_vertices.next_free_num++;
     stree->leaf_vertices.next_free++;
 }
