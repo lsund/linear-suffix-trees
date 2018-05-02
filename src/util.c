@@ -12,3 +12,9 @@ Uint lcp(Wchar *start1, Wchar *end1, Wchar *start2, Wchar *end2)
     return (Uint) (ptr1 - start1);
 }
 
+Uint max(Uint a, Uint b)
+{
+    return a > b ? a : b;
+}
+
+

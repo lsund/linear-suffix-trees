@@ -14,24 +14,6 @@ Wchar *text;
 Uint textlen;
 
 
-static Uint max(Uint a, Uint b)
-{
-    return a > b ? a : b;
-}
-
-
-static Uint start_alloc()
-{
-    return max(0.5 * MULTBYSMALLINTS(textlen+1), 48);
-}
-
-
-static Uint extra_alloc()
-{
-    return max(0.05 * MULTBYSMALLINTS(textlen + 1), 48);
-}
-
-
 static bool no_space(STree *stree)
 {
     return stree->inner_vertices.next_free >= stree->alloc_leftbound;
@@ -48,8 +30,7 @@ static void allocate_inner_vertices(STree *stree)
 {
     if(no_space(stree)) {
 
-        Uint extra = extra_alloc();
-        stree->inner_vertices.size += extra;
+        stree->inner_vertices.size += EXTRA_ALLOCSIZE;
 
         Uint head = INDEX_INNER(stree, stree->headnode);
         Uint tmpchainstart = 0;
@@ -193,7 +174,7 @@ void insertbranchnode(STree *stree)
 void rescan(STree *stree) // skip-count
 {
     Uint *nodeptr, *largep = NULL, distance = 0, node, prevnode,
-         nodedepth, edgelen, wlen, leafindex, headposition;
+         nodedepth, edgelen, wlen, leafindex, head;
     Wchar headchar, edgechar;
 
     if(stree->headnodedepth == 0)   // head is the root
@@ -206,7 +187,7 @@ void rescan(STree *stree) // skip-count
             return;
         }
         nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-        GETONLYDEPTH(nodedepth,nodeptr);
+        nodedepth = get_depth(stree, nodeptr, &distance, &largep);
         wlen = (Uint) (stree->headend - stree->headstart + 1);
         if(nodedepth > wlen)    // cannot reach the successor node
         {
@@ -244,8 +225,8 @@ void rescan(STree *stree) // skip-count
             } else   // successor is branch node
             {
                 nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-                get_head(stree, nodeptr, &largep, &distance, &headposition);
-                edgechar = stree->text[stree->headnodedepth + headposition];
+                head = get_head(stree, nodeptr, &largep, &distance);
+                edgechar = stree->text[stree->headnodedepth + head];
                 // Correct edge found
                 if(edgechar == headchar) {
                     break;
@@ -297,7 +278,7 @@ static Uint taillcp(STree *stree,Wchar *start1, Wchar *end1)
 void scanprefix(STree *stree)
 {
     Uint *nodeptr = NULL, *largep = NULL, leafindex, nodedepth, edgelen, node,
-         distance = 0, prevnode, prefixlen, headposition;
+         distance = 0, prevnode, prefixlen, head;
     Wchar *leftborder = (Wchar *) NULL, tailchar, edgechar = 0;
 
     if(stree->headnodedepth == 0)   // headnode is root
@@ -325,8 +306,8 @@ void scanprefix(STree *stree)
             return;
         }
         nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-        get_depth_head(stree, &nodedepth, &headposition, nodeptr, largep);
-        leftborder = stree->text + headposition;
+        get_depth_head(stree, &nodedepth, &head, nodeptr, largep);
+        leftborder = stree->text + head;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + nodedepth - 1);
         (stree->tailptr)+= prefixlen;
         if(nodedepth > prefixlen)   // cannot reach the successor, fall out of tree
@@ -378,8 +359,8 @@ void scanprefix(STree *stree)
             } else  // successor is branch node
             {
                 nodeptr = stree->inner_vertices.first + LEAF_NUM(node);
-                get_head(stree, nodeptr, &largep, &distance, &headposition);
-                leftborder = stree->text + (stree->headnodedepth + headposition);
+                head = get_head(stree, nodeptr, &largep, &distance);
+                leftborder = stree->text + (stree->headnodedepth + head);
                 if((edgechar = *leftborder) >= tailchar)  // edge will not come later
                 {
                     break;
@@ -404,7 +385,7 @@ void scanprefix(STree *stree)
             stree->insertprev = prevnode;
             return;
         }
-        GETDEPTHAFTERHEADPOS(nodedepth,nodeptr); // we already know headposition
+        GETDEPTHAFTERHEADPOS(nodedepth,nodeptr); // we already know head
         edgelen = nodedepth - stree->headnodedepth;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + edgelen - 1);
         (stree->tailptr) += prefixlen;
@@ -485,8 +466,7 @@ void init(STree *stree)
 {
     Uint i;
 
-    stree->inner_vertices.size = start_alloc();
-
+    stree->inner_vertices.size = START_ALLOCSIZE;
     stree->leaf_vertices.first = ALLOC(NULL, Uint, textlen + 2);
 
     stree->inner_vertices.first = ALLOC(NULL, Uint, stree->inner_vertices.size);

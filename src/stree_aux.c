@@ -1,4 +1,16 @@
+/*
+ * Copyright (c) 2003 by Stefan Kurtz and The Institute for
+ * Genomic Research.  This is OSI Certified Open Source Software.
+ * Please see the file LICENSE for licensing information and
+ * the file ACKNOWLEDGEMENTS for names of contributors to the
+ * code base.
+ *
+ * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
+ */
+
 #include "stree_aux.h"
+
+Uint textlen;
 
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep)
 {
@@ -30,19 +42,19 @@ Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *
 }
 
 
-void get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance, Uint *head)
+Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
         *distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - vertexp));
-        *head = stree->leaf_vertices.next_free_num - *distance;
+        return stree->leaf_vertices.next_free_num - *distance;
     } else
     {
         if(ISLARGE(*(vertexp))) {
-            *head = GETHEADPOS(vertexp);
+            return GETHEADPOS(vertexp);
         } else {
             *distance = GETDISTANCE(vertexp);
             GETCHAINEND(*largep, vertexp, *distance);
-            *head = GETHEADPOS(*largep) - *distance;
+            return GETHEADPOS(*largep) - *distance;
         }
     }
 }

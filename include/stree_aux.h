@@ -7,7 +7,6 @@
 #define SMALLINTS           3                  // # of integers for small node
 #define LARGEINTS           5                  // # of integers for large node
 
-
 #define DIVBYSMALLINTS(V)   ((V) / SMALLINTS)  // div by SMALLINTS
 #define MULTBYSMALLINTS(V)  ((V) * SMALLINTS)  // multiply by SMALLINTS
 
@@ -23,10 +22,13 @@
 #define GETDISTANCE(B)            (*((B)+2))
 #define GETCHAINEND(C, B, D)      C = (B) + MULTBYSMALLINTS(D)
 
+#define START_ALLOCSIZE         max(0.5 * MULTBYSMALLINTS(textlen + 1), 48);
+#define EXTRA_ALLOCSIZE         max(0.05 * MULTBYSMALLINTS(textlen + 1), 48);
+
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
-void get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance, Uint *head);
+Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
 
 Uint get_depth(STree *stree, Uint *vertexp, Uint *distance, Uint **largep);
 

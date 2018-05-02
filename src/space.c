@@ -16,6 +16,7 @@
 #include <string.h>
 #include "types.h"
 #include "basedef.h"
+#include "spaceman.h"
 
 //}
 

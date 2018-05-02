@@ -9,6 +9,7 @@
 #ifndef SPACEMAN_H
 #define SPACEMAN_H
 #include "types.h"
+#include "util.h"
 
 void *allocandusespaceviaptr(
         char *file,Uint line,
