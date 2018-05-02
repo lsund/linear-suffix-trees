@@ -50,7 +50,7 @@ typedef struct
 //
 // The important are the following:
 //
-// wchar_t *text;     // points to the input string
+// Wchar *text;     // points to the input string
 // Uint textlen;     // the length of the input string
 // Uint *inner_vertices;  // stores the infos for the branching nodes
 // Uint *leaftab;    // stores the brother-references of the leaves
@@ -75,8 +75,8 @@ typedef struct suffixtree
 
     Uint *rootchildren;         // references to successors of root
 
-    wchar_t *text;               // points to the input string
-    wchar_t *sentinel;           // points to the position of the \(\$\)-symbol
+    Wchar *text;               // points to the input string
+    Wchar *sentinel;           // points to the position of the \(\$\)-symbol
 
     Uint headnodedepth;         // the depth of the headnode
     Uint insertnode;            // the node the split edge leads to
@@ -104,30 +104,30 @@ typedef struct suffixtree
     Uint *leafcounts;           // holds counts of the number of leafs in subtree
     // indexed by headposition
     Bool setatnewleaf;          // nil-reference is stored in new leaf
-    wchar_t *headstart;          // these references represent the right component
-    wchar_t *headend;            // of the head location \((\overline{u},v)\).
+    Wchar *headstart;          // these references represent the right component
+    Wchar *headend;            // of the head location \((\overline{u},v)\).
     // \emph{headstart} refers to the first character
     // of \(v\), and \emph{headend} to the last
     // character. In case, \(v=\varepsilon\),
     // \(\emph{headend}=\emph{NULL}\).
-    wchar_t *tailptr;            // points to the tail
+    Wchar *tailptr;            // points to the tail
 
-#if (wchar_tBYTES == 2) || (wchar_tBYTES == 4)
+#if (WcharBYTES == 2) || (WcharBYTES == 4)
     Sint lastcharindex;
 #endif
 
 } STree;
 
-// A location is implemented by the type `Location`
+// A location is implemented by the type `Loc`
 typedef struct
 {
     String locstring;     // string represented by location
     Uint *previousnode;    // reference to previous node (which is branching)
-    wchar_t *firstptr;     // pointer to first character of edge label
+    Wchar *firstptr;     // pointer to first character of edge label
     Uint edgelen;         // length of edge
     Uint remain;          // number of remaining characters on edge
     Uint *nextnode;   // reference to node the edge points to
-} Location;
+} Loc;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to
 // u in `nextnode`. Moreover, we store a position where u starts and its length
@@ -146,7 +146,7 @@ typedef struct
 //
 // Since w is not empty, a location is a node location iff remain = 0.
 
-// A SimpleLoc is a subset of a Location
+// A SimpleLoc is a subset of a Loc
 typedef struct {
     Uint remain;
     Uint textpos;  // these last two items are redundant and can be computed
@@ -173,9 +173,9 @@ typedef struct
 ///////////////////////////////////////////////////////////////////////////////
 // Functions
 
-Sint construct(STree *stree,wchar_t *text,Uint textlen);
+Sint construct(STree *stree,Wchar *text,Uint textlen);
 
-Sint constructprogressstree(STree *stree,wchar_t *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
+Sint constructprogressstree(STree *stree,Wchar *text,Uint textlen,void (*progress)(Uint,void *),void (*finalprogress)(void *),void *info);
 
 void setdepthheadposition(STree *stree,Uint depth, Uint headposition);
 
@@ -183,7 +183,7 @@ void setsuffixlink(STree *stree,Uint slink);
 
 Uint getlargelinkconstruction(STree *stree);
 
-void init(STree *stree, wchar_t *text, Uint textlen);
+void init(STree *stree, Wchar *text, Uint textlen);
 
 // Slow-scan
 void scanprefix(STree *stree);
@@ -268,6 +268,8 @@ void freestree(STree *stree);
 #define SETBRANCHNODEOFFSET       /* nothing */
 
 #define ROOT(ST)            ((ST)->inner_vertices.first)
+
+#define IS_ROOT(ST, V)          ((ST)->inner_vertices.first == V)
 
 // Is the location the root?
 #define ROOTLOCATION(LOC)\
@@ -361,30 +363,6 @@ void freestree(STree *stree);
     }\
 }
 
-#define GETHEADPOSAFTERDEPTH(HP,PT) \
-    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-{\
-    HP = stree->leaf_vertices.next_free_num - distance;\
-} else\
-{\
-    if(ISLARGE(*(PT)))\
-    {\
-        HP = GETHEADPOS(PT);\
-    } else\
-    {\
-        HP = GETHEADPOS(largeptr) - distance;\
-    }\
-}
-
-#define NEXTNODE(PT)\
-    if(ISLARGE(*(PT)))\
-{\
-    PT += LARGEINTS;\
-} else\
-{\
-    PT += SMALLINTS;\
-}
-
 #define FOLLOWSUFFIXLINK\
     if(ISLARGE(*(stree->headnode)))\
 {\
@@ -394,8 +372,6 @@ void freestree(STree *stree);
     stree->headnode += SMALLINTS;\
 }\
 stree->headnodedepth--
-
-#define RECALLSUCC(S)             /* Nothing */
 
 // Set the address for a nil-reference. In the case the reference is a new
 // leaf, this is marked

@@ -13,7 +13,7 @@
 #include "io.h"
 
 
-wchar_t *text;
+Wchar *text;
 Uint textlen;
 
 

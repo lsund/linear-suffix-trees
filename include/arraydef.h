@@ -53,9 +53,9 @@
         }
 
 
-DECLAREARRAYSTRUCT(wchar_t);
+DECLAREARRAYSTRUCT(Wchar);
 DECLAREARRAYSTRUCT(Uint);
 
-typedef Arraywchar_t ArrayCharacters;
+typedef ArrayWchar ArrayCharacters;
 
 #endif

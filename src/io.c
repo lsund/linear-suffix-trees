@@ -19,14 +19,14 @@
 
 #include "io.h"
 
-wchar_t *text;
+Wchar *text;
 Uint textlen;
 
 
 void file_to_string(const char *filename)
 {
     FILE *in = fopen(filename, "r");
-    text = malloc(sizeof(wchar_t) * MAX_ALLOC);
+    text = malloc(sizeof(Wchar) * MAX_ALLOC);
 
     if(text == NULL) {
         fprintf(stderr,"Cannot open file %s\n", filename);

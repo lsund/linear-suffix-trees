@@ -5,9 +5,9 @@
 
 #include "types.h"
 
-extern wchar_t *text;
+extern Wchar *text;
 
-extern wchar_t *sentinel, characters[UCHAR_MAX + 1];
+extern Wchar *sentinel, characters[UCHAR_MAX + 1];
 extern Uint     root_children[UCHAR_MAX + 1],
                 textlen,
                 *stree,

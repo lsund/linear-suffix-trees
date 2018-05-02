@@ -102,7 +102,6 @@ void insertleaf(STree *stree)
             }
         }
     }
-    RECALLSUCC(newleaf);     // recall node on successor path of \emph{headnode}
 stree->leaf_vertices.next_free_num++;
 stree->leaf_vertices.next_free++;
 }
@@ -174,7 +173,6 @@ void insertbranchnode(STree *stree)
         }
     }
     SETNILBIT;
-    RECALLSUCC(MAKEBRANCHADDR(stree->inner_vertices.next_free)); // node on succ. path
     stree->currentdepth = stree->headnodedepth + (Uint) (stree->headend-stree->headstart+1);
     SETDEPTHHEADPOS(stree->currentdepth,stree->leaf_vertices.next_free_num);
     SETMAXBRANCHDEPTH(stree->currentdepth);
@@ -182,7 +180,7 @@ void insertbranchnode(STree *stree)
     stree->leaf_vertices.next_free++;
 }
 
-// Finding the Head-Locations
+// Finding the Head-Locs
 
 //
 // The function \emph{rescan} finds the location of the current head.
@@ -194,7 +192,7 @@ void rescan(STree *stree) // skip-count
 {
     Uint *nodeptr, *largeptr = NULL, distance = 0, node, prevnode,
          nodedepth, edgelen, wlen, leafindex, headposition;
-    wchar_t headchar, edgechar;
+    Wchar headchar, edgechar;
 
     if(stree->headnodedepth == 0)   // head is the root
     {
@@ -282,9 +280,9 @@ void rescan(STree *stree) // skip-count
    pointers \emph{tailptr} and \emph{sentinel}.
    */
 
-static Uint taillcp(STree *stree,wchar_t *start1, wchar_t *end1)
+static Uint taillcp(STree *stree,Wchar *start1, Wchar *end1)
 {
-    wchar_t *ptr1 = start1, *ptr2 = stree->tailptr + 1;
+    Wchar *ptr1 = start1, *ptr2 = stree->tailptr + 1;
     while(ptr1 <= end1 && ptr2 < stree->sentinel && *ptr1 == *ptr2)
     {
         ptr1++;
@@ -298,7 +296,7 @@ void scanprefix(STree *stree)
 {
     Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, edgelen, node,
          distance = 0, prevnode, prefixlen, headposition;
-    wchar_t *leftborder = (wchar_t *) NULL, tailchar, edgechar = 0;
+    Wchar *leftborder = (Wchar *) NULL, tailchar, edgechar = 0;
 
     if(stree->headnodedepth == 0)   // headnode is root
     {
@@ -481,7 +479,7 @@ void linkrootchildren(STree *stree)
 }
 
 
-void init(STree *stree,wchar_t *text,Uint textlen)
+void init(STree *stree,Wchar *text,Uint textlen)
 {
     Uint i;
 
@@ -551,7 +549,7 @@ void freestree(STree *stree)
 
 Uint getlargelinkconstruction(STree *stree)
 {
-    wchar_t secondchar;
+    Wchar secondchar;
 
     if(stree->headnodedepth == 1)
     {

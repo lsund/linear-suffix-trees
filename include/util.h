@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-Uint lcp(wchar_t *start1, wchar_t *end1, wchar_t *start2, wchar_t *end2);
+Uint lcp(Wchar *start1, Wchar *end1, Wchar *start2, Wchar *end2);
 
 #endif

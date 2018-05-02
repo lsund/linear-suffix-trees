@@ -10,14 +10,14 @@ size_t strlenw(Wchar *s)
 }
 
 
-wchar_t *text;
+Wchar *text;
 Uint textlen, max_codepoint;
 
-static bool search_pattern(STree *stree, wchar_t *patt)
+static bool search_pattern(STree *stree, Wchar *patt)
 {
-    Location loc;
+    Loc loc;
     Uint pattlen = strlenw(patt);
-    wchar_t *rem = scan(stree, &loc, ROOT(stree), patt, patt + pattlen);
+    Wchar *rem = scan(stree, &loc, ROOT(stree), patt, patt + pattlen);
     return !rem || rem[0] == 0;
 }
 

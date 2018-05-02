@@ -6,12 +6,12 @@
 #include "basedef.h"
 #include "util.h"
 
-wchar_t *scan(
+Wchar *scan(
             STree *stree,
-            Location *loc,              // The location of the prefix (out)
+            Loc *loc,              // The location of the prefix (out)
             Uint *btptr,                 // Branch reference
-            wchar_t *left,               // The start
-            wchar_t *right              // The end
+            Wchar *left,               // The start
+            Wchar *right              // The end
         );
 
 #endif

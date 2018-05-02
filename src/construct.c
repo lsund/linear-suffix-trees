@@ -60,7 +60,7 @@ static void insert_vertex(STree *stree)
 // Public
 
 
-Sint construct(STree *stree,wchar_t *text,Uint textlen)
+Sint construct(STree *stree,Wchar *text,Uint textlen)
 {
     stree->nonmaximal = NULL;
 
