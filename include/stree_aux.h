@@ -59,14 +59,14 @@
 #define IS_ROOT_DEPTH       (stree->head_depth == 0)
 #define IS_HEAD_ROOT        (IS_ROOT_DEPTH && IS_HEAD_VERTEX)
 #define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
-#define IS_LEFTMOST       (stree->insertprev == UNDEF)
+#define IS_LEFTMOST(V)       ((V) == UNDEF)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
 
 // The vertices can be implemented as a collection of integers.
 //
-// For each small vertex there is a record that stares the distance,
+// For each small vertex there is a record that stores the distance,
 // child and sibling. For each large vertex w there is a record that stores
 // child, sibling, depth and head.
 //
@@ -80,6 +80,7 @@
 // Note that this needs to be done only for nodes that exceed K
 #define CHILD(V)               ((*(V)) & MAXINDEX)
 #define SIBLING(V)             (*((V) + 1))
+#define LEAF_SIBLING(L)        (*(L))
 #define DEPTH(V)               (*((V) + 2))
 #define DISTANCE(V)            (*((V) + 2))
 #define HEAD(V)                (*((V) + 3))
@@ -118,21 +119,24 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
 
-#define SET_CHILD(B,VAL)                *(B) = ((*(B)) & SMALLBIT) | (VAL)
-#define SET_SIBLING(B,VAL)               *(B + 1) = VAL
-#define SET_LEAF_SIBLING(B,VAL)           *(B) = (VAL)
-#define SET_DISTANCE(B,VAL)              *(B + 2) = VAL; *(B) = (*(B)) | SMALLBIT
-#define SET_SUFFIXLINK(SL)               *(stree->inner.next+4) = (SL)
+#define SET_CHILD(B, VAL)                *(B) = ((*(B)) & SMALLBIT) | (VAL)
+#define SET_SIBLING(B, VAL)               *(B + 1) = VAL
+// The only thing a leaf stores is a reference to its right sibling. Therefore
+// to set a leaf sibling, simply set the value of the previous one to the
+// current one.
+#define SET_DISTANCE(B,VAL)             *(B + 2) = VAL; *(B) = (*(B)) | SMALLBIT
+#define SET_SUFFIXLINK(SL)              *(stree->inner.next+4) = (SL)
 #define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S)
 #define SET_DEPTH(D)                    *(stree->inner.next + 2) = D
 #define SET_HEAD(H)                     *(stree->inner.next + 3) = H
 #define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
+#define SET_LEAF_SIBLING(L, S)          *(L) = (S)
 
 
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
-void get_dist(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
+void get_chainend(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
 
 Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint distance);
 

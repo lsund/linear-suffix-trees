@@ -11,6 +11,7 @@
 
 #include "stree.h"
 #include "stree_aux.h"
+#include "insert.h"
 
 Wchar *text;
 Uint textlen;

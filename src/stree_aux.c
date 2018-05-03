@@ -12,20 +12,19 @@
 
 Uint textlen;
 
-void get_dist(STree *stree, Uint *vertexp, Uint **largep, Uint *distance)
+void get_chainend(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
         *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next - vertexp));
     } else {
-        if(IS_LARGE(*(vertexp))) {
-        } else {
+        if(!IS_LARGE(*(vertexp))) {
             *distance = DISTANCE(vertexp);
-            *largep   = CHAIN_END(vertexp, *distance);
+            *chainend   = CHAIN_END(vertexp, *distance);
         }
     }
 }
 
-Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint distance)
+Uint get_head(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
         return stree->leaves.next_num - distance;
@@ -33,12 +32,12 @@ Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint distance)
         if(IS_LARGE(*(vertexp))) {
             return HEAD(vertexp);
         } else {
-            return HEAD(*largep) - distance;
+            return HEAD(*chainend) - distance;
         }
     }
 }
 
-Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **largep)
+Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
         return stree->currentdepth  + distance;
@@ -46,7 +45,7 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **largep)
         if(IS_LARGE(*vertexp)) {
             return DEPTH(vertexp);
         } else {
-            return DEPTH(*largep) + distance;
+            return DEPTH(*chainend) + distance;
         }
     }
 }

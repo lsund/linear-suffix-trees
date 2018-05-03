@@ -14,155 +14,6 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen;
 
-
-static Uint *new_allocbound(STree *stree)
-{
-    return stree->inner.first + stree->inner.size - LARGE_WIDTH;
-}
-
-// Allocate space for branch vertices
-static void allocate_inner_vertices(STree *stree)
-{
-    if(IS_NO_SPACE) {
-
-        stree->inner.size += EXTRA_ALLOCSIZE;
-
-        Uint chainstart;
-        if(stree->chainstart != NULL) {
-            chainstart = INDEX(stree->chainstart);
-        }
-
-        Uint head = INDEX(stree->headnode);
-        Uint size = stree->inner.size;
-
-        stree->inner.first = ALLOC(stree->inner.first, Uint, size);
-        stree->inner.next = stree->inner.first + stree->inner.next_num;
-        stree->headnode = stree->inner.first + head;
-
-        if(stree->chainstart != NULL) {
-            stree->chainstart = stree->inner.first + chainstart;
-        }
-        stree->allocated = new_allocbound(stree);
-    }
-}
-
-
-void insert_leaf(STree *stree)
-{
-    Uint leaf = MAKE_LEAF(stree->leaves.next_num);
-    if(IS_HEAD_ROOT && !IS_SENTINEL(stree->tailptr)) {
-
-        SET_ROOTCHILD(*(stree->tailptr), leaf);
-        *stree->leaves.next = 0;
-
-    } else {
-        // leaf = first child
-        if (IS_LEFTMOST) {
-            *(stree->leaves.next) = CHILD(stree->headnode);
-            SET_CHILD(stree->headnode, leaf);
-        } else {
-            if(IS_LEAF(stree->insertprev)) {
-                // Previous node is leaf
-                Uint *left = stree->leaves.first + LEAF_NUM(stree->insertprev);
-                *(stree->leaves.next) = *left;
-                SET_LEAF_SIBLING(left, leaf);
-            } else {
-                // previous node is branching node
-                Uint *left = stree->inner.first + LEAF_NUM(stree->insertprev);
-                *(stree->leaves.next) = SIBLING(left);
-                SET_SIBLING(left, leaf);
-            }
-        }
-    }
-    stree->leaves.next_num++;
-    stree->leaves.next++;
-}
-
-void insert_inner(STree *stree)
-{
-    Uint *insertnodeptr, *insertleafptr, insertnodeptrbrother;
-
-    allocate_inner_vertices(stree);
-    if(IS_ROOT_DEPTH) {
-
-        SET_ROOTCHILD(*(stree->headstart), stree->inner.next_num);
-        *(stree->inner.next + 1) = 0;
-
-    } else {
-        if(IS_LEFTMOST) {
-            // new branch = first child
-            SET_CHILD(stree->headnode,stree->inner.next_num);
-        } else {
-            // new branch = right brother of leaf
-            if(IS_LEAF(stree->insertprev)) {
-                Uint *ptr = stree->leaves.first + LEAF_NUM(stree->insertprev);
-                SET_LEAF_SIBLING(ptr,stree->inner.next_num);
-            } else {
-                // new branch = brother of branching node
-                SET_SIBLING(stree->inner.first + LEAF_NUM(stree->insertprev),
-                        stree->inner.next_num);
-            }
-        }
-    }
-    if(IS_LEAF(stree->insertnode)) {
-        // split edge is leaf edge
-        insertleafptr = stree->leaves.first + LEAF_NUM(stree->insertnode);
-        if (stree->tailptr == sentinel ||
-                *(stree->headend+1) < *(stree->tailptr))
-        {
-            // first child =oldleaf
-            // inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE(stree->insertnode), *insertleafptr);
-            // Recall new leaf address
-            stree->setlink = stree->leaves.next;
-            stree->setatnewleaf = True;
-            SET_LEAF_SIBLING(insertleafptr,                     // new leaf =
-                    MAKE_LEAF(stree->leaves.next_num)); // right brother of old leaf
-        } else
-        {
-            // First child = new leaf
-            // inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE_LEAF(stree->leaves.next_num), *insertleafptr);
-            *(stree->leaves.next) = stree->insertnode;  // old leaf = right brother of of new leaf
-            // Recall leaf address
-            stree->setlink = insertleafptr;
-            stree->setatnewleaf = False;
-        }
-    } else {
-        // split edge leads to branching node
-        insertnodeptr = stree->inner.first + LEAF_NUM(stree->insertnode);
-        insertnodeptrbrother = SIBLING(insertnodeptr);
-        if (stree->tailptr == sentinel ||
-                *(stree->headend+1) < *(stree->tailptr))
-        {
-            // First child is new branch
-            // inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE(stree->insertnode), insertnodeptrbrother);
-            // Recall new leaf address
-            stree->setlink = stree->leaves.next;
-            stree->setatnewleaf = True;
-            SET_SIBLING(insertnodeptr,MAKE_LEAF(stree->leaves.next_num)); // new leaf = brother of old branch
-        } else
-        {
-            // First child is new leaf
-            // Inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE_LEAF(stree->leaves.next_num), insertnodeptrbrother);
-            *(stree->leaves.next) = stree->insertnode;   // new branch is brother of new leaf
-            stree->setlink = insertnodeptr + 1;
-            stree->setatnewleaf = False;
-        }
-    }
-    *(stree->setlink) = NOTHING;
-    stree->currentdepth = stree->head_depth + (Uint) (stree->headend - stree->headstart+1);
-    SET_DEPTH(stree->currentdepth);
-    SET_HEAD(stree->leaves.next_num);
-    if (stree->currentdepth > stree->maxbranchdepth) {
-        stree->maxbranchdepth = stree->currentdepth;
-    }
-    stree->leaves.next_num++;
-    stree->leaves.next++;
-}
-
 // Finding the Head-Locs
 
 //
@@ -173,7 +24,7 @@ void insert_inner(STree *stree)
 
 void rescan(STree *stree) // skip-count
 {
-    Uint *nodeptr, *largep = NULL, distance = 0, node, prevnode,
+    Uint *nodeptr, *chainend = NULL, distance = 0, node, prevnode,
          nodedepth, edgelen, wlen, leafindex, head;
     Wchar headchar, edgechar;
 
@@ -188,8 +39,8 @@ void rescan(STree *stree) // skip-count
         }
         nodeptr = stree->inner.first + LEAF_NUM(node);
 
-        get_dist(stree, nodeptr, &largep, &distance);
-        nodedepth = get_depth(stree, nodeptr, distance, &largep);
+        get_chainend(stree, nodeptr, &chainend, &distance);
+        nodedepth = get_depth(stree, nodeptr, distance, &chainend);
 
         wlen = (Uint) (stree->headend - stree->headstart + 1);
         if(nodedepth > wlen)    // cannot reach the successor node
@@ -229,8 +80,8 @@ void rescan(STree *stree) // skip-count
             {
                 nodeptr = stree->inner.first + LEAF_NUM(node);
 
-                get_dist(stree, nodeptr, &largep, &distance);
-                head = get_head(stree, nodeptr, &largep, distance);
+                get_chainend(stree, nodeptr, &chainend, &distance);
+                head = get_head(stree, nodeptr, &chainend, distance);
 
                 edgechar = text[stree->head_depth + head];
                 // Correct edge found
@@ -242,7 +93,7 @@ void rescan(STree *stree) // skip-count
             }
         }
 
-        nodedepth = get_depth(stree, nodeptr, distance, &largep);
+        nodedepth = get_depth(stree, nodeptr, distance, &chainend);
         edgelen = nodedepth - stree->head_depth;
         wlen = (Uint) (stree->headend - stree->headstart + 1);
         if(edgelen > wlen) {
@@ -284,7 +135,7 @@ static Uint taillcp(STree *stree,Wchar *start1, Wchar *end1)
 // Scans a prefix of the current tail down from a given node
 void scanprefix(STree *stree)
 {
-    Uint *nodeptr = NULL, *largep = NULL, leafindex, nodedepth, edgelen, node,
+    Uint *nodeptr = NULL, *chainend = NULL, leafindex, nodedepth, edgelen, node,
          distance = 0, prevnode, prefixlen, head;
     Wchar *leftborder = (Wchar *) NULL, tailchar, edgechar = 0;
 
@@ -314,9 +165,9 @@ void scanprefix(STree *stree)
         }
         nodeptr = stree->inner.first + LEAF_NUM(node);
 
-        get_dist(stree, nodeptr, &largep, &distance);
-        head = get_head(stree, nodeptr, &largep, distance);
-        nodedepth = get_depth(stree, nodeptr, distance, &largep);
+        get_chainend(stree, nodeptr, &chainend, &distance);
+        head = get_head(stree, nodeptr, &chainend, distance);
+        nodedepth = get_depth(stree, nodeptr, distance, &chainend);
 
         leftborder = text + head;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + nodedepth - 1);
@@ -371,8 +222,8 @@ void scanprefix(STree *stree)
             {
                 nodeptr = stree->inner.first + LEAF_NUM(node);
 
-                get_dist(stree, nodeptr, &largep, &distance);
-                head = get_head(stree, nodeptr, &largep, distance);
+                get_chainend(stree, nodeptr, &chainend, &distance);
+                head = get_head(stree, nodeptr, &chainend, distance);
 
                 leftborder = text + (stree->head_depth + head);
                 if((edgechar = *leftborder) >= tailchar)  // edge will not come later
@@ -399,7 +250,7 @@ void scanprefix(STree *stree)
             stree->insertprev = prevnode;
             return;
         }
-        nodedepth = get_depth(stree, nodeptr, distance, &largep);
+        nodedepth = get_depth(stree, nodeptr, distance, &chainend);
         edgelen = nodedepth - stree->head_depth;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + edgelen - 1);
         (stree->tailptr) += prefixlen;

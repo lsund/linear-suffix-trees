@@ -44,12 +44,6 @@ void rescan(STree *stree);
 // Insert a large node
 void completelarge(STree *stree);
 
-// Insert a leaf edge from the current base vertex
-void insert_leaf(STree *stree);
-
-// Insert inner veretx and split appropriate edges
-void insert_inner(STree *stree);
-
 // Construct the successor chain for the children of the root. This is done of
 // the end of the algorithm in one sweep.
 void linkrootchildren(STree *stree);
