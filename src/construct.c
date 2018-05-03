@@ -10,6 +10,7 @@
 
 
 #include "stree.h"
+#include "stree_aux.h"
 
 Wchar *text;
 Uint textlen;
@@ -81,7 +82,7 @@ Sint construct(STree *stree)
             // Case 2.1: Head is node
             if(head_is_node(stree)) {
 
-                FOLLOWSUFFIXLINK;
+                follow_link(stree);
                 scanprefix(stree);
 
             // Case 2.2
@@ -100,7 +101,7 @@ Sint construct(STree *stree)
                     }
                 // Case 2.2.2
                 } else {
-                    FOLLOWSUFFIXLINK;
+                    follow_link(stree);
                     rescan(stree);
                 }
                 // Case 2.2.3

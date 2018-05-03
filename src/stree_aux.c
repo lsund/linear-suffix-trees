@@ -75,3 +75,47 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint *distance, Uint **largep)
     }
 }
 
+
+Uint get_depth_after_head(STree *stree, Uint *vertexp, Uint *distance, Uint **largep)
+{
+    if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
+         return stree->currentdepth + *distance;
+    } else {
+        if(ISLARGE(*vertexp)) {
+            return GETDEPTH(vertexp);
+        } else {
+            return GETDEPTH(*largep) + *distance;
+        }
+    }
+}
+
+static Uint getlargelinkconstruction(STree *stree)
+{
+    Wchar secondchar;
+
+    if(stree->headnodedepth == 1)
+    {
+        return 0;        // link refers to root
+    }
+    if(stree->headnodedepth == 2)  // determine second char of egde
+    {
+        if(stree->headend == NULL)
+        {
+            secondchar = *(stree->tailptr-1);
+        } else {
+            secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
+        }
+        return stree->rootchildren[(Uint) secondchar];
+    }
+    return *(stree->headnode+4);
+}
+
+void follow_link(STree *stree)
+{
+    if(ISLARGE(*(stree->headnode))) {
+        stree->headnode = stree->inner_vertices.first + GETSUFFIXLINK(stree->headnode);
+    } else {
+        stree->headnode += SMALLINTS;
+    }
+    stree->headnodedepth--;
+}

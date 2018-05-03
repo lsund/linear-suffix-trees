@@ -239,19 +239,20 @@ void rescan(STree *stree) // skip-count
             }
         }
 
-        GETDEPTHAFTERHEADPOS(nodedepth,nodeptr);     // get info about succ node
+        nodedepth = get_depth_after_head(stree, nodeptr, &distance, &largep);
         edgelen = nodedepth - stree->headnodedepth;
         wlen = (Uint) (stree->headend - stree->headstart + 1);
-        if(edgelen > wlen)     // cannot reach the succ node
-        {
+        if(edgelen > wlen) {
+            // cannot reach the succ node
             stree->insertnode = node;
             stree->insertprev = prevnode;
             return;
         }
-        stree->headnode = nodeptr;    // go to the successor node
+        // go to the successor node
+        stree->headnode = nodeptr;
         stree->headnodedepth = nodedepth;
-        if(edgelen == wlen)                    // location is found
-        {
+        if(edgelen == wlen) {
+            // location is found
             stree->headend = NULL;
             return;
         }
@@ -388,7 +389,7 @@ void scanprefix(STree *stree)
             stree->insertprev = prevnode;
             return;
         }
-        GETDEPTHAFTERHEADPOS(nodedepth,nodeptr); // we already know head
+        nodedepth = get_depth_after_head(stree, nodeptr, &distance, &largep);
         edgelen = nodedepth - stree->headnodedepth;
         prefixlen = 1 + taillcp(stree,leftborder+1,leftborder + edgelen - 1);
         (stree->tailptr) += prefixlen;
@@ -503,15 +504,15 @@ void init(STree *stree)
     stree->leaf_vertices.first[0]                 = 0;
 
     stree->leafcounts                   = NULL;
-    stree->leaf_vertices.next_free_num              = 1;
-    stree->leaf_vertices.next_free              = stree->leaf_vertices.first + 1;
-    stree->inner_vertices.next_free              = stree->inner_vertices.first + LARGEINTS;
+    stree->leaf_vertices.next_free_num  = 1;
+    stree->leaf_vertices.next_free      = stree->leaf_vertices.first + 1;
+    stree->inner_vertices.next_free     = stree->inner_vertices.first + LARGEINTS;
     stree->inner_vertices.next_free_num = LARGEINTS;
     stree->insertnode                   = UNDEFREFERENCE;
     stree->insertprev                   = UNDEFREFERENCE;
     stree->smallnotcompleted            = 0;
     stree->chainstart                   = NULL;
-    stree->largenode                    = stree->smallnode                         = 0;
+    stree->largenode                    = stree->smallnode = 0;
 
 
 }
@@ -532,23 +533,3 @@ void freestree(STree *stree)
 }
 
 
-Uint getlargelinkconstruction(STree *stree)
-{
-    Wchar secondchar;
-
-    if(stree->headnodedepth == 1)
-    {
-        return 0;        // link refers to root
-    }
-    if(stree->headnodedepth == 2)  // determine second char of egde
-    {
-        if(stree->headend == NULL)
-        {
-            secondchar = *(stree->tailptr-1);
-        } else {
-            secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
-        }
-        return stree->rootchildren[(Uint) secondchar];
-    }
-    return *(stree->headnode+4);
-}

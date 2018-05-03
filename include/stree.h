@@ -50,8 +50,6 @@ void setdepthheadposition(STree *stree,Uint depth, Uint headposition);
 
 void setsuffixlink(STree *stree,Uint slink);
 
-Uint getlargelinkconstruction(STree *stree);
-
 void init(STree *stree);
 
 // Slow-scan
@@ -104,7 +102,6 @@ void freestree(STree *stree);
 
 #define CHILD(B)               ((*(B)) & MAXINDEX)
 #define SIBLING(B)             (*((B)+1))
-#define GETSUFFIXLINK(B)          getlargelinkconstruction(stree)
 #define SETCHILD(B,VAL)           SETVAL(B,((*(B)) & SMALLBIT) | (VAL))
 #define SETBROTHER(B,VAL)         SETVAL(B+1,VAL)
 
@@ -142,30 +139,7 @@ void freestree(STree *stree);
 
 #define SETVAL(E,VAL) *(E) = VAL
 
-#define GETDEPTHAFTERHEADPOS(DP,PT) \
-    if(stree->chainstart != NULL && (PT) >= stree->chainstart)\
-{\
-    DP = stree->currentdepth + distance;\
-} else\
-{\
-    if(ISLARGE(*(PT)))\
-    {\
-        DP = GETDEPTH(PT);\
-    } else\
-    {\
-        DP = GETDEPTH(largep) + distance;\
-    }\
-}
-
-#define FOLLOWSUFFIXLINK\
-    if(ISLARGE(*(stree->headnode)))\
-{\
-    stree->headnode = stree->inner_vertices.first + GETSUFFIXLINK(stree->headnode);\
-} else\
-{\
-    stree->headnode += SMALLINTS;\
-}\
-stree->headnodedepth--
+/* #define FOLLOWSUFFIXLINK\ */
 
 // Set the address for a nil-reference. In the case the reference is a new
 // leaf, this is marked

@@ -25,6 +25,8 @@
 #define START_ALLOCSIZE         max(0.5 * MULTBYSMALLINTS(textlen + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * MULTBYSMALLINTS(textlen + 1), 48);
 
+#define GETSUFFIXLINK(B)          getlargelinkconstruction(stree)
+
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
@@ -32,5 +34,8 @@ Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
 
 Uint get_depth(STree *stree, Uint *vertexp, Uint *distance, Uint **largep);
 
+Uint get_depth_after_head(STree *stree, Uint *vertexp, Uint *distance, Uint **largep);
+
+void follow_link(STree *stree);
 
 #endif
