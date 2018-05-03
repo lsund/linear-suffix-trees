@@ -56,7 +56,7 @@ typedef struct suffixtree {
     // For each leaf number j, leafs store a reference to the right sibling of
     // the corresponding suffix. If there is no such sibling, then
     // leafs[j] = nothing
-    Table leaf_vertices;
+    Table leaves;
 
     Uint *rootchildren;         // references to successors of root
 

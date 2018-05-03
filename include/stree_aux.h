@@ -70,8 +70,14 @@
 // child and sibling. For each large vertex w there is a record that stores
 // child, sibling, depth and head.
 //
-// If depth is smaller than some constant, then it is said that the large
+// If depth is smaller than some constant K, then it is said that the large
 // record is complete. A complete large record also stores the suffix link
+//
+// Now consider if depth(w) > K for some vertex w. Let CS be the children of w.
+// The suffix link is now stored in the rightmost child of CS. Thus, it takes
+// linear time in the alphabet to retrieve the suffix, but this does not happen
+// more than n times.
+// Note that this needs to be done only for nodes that exceed K
 #define CHILD(V)               ((*(V)) & MAXINDEX)
 #define SIBLING(V)             (*((V) + 1))
 #define DEPTH(V)               (*((V) + 2))
@@ -95,7 +101,7 @@
 #define START_ALLOCSIZE         max(0.5 * MULT_SMALL_WIDTH(textlen + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * MULT_SMALL_WIDTH(textlen + 1), 48);
 #define LEAF_REF(ST, V)    (ST)->inner.first + LEAF_NUM((V))
-#define LEAF_VERTEX(ST, N) (ST)->leaf_vertices.first[(N)]
+#define LEAF_VERTEX(ST, N) (ST)->leaves.first[(N)]
 #define ROOT_CHILD(ST, C)   ((ST)->rootchildren[(Uint) (C)])
 // Index of a branch and leaf relative to the first address
 #define INDEX(A)      ((Uint) ((A) - ROOT(stree)))
@@ -126,11 +132,11 @@
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
-Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
+void get_dist(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
 
-Uint get_depth(STree *stree, Uint *vertexp, Uint *distance, Uint **largep);
+Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint distance);
 
-Uint get_depth_after_head(STree *stree, Uint *vertexp, Uint *distance, Uint **largep);
+Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **largep);
 
 void follow_link(STree *stree);
 

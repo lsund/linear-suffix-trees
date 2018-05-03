@@ -30,7 +30,7 @@ void make_loc(STree *stree, Uint leafnum, Uint plen, Loc *loc, Wchar *first)
     loc->prev          = stree->inner.first;
     loc->edgelen       = text.len - leafnum + 1;
     loc->remain        = loc->edgelen - plen;
-    loc->next          = stree->leaf_vertices.first + leafnum;
+    loc->next          = stree->leaves.first + leafnum;
     loc->first         = first;
 }
 
