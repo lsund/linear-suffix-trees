@@ -24,7 +24,7 @@ static void insert_vertex(STree *stree)
     if(IS_HEAD_VERTEX) {
         insert_leaf(stree);
     } else {
-        insertbranchnode(stree);
+        insert_inner(stree);
     }
 }
 

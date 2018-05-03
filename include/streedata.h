@@ -37,10 +37,6 @@ typedef struct text {
 
 typedef struct suffixtree {
 
-    /* Uint textlen;               // the length of the input string */
-    /* Wchar *text;               // points to the input string */
-    /* Wchar *sentinel;           // points to the position of the \(\$\)-symbol */
-
     Table inner;
     Table leaf_vertices;
 

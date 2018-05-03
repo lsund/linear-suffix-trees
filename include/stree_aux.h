@@ -45,7 +45,7 @@
 #define IS_ROOT_DEPTH       (stree->head_depth == 0)
 #define IS_HEAD_ROOT        (IS_ROOT_DEPTH && IS_HEAD_VERTEX)
 #define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
-#define IS_FIRST_LEAF       (stree->insertprev == UNDEF)
+#define IS_LEFTMOST       (stree->insertprev == UNDEF)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
@@ -74,7 +74,7 @@
 #define MAKE_LEAF(V)               ((V) | LEAFBIT)
 #define MAKE_LARGE(V)              (V)
 #define MAKE_LARGE_LEAF(V)          MAKE_LEAF(V)
-#define UNDEF            (~((Uint) 0))
+#define UNDEF                       (~((Uint) 0))
 
 ///////////////////////////////////////////////////////////////////////////////
 // Setters

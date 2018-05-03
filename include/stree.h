@@ -48,7 +48,7 @@ void completelarge(STree *stree);
 void insert_leaf(STree *stree);
 
 // Insert inner veretx and split appropriate edges
-void insertbranchnode(STree *stree);
+void insert_inner(STree *stree);
 
 // Construct the successor chain for the children of the root. This is done of
 // the end of the algorithm in one sweep.
