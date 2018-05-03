@@ -7,6 +7,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Types
 
+
+typedef Uint Vertex;
+
+typedef Uint *VertexP;
+
 typedef struct pattern {
     Wchar *start;
     Wchar *end;

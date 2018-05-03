@@ -4,77 +4,90 @@
 void skip_count(STree *stree)
 {
     Uint prevnode, depth, edgelen, leafindex, head;
-    Wchar headchar, edgechar;
+    Wchar firstchar, edgechar;
 
-    Uint *vertexp  = NULL;;
-    Uint *chainend = NULL;
+    VertexP vertex  = NULL;;
+    VertexP chainend = NULL;
     Uint distance = 0;
-    if(stree->head_depth == 0)   // head is the root
-    {
-        headchar = *(stree->headstart);  // headstart is assumed to be not empty
-        Uint rootchild = stree->rootchildren[(Uint) headchar];
-        if(IS_LEAF(rootchild))   // stop if successor is leaf
-        {
+
+    if(IS_ROOT_DEPTH) {
+
+        firstchar = *(stree->headstart);
+        Uint rootchild = stree->rootchildren[(Uint) firstchar];
+
+        if(IS_LEAF(rootchild)) {
             stree->insertnode = rootchild;
             return;
-        }
-        vertexp = stree->inner.first + LEAF_NUM(rootchild);
 
-        get_chainend(stree, vertexp, &chainend, &distance);
-        depth = get_depth(stree, vertexp, distance, &chainend);
+        } else {
 
-        Uint wlen = (stree->headend - stree->headstart + 1);
-        if(depth > wlen)    // cannot reach the successor node
-        {
-            stree->insertnode = rootchild;
-            return;
+            vertex = stree->inner.first + LEAF_NUM(rootchild);
+            get_chainend(stree, vertex, &chainend, &distance);
+            depth = get_depth(stree, vertex, distance, &chainend);
+
+            Uint wlen = (stree->headend - stree->headstart + 1);
+
+            if(depth > wlen) {
+                // cannot reach the successor node
+                stree->insertnode = rootchild;
+                return;
+            } else {
+                // Go to successor vertex
+                stree->headnode = vertex;
+                stree->head_depth = depth;
+            }
+
+            // location has been scanned
+            if(depth == wlen) {
+                stree->headend = NULL;
+                return;
+            } else {
+                (stree->headstart) += depth;
+            }
         }
-        stree->headnode = vertexp;        // go to successor node
-        stree->head_depth = depth;
-        if(depth == wlen)             // location has been scanned
-        {
-            stree->headend = NULL;
-            return;
-        }
-        (stree->headstart) += depth;
     }
-    while(True)   // \emph{headnode} is not the root
-    {
-        headchar = *(stree->headstart);  // \emph{headstart} is assumed to be nonempty
+
+    while(True) {
+
+        firstchar = *(stree->headstart);
         prevnode = UNDEF;
-        Uint headchild = CHILD(stree->headnode);
-        while(True)             // traverse the list of successors
-        {
-            if(IS_LEAF(headchild))   // successor is leaf
-            {
+        Vertex headchild = CHILD(stree->headnode);
+
+        // traverse the list of successors
+        while(True) {
+            if(IS_LEAF(headchild)) {
+
                 leafindex = LEAF_NUM(headchild);
                 edgechar = text[stree->head_depth + leafindex];
-                if(edgechar == headchar)    // correct edge found
-                {
+
+                if(edgechar == firstchar) {
+                    // correct edge found
                     stree->insertnode = headchild;
                     stree->insertprev = prevnode;
                     return;
                 }
+
                 prevnode = headchild;
                 headchild = stree->leaves.first[leafindex];
-            } else   // successor is branch node
-            {
-                vertexp = stree->inner.first + LEAF_NUM(headchild);
+                continue;
 
-                get_chainend(stree, vertexp, &chainend, &distance);
-                head = get_head(stree, vertexp, &chainend, distance);
+            } else {
 
+                // successor is branch node
+                vertex = stree->inner.first + LEAF_NUM(headchild);
+                get_chainend(stree, vertex, &chainend, &distance);
+                head = get_head(stree, vertex, &chainend, distance);
                 edgechar = text[stree->head_depth + head];
                 // Correct edge found
-                if(edgechar == headchar) {
+                if(edgechar == firstchar) {
                     break;
                 }
                 prevnode = headchild;
-                headchild = SIBLING(vertexp);
+                headchild = SIBLING(vertex);
             }
         }
 
-        depth = get_depth(stree, vertexp, distance, &chainend);
+        depth = get_depth(stree, vertex, distance, &chainend);
         edgelen = depth - stree->head_depth;
         Uint wlen = (stree->headend - stree->headstart + 1);
         if(edgelen > wlen) {
@@ -84,7 +97,7 @@ void skip_count(STree *stree)
             return;
         }
         // go to the successor node
-        stree->headnode = vertexp;
+        stree->headnode = vertex;
         stree->head_depth = depth;
         if(edgelen == wlen) {
             // location is found
