@@ -33,12 +33,16 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Queries
 
+#define IS_HEAD_EMPTY           (stree->headstart == stree->headend)
 #define IS_LARGE(V)                (!((V) & SMALLBIT))
-#define IS_LAST(ST, C)          (C) == sentinel
+#define IS_LAST(C)          ((C) >= sentinel)
 #define IS_LEAF(V)                 ((V) & LEAFBIT)
 #define IS_NOTHING(P)                 ((P) & NOTHING)
 #define IS_ROOT(ST, V)          ((ST)->inner.first == V)
 #define IS_UNDEF(V)          ((V) == UNDEFREFERENCE)
+#define IS_HEAD_VERTEX      (stree->headend == NULL)
+#define IS_ROOT_DEPTH       (stree->head_depth == 0)
+#define IS_HEAD_ROOT        (IS_ROOT_DEPTH && IS_HEAD_VERTEX)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
@@ -72,14 +76,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
 
-#define SET_CHILD(B,VAL)                *(B) = ((*(B)) & SMALLBIT) | (VAL);
-#define SET_SIBLING(B,VAL)               *(B + 1) = VAL;
-#define SET_LEAF_SIBLING(B,VAL)           *(B) = (VAL);
-#define SET_DISTANCE(B,VAL)              *(B + 2) = VAL; *(B) = (*(B)) | SMALLBIT;
-#define SET_SUFFIXLINK(SL)               *(stree->inner.next+4) = (SL);
-#define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S);
-#define SET_DEPTH(D)                    *(stree->inner.next + 2) = D;
-#define SET_HEAD(H)                     *(stree->inner.next + 3) = H;
+#define SET_CHILD(B,VAL)                *(B) = ((*(B)) & SMALLBIT) | (VAL)
+#define SET_SIBLING(B,VAL)               *(B + 1) = VAL
+#define SET_LEAF_SIBLING(B,VAL)           *(B) = (VAL)
+#define SET_DISTANCE(B,VAL)              *(B + 2) = VAL; *(B) = (*(B)) | SMALLBIT
+#define SET_SUFFIXLINK(SL)               *(stree->inner.next+4) = (SL)
+#define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S)
+#define SET_DEPTH(D)                    *(stree->inner.next + 2) = D
+#define SET_HEAD(H)                     *(stree->inner.next + 3) = H
 
 
 // Get info for branch vertex

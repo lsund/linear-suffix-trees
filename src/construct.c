@@ -19,39 +19,9 @@ Uint textlen;
 // Private
 
 
-static bool last_suffix(STree *stree)
-{
-    return stree->tailptr >= sentinel;
-}
-
-
-static bool head_is_node(STree *stree)
-{
-    return stree->headend == NULL;
-}
-
-
-static bool root_depth(STree *stree)
-{
-    return stree->head_depth == 0;
-}
-
-
-static bool head_is_root(STree *stree)
-{
-    return root_depth(stree) && head_is_node(stree);
-}
-
-
-static bool empty_head(STree *stree)
-{
-    return stree->headstart == stree->headend;
-}
-
-
 static void insert_vertex(STree *stree)
 {
-    if(head_is_node(stree)) {
+    if(IS_HEAD_VERTEX) {
         insertleaf(stree);
     } else {
         insertbranchnode(stree);
@@ -69,10 +39,10 @@ Sint construct(STree *stree)
 
     init(stree);
 
-    while(!last_suffix(stree) || !head_is_root(stree)) {
+    while(!IS_LAST(stree->tailptr) || IS_HEAD_ROOT) {
 
         // case (1)
-        if(head_is_root(stree)) {
+        if(IS_HEAD_ROOT) {
 
             (stree->tailptr)++;
             scanprefix(stree);
@@ -80,7 +50,7 @@ Sint construct(STree *stree)
         // Case 2
         } else {
             // Case 2.1: Head is node
-            if(head_is_node(stree)) {
+            if(IS_HEAD_VERTEX) {
 
                 follow_link(stree);
                 scanprefix(stree);
@@ -88,10 +58,9 @@ Sint construct(STree *stree)
             // Case 2.2
             } else {
                 // Case 2.2.1: at root, do not use links
-                if(root_depth(stree))
-                {
+                if(IS_ROOT_DEPTH) {
                     // No need to rescan
-                    if(empty_head(stree)) {
+                    if(IS_HEAD_EMPTY) {
                         stree->headend = NULL;
                     } else {
 
@@ -105,7 +74,7 @@ Sint construct(STree *stree)
                     rescan(stree);
                 }
                 // Case 2.2.3
-                if(head_is_node(stree)) {
+                if(IS_HEAD_VERTEX) {
 
                     SET_SUFFIXLINK(INDEX(stree,stree->headnode));
                     completelarge(stree);

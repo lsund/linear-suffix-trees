@@ -26,7 +26,7 @@ static void skip_edge(
     loc->remain        = 0;
 }
 
-static Uint prefixlen(STree *stree, Wchar *start, Pattern *patt, Uint remain)
+static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
 {
     if (remain > 0) {
         Wchar *patt_start = patt->start + remain;
@@ -44,12 +44,12 @@ static Uint prefixlen(STree *stree, Wchar *start, Pattern *patt, Uint remain)
 }
 
 
-static Uint  match_leaf(STree *stree, Loc *loc, Uint vertex, Pattern *patt, Uint remain)
+static Uint  match_leaf(Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 {
     Uint leafnum = LEAF_NUM(vertex);
     loc->first   = text + leafnum;
 
-    return prefixlen(stree, loc->first, patt, remain);
+    return prefixlen(loc->first, patt, remain);
 }
 
 
@@ -99,7 +99,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
             if(IS_LEAF(vertex)) {
 
-                plen = match_leaf(stree, loc, vertex, &patt, remain);
+                plen = match_leaf(loc, vertex, &patt, remain);
 
                 if(MATCHED(plen, patt.end, patt.start)) {
                     return NULL;
@@ -128,7 +128,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                     leafnum = LEAF_NUM(vertex);
                     label   = LABEL_START(stree, depth + leafnum);
 
-                    if(IS_LAST(stree, label)) {
+                    if(IS_LAST(label)) {
                         return patt.start;
                     }
 
@@ -139,7 +139,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
                     if(edgechar == firstchar) {
 
-                        plen = prefixlen(stree, label, &patt, remain);
+                        plen = prefixlen(label, &patt, remain);
                         if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
                         } else {
