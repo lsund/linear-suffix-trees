@@ -21,6 +21,7 @@
 
 Wchar *text;
 Uint textlen;
+Wchar *sentinel;
 
 
 void file_to_string(const char *filename)
@@ -40,6 +41,7 @@ void file_to_string(const char *filename)
         textlen++;
     }
     text[textlen + 1] = '\0';
+    sentinel = text + textlen;
 
     if(textlen == 0) {
         fprintf(stderr,"file \"%s\" is empty\n", filename);

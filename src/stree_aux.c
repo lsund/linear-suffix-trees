@@ -18,9 +18,9 @@ Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
 
         distance = 1 +
-            DIV_SMALL_WIDTH((Uint) (stree->inner.next_free - (vertexp)));
+            DIV_SMALL_WIDTH((Uint) (stree->inner.next - (vertexp)));
         *depth = stree->currentdepth + distance;
-        *head = stree->leaf_vertices.next_free_num - distance;
+        *head = stree->leaf_vertices.next_num - distance;
 
     } else {
 
@@ -45,8 +45,8 @@ Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *
 Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
-        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next_free - vertexp));
-        return stree->leaf_vertices.next_free_num - *distance;
+        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next - vertexp));
+        return stree->leaf_vertices.next_num - *distance;
     } else
     {
         if(IS_LARGE(*(vertexp))) {
@@ -62,7 +62,7 @@ Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance)
 Uint get_depth(STree *stree, Uint *vertexp, Uint *distance, Uint **largep)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
-        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next_free - vertexp));
+        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next - vertexp));
         return stree->currentdepth  + *distance;
     } else {
         if(IS_LARGE(*vertexp)) {
@@ -93,11 +93,11 @@ static Uint suffix_link(STree *stree)
 {
     Wchar secondchar;
 
-    if(stree->headnodedepth == 1)
+    if(stree->head_depth == 1)
     {
         return 0;        // link refers to root
     }
-    if(stree->headnodedepth == 2)  // determine second char of egde
+    if(stree->head_depth == 2)  // determine second char of egde
     {
         if(stree->headend == NULL)
         {
@@ -117,5 +117,5 @@ void follow_link(STree *stree)
     } else {
         stree->headnode += SMALL_WIDTH;
     }
-    stree->headnodedepth--;
+    stree->head_depth--;
 }

@@ -21,7 +21,7 @@ Uint textlen;
 
 static bool last_suffix(STree *stree)
 {
-    return stree->tailptr >= stree->sentinel;
+    return stree->tailptr >= sentinel;
 }
 
 
@@ -33,7 +33,7 @@ static bool head_is_node(STree *stree)
 
 static bool root_depth(STree *stree)
 {
-    return stree->headnodedepth == 0;
+    return stree->head_depth == 0;
 }
 
 
@@ -113,20 +113,20 @@ Sint construct(STree *stree)
 
                 } else {
                     // artificial large node
-                    if(stree->smallnotcompleted == MAXDISTANCE) {
+                    if(stree->chain_remain == MAXDISTANCE) {
 
-                        SET_SUFFIXLINK(stree->inner.next_free_num + LARGE_WIDTH);
+                        SET_SUFFIXLINK(stree->inner.next_num + LARGE_WIDTH);
                         completelarge(stree);
 
                     } else {
                         if(stree->chainstart == NULL) {
                             // Start new chain
-                            stree->chainstart = stree->inner.next_free;
+                            stree->chainstart = stree->inner.next;
                         }
-                        (stree->smallnotcompleted)++;
-                        (stree->inner.next_free) += SMALL_WIDTH;      // case (2.2.4)
-                        (stree->inner.next_free_num) += SMALL_WIDTH;
-                        stree->smallnode++;
+                        stree->chain_remain++;
+                        stree->inner.next += SMALL_WIDTH;      // case (2.2.4)
+                        stree->inner.next_num += SMALL_WIDTH;
+                        stree->n_small++;
                     }
                 }
             }

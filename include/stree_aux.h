@@ -30,14 +30,11 @@
 #define MAXTEXTLEN                ((MAXINDEX / ((LARGE_WIDTH+SMALL_WIDTH) / 2)) - 3)
 
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // Queries
 
 #define IS_LARGE(V)                (!((V) & SMALLBIT))
-#define IS_LAST(ST, C)          (C) == (ST)->sentinel
+#define IS_LAST(ST, C)          (C) == sentinel
 #define IS_LEAF(V)                 ((V) & LEAFBIT)
 #define IS_NOTHING(P)                 ((P) & NOTHING)
 #define IS_ROOT(ST, V)          ((ST)->inner.first == V)
@@ -52,7 +49,7 @@
 #define HEAD(B)                (*((B) + 3))
 #define START_ALLOCSIZE         max(0.5 * MULT_SMALL_WIDTH(textlen + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * MULT_SMALL_WIDTH(textlen + 1), 48);
-#define LABEL_START(ST, O)        (ST)->text + (O)
+#define LABEL_START(ST, O)        text + (O)
 #define LEAF_NUM(V)           ((V) & ~(LEAFBIT | SMALLBIT))
 #define LEAF_REF(ST, V)    (ST)->inner.first + LEAF_NUM((V))
 #define LEAF_VERTEX(ST, N) (ST)->leaf_vertices.first[(N)]
@@ -79,10 +76,10 @@
 #define SET_SIBLING(B,VAL)               *(B + 1) = VAL;
 #define SET_LEAF_SIBLING(B,VAL)           *(B) = (VAL);
 #define SET_DISTANCE(B,VAL)              *(B + 2) = VAL; *(B) = (*(B)) | SMALLBIT;
-#define SET_SUFFIXLINK(SL)               *(stree->inner.next_free+4) = (SL);
+#define SET_SUFFIXLINK(SL)               *(stree->inner.next+4) = (SL);
 #define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S);
-#define SET_DEPTH(D)                    *(stree->inner.next_free + 2) = D;
-#define SET_HEAD(H)                     *(stree->inner.next_free + 3) = H;
+#define SET_DEPTH(D)                    *(stree->inner.next + 2) = D;
+#define SET_HEAD(H)                     *(stree->inner.next + 3) = H;
 
 
 // Get info for branch vertex

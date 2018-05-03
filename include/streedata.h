@@ -21,44 +21,43 @@ typedef struct pattern {
 typedef struct table {
 
     Uint *first;
-    Uint *next_free;
-    Uint next_free_num;
+    Uint *next;
+    Uint next_num;
     Uint size;
 
 } Table;
 
 
 typedef struct text {
-    Wchar *content;               // points to the input string
-    Wchar *sentinel;           // points to the position of the \(\$\)-symbol
-    Uint len;               // the length of the input string
+    Wchar *content;                // points to the input string
+    Wchar *sentinel;               // points to the position of the \(\$\)-symbol
+    Uint len;                      // the length of the input string
 } Text;
 
 
 typedef struct suffixtree {
 
-    Uint textlen;               // the length of the input string
-    Wchar *text;               // points to the input string
-    Wchar *sentinel;           // points to the position of the \(\$\)-symbol
-
+    /* Uint textlen;               // the length of the input string */
+    /* Wchar *text;               // points to the input string */
+    /* Wchar *sentinel;           // points to the position of the \(\$\)-symbol */
 
     Table inner;
     Table leaf_vertices;
 
     Uint *rootchildren;         // references to successors of root
 
-    Uint headnodedepth;         // the depth of the headnode
+    Uint head_depth;         // the depth of the headnode
     Uint insertnode;            // the node the split edge leads to
     Uint insertprev;            // the edge preceeding the split edge
-    Uint smallnotcompleted;     // the number of small nodes in the current chain
+    Uint chain_remain;     // the number of small nodes in the current chain
 
     Uint onsuccpath;            // refers to node on success path of headnode
     Uint currentdepth;          // depth of the new branch node
     Uint branchnodeoffset;      // number of leafs in tree
     Uint alphasize;             // the number of different characters in t
     Uint maxbranchdepth;        // maximal depth of branching node
-    Uint largenode;             // number of large nodes
-    Uint smallnode;             // number of small nodes
+    Uint n_large;             // number of large nodes
+    Uint n_small;             // number of small nodes
     Uint *setlink;              // address of a nil-reference
     Uint *chainstart;           // address of the node current chains starts at
 

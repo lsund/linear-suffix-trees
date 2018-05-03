@@ -31,13 +31,13 @@ static Uint prefixlen(STree *stree, Wchar *start, Pattern *patt, Uint remain)
     if (remain > 0) {
         Wchar *patt_start = patt->start + remain;
         Wchar *text_start = start + remain;
-        Wchar *text_end = stree->sentinel - 1;
+        Wchar *text_end = sentinel - 1;
         Uint lcp_res = lcp(patt_start, patt->end, text_start, text_end);
         return remain + lcp_res;
     } else {
         Wchar *patt_start = patt->start + 1;
         Wchar *text_start = start + 1;
-        Wchar *text_end = stree->sentinel - 1;
+        Wchar *text_end = sentinel - 1;
         Uint lcp_res = lcp(patt_start, patt->end, text_start, text_end);
         return 1 + lcp_res;
     }
@@ -47,7 +47,7 @@ static Uint prefixlen(STree *stree, Wchar *start, Pattern *patt, Uint remain)
 static Uint  match_leaf(STree *stree, Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 {
     Uint leafnum = LEAF_NUM(vertex);
-    loc->first   = stree->text + leafnum;
+    loc->first   = text + leafnum;
 
     return prefixlen(stree, loc->first, patt, remain);
 }
