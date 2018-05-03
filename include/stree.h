@@ -45,7 +45,7 @@ void rescan(STree *stree);
 void completelarge(STree *stree);
 
 // Insert a leaf edge from the current base vertex
-void insertleaf(STree *stree);
+void insert_leaf(STree *stree);
 
 // Insert inner veretx and split appropriate edges
 void insertbranchnode(STree *stree);

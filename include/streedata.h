@@ -63,7 +63,7 @@ typedef struct suffixtree {
 
     Uint *headnode;             // left component of head location
 
-    Uint *alloc_leftbound;    // refers to the last address, such that at
+    Uint *allocated;    // refers to the last address, such that at
     // least LARGE_WIDTH integers are
     // available. So a large node can be stored in
     // the available amount of space.

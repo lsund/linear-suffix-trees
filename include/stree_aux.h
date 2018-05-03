@@ -36,6 +36,7 @@
 #define IS_HEAD_EMPTY           (stree->headstart == stree->headend)
 #define IS_LARGE(V)                (!((V) & SMALLBIT))
 #define IS_LAST(C)          ((C) >= sentinel)
+#define IS_SENTINEL(C)  ((C) == sentinel)
 #define IS_LEAF(V)                 ((V) & LEAFBIT)
 #define IS_NOTHING(P)                 ((P) & NOTHING)
 #define IS_ROOT(ST, V)          ((ST)->inner.first == V)
@@ -43,6 +44,8 @@
 #define IS_HEAD_VERTEX      (stree->headend == NULL)
 #define IS_ROOT_DEPTH       (stree->head_depth == 0)
 #define IS_HEAD_ROOT        (IS_ROOT_DEPTH && IS_HEAD_VERTEX)
+#define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
+#define IS_FIRST_LEAF       (stree->insertprev == UNDEF)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
@@ -62,7 +65,7 @@
 #define ROOT_CHILD(ST, C)   ((ST)->rootchildren[(Uint) (C)])
 #define ROOT(ST)            ((ST)->inner.first)
 // Index of a branch and leaf relative to the first address
-#define INDEX(ST,A)      ((Uint) ((A) - ROOT(ST)))
+#define INDEX(A)      ((Uint) ((A) - ROOT(stree)))
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,6 +87,7 @@
 #define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S)
 #define SET_DEPTH(D)                    *(stree->inner.next + 2) = D
 #define SET_HEAD(H)                     *(stree->inner.next + 3) = H
+#define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
 
 
 // Get info for branch vertex

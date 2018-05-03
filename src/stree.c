@@ -15,13 +15,7 @@ Wchar *sentinel;
 Uint textlen;
 
 
-static bool no_space(STree *stree)
-{
-    return stree->inner.next >= stree->alloc_leftbound;
-}
-
-
-static Uint *push_leftbound(STree *stree)
+static Uint *new_allocbound(STree *stree)
 {
     return stree->inner.first + stree->inner.size - LARGE_WIDTH;
 }
@@ -29,60 +23,54 @@ static Uint *push_leftbound(STree *stree)
 // Allocate space for branch vertices
 static void allocate_inner_vertices(STree *stree)
 {
-    if(no_space(stree)) {
+    if(IS_NO_SPACE) {
 
         stree->inner.size += EXTRA_ALLOCSIZE;
 
-        Uint head = INDEX(stree, stree->headnode);
-        Uint tmpchainstart = 0;
-
+        Uint chainstart;
         if(stree->chainstart != NULL) {
-            tmpchainstart = INDEX(stree,stree->chainstart);
+            chainstart = INDEX(stree->chainstart);
         }
 
+        Uint head = INDEX(stree->headnode);
         Uint size = stree->inner.size;
+
         stree->inner.first = ALLOC(stree->inner.first, Uint, size);
         stree->inner.next = stree->inner.first + stree->inner.next_num;
         stree->headnode = stree->inner.first + head;
 
         if(stree->chainstart != NULL) {
-            stree->chainstart = stree->inner.first + tmpchainstart;
+            stree->chainstart = stree->inner.first + chainstart;
         }
-        stree->alloc_leftbound = push_leftbound(stree);
+        stree->allocated = new_allocbound(stree);
     }
 }
 
 
-void insertleaf(STree *stree)
+void insert_leaf(STree *stree)
 {
-    Uint *ptr, newleaf;
+    Uint leaf = MAKE_LEAF(stree->leaf_vertices.next_num);
+    if(IS_HEAD_ROOT && !IS_SENTINEL(stree->tailptr)) {
 
-    newleaf = MAKE_LEAF(stree->leaf_vertices.next_num);
-    if(stree->head_depth == 0)                // head is the root
-    {
-        if(stree->tailptr != sentinel)      // no \$-edge initially
-        {
-            stree->rootchildren[(Uint) *(stree->tailptr)] = newleaf;
-            *(stree->leaf_vertices.next) = 0;
-        }
-    } else
-    {
-        if (stree->insertprev == UNDEF)  // newleaf = first child
-        {
+        SET_ROOTCHILD(*(stree->tailptr), leaf);
+        *stree->leaf_vertices.next = 0;
+
+    } else {
+        // leaf = first child
+        if (IS_FIRST_LEAF) {
             *(stree->leaf_vertices.next) = CHILD(stree->headnode);
-            SET_CHILD(stree->headnode,newleaf);
-        } else
-        {
-            if(IS_LEAF(stree->insertprev))   // previous node is leaf
-            {
-                ptr = stree->leaf_vertices.first + LEAF_NUM(stree->insertprev);
+            SET_CHILD(stree->headnode, leaf);
+        } else {
+            if(IS_LEAF(stree->insertprev)) {
+                // Previous node is leaf
+                Uint *ptr = stree->leaf_vertices.first + LEAF_NUM(stree->insertprev);
                 *(stree->leaf_vertices.next) = *ptr;
-                SET_LEAF_SIBLING(ptr,newleaf);
-            } else   // previous node is branching node
-            {
-                ptr = stree->inner.first + LEAF_NUM(stree->insertprev);
+                SET_LEAF_SIBLING(ptr,leaf);
+            } else {
+                // previous node is branching node
+                Uint *ptr = stree->inner.first + LEAF_NUM(stree->insertprev);
                 *(stree->leaf_vertices.next) = SIBLING(ptr);
-                SET_SIBLING(ptr,newleaf);
+                SET_SIBLING(ptr,leaf);
             }
         }
     }
@@ -497,7 +485,7 @@ void init(STree *stree)
     }
 
     stree->tailptr = text;
-    stree->alloc_leftbound
+    stree->allocated
         = stree->inner.first + stree->inner.size - LARGE_WIDTH;
     stree->headnode = stree->inner.next = stree->inner.first;
     stree->headend = NULL;

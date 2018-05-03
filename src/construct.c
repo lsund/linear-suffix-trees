@@ -22,7 +22,7 @@ Uint textlen;
 static void insert_vertex(STree *stree)
 {
     if(IS_HEAD_VERTEX) {
-        insertleaf(stree);
+        insert_leaf(stree);
     } else {
         insertbranchnode(stree);
     }
@@ -41,32 +41,26 @@ Sint construct(STree *stree)
 
     while(!IS_LAST(stree->tailptr) || IS_HEAD_ROOT) {
 
-        // case (1)
         if(IS_HEAD_ROOT) {
-
+            // Case 1
             (stree->tailptr)++;
             scanprefix(stree);
-
-        // Case 2
         } else {
-            // Case 2.1: Head is node
+            // Case 2
             if(IS_HEAD_VERTEX) {
-
+                // Case 2.1: Head is node
                 follow_link(stree);
                 scanprefix(stree);
-
-            // Case 2.2
             } else {
-                // Case 2.2.1: at root, do not use links
+                // Case 2.2
                 if(IS_ROOT_DEPTH) {
-                    // No need to rescan
+                    // Case 2.2.1: at root, do not use links
                     if(IS_HEAD_EMPTY) {
+                        // No need to rescan
                         stree->headend = NULL;
                     } else {
-
                         (stree->headstart)++;
                         rescan(stree);
-
                     }
                 // Case 2.2.2
                 } else {
@@ -76,7 +70,7 @@ Sint construct(STree *stree)
                 // Case 2.2.3
                 if(IS_HEAD_VERTEX) {
 
-                    SET_SUFFIXLINK(INDEX(stree,stree->headnode));
+                    SET_SUFFIXLINK(INDEX(stree->headnode));
                     completelarge(stree);
                     scanprefix(stree);
 
@@ -104,6 +98,7 @@ Sint construct(STree *stree)
         insert_vertex(stree);
 
     }
+
     stree->chainstart = NULL;
     linkrootchildren(stree);
 
