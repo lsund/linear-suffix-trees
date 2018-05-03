@@ -107,7 +107,7 @@ static Uint suffix_link(STree *stree)
         }
         return stree->rootchildren[(Uint) secondchar];
     }
-    return *(stree->headnode+4);
+    return SUFFIX_LINK(stree->headnode);
 }
 
 void follow_link(STree *stree)
