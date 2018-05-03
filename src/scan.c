@@ -89,22 +89,21 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
         }
 
         firstchar    = *patt.start;
-        Uint vertex  = 0;
         Uint leafnum = 0;
         Wchar *label = NULL;
         Uint plen    = 0;
 
         if(IS_ROOT(stree, vertexp)) {
 
-            vertex = ROOT_CHILD(stree, firstchar);
+            Uint rootchild = ROOT_CHILD(stree, firstchar);
 
-            if (IS_UNDEF(vertex)) {
+            if (IS_UNDEF(rootchild)) {
                 return patt.start;
             }
 
-            if(IS_LEAF(vertex)) {
+            if(IS_LEAF(rootchild)) {
 
-                plen = match_leaf(loc, vertex, &patt, remain);
+                plen = match_leaf(loc, rootchild, &patt, remain);
 
                 if(MATCHED(plen, patt.end, patt.start)) {
                     return NULL;
@@ -113,7 +112,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                 }
             }
 
-            vertexp = LEAF_REF(stree, vertex);
+            vertexp = LEAF_REF(stree, rootchild);
 
             get_chainend(stree, vertexp, &chainend, &distance);
             head = get_head(stree, vertexp, &chainend, distance);
@@ -123,7 +122,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
         } else {
 
             Wchar edgechar;
-            vertex = CHILD(vertexp);
+            Uint vertex = CHILD(vertexp);
 
             while(True) {
 

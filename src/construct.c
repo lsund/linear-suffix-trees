@@ -12,6 +12,7 @@
 #include "stree.h"
 #include "stree_aux.h"
 #include "insert.h"
+#include "skip_count.h"
 
 Wchar *text;
 Uint textlen;
@@ -57,16 +58,16 @@ Sint construct(STree *stree)
                 if(IS_ROOT_DEPTH) {
                     // Case 2.2.1: at root, do not use links
                     if(IS_HEAD_EMPTY) {
-                        // No need to rescan
+                        // No need to skip-count
                         stree->headend = NULL;
                     } else {
                         (stree->headstart)++;
-                        rescan(stree);
+                        skip_count(stree);
                     }
                 // Case 2.2.2
                 } else {
                     follow_link(stree);
-                    rescan(stree);
+                    skip_count(stree);
                 }
                 // Case 2.2.3
                 if(IS_HEAD_VERTEX) {

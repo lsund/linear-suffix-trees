@@ -14,105 +14,6 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen;
 
-// Finding the Head-Locs
-
-//
-// The function \emph{rescan} finds the location of the current head.
-// In order to scan down the tree, it suffices to look at the first
-// character of each edge.
-//
-
-void rescan(STree *stree) // skip-count
-{
-    Uint *nodeptr, *chainend = NULL, distance = 0, node, prevnode,
-         nodedepth, edgelen, wlen, leafindex, head;
-    Wchar headchar, edgechar;
-
-    if(stree->head_depth == 0)   // head is the root
-    {
-        headchar = *(stree->headstart);  // headstart is assumed to be not empty
-        node = stree->rootchildren[(Uint) headchar];
-        if(IS_LEAF(node))   // stop if successor is leaf
-        {
-            stree->insertnode = node;
-            return;
-        }
-        nodeptr = stree->inner.first + LEAF_NUM(node);
-
-        get_chainend(stree, nodeptr, &chainend, &distance);
-        nodedepth = get_depth(stree, nodeptr, distance, &chainend);
-
-        wlen = (Uint) (stree->headend - stree->headstart + 1);
-        if(nodedepth > wlen)    // cannot reach the successor node
-        {
-            stree->insertnode = node;
-            return;
-        }
-        stree->headnode = nodeptr;        // go to successor node
-        stree->head_depth = nodedepth;
-        if(nodedepth == wlen)             // location has been scanned
-        {
-            stree->headend = NULL;
-            return;
-        }
-        (stree->headstart) += nodedepth;
-    }
-    while(True)   // \emph{headnode} is not the root
-    {
-        headchar = *(stree->headstart);  // \emph{headstart} is assumed to be nonempty
-        prevnode = UNDEF;
-        node = CHILD(stree->headnode);
-        while(True)             // traverse the list of successors
-        {
-            if(IS_LEAF(node))   // successor is leaf
-            {
-                leafindex = LEAF_NUM(node);
-                edgechar = text[stree->head_depth + leafindex];
-                if(edgechar == headchar)    // correct edge found
-                {
-                    stree->insertnode = node;
-                    stree->insertprev = prevnode;
-                    return;
-                }
-                prevnode = node;
-                node = stree->leaves.first[leafindex];
-            } else   // successor is branch node
-            {
-                nodeptr = stree->inner.first + LEAF_NUM(node);
-
-                get_chainend(stree, nodeptr, &chainend, &distance);
-                head = get_head(stree, nodeptr, &chainend, distance);
-
-                edgechar = text[stree->head_depth + head];
-                // Correct edge found
-                if(edgechar == headchar) {
-                    break;
-                }
-                prevnode = node;
-                node = SIBLING(nodeptr);
-            }
-        }
-
-        nodedepth = get_depth(stree, nodeptr, distance, &chainend);
-        edgelen = nodedepth - stree->head_depth;
-        wlen = (Uint) (stree->headend - stree->headstart + 1);
-        if(edgelen > wlen) {
-            // cannot reach the succ node
-            stree->insertnode = node;
-            stree->insertprev = prevnode;
-            return;
-        }
-        // go to the successor node
-        stree->headnode = nodeptr;
-        stree->head_depth = nodedepth;
-        if(edgelen == wlen) {
-            // location is found
-            stree->headend = NULL;
-            return;
-        }
-        (stree->headstart) += edgelen;
-    }
-}
 
 /*
    The function \emph{taillcp} computes the length of the longest common prefix
@@ -131,6 +32,10 @@ static Uint taillcp(STree *stree,Wchar *start1, Wchar *end1)
     }
     return (Uint) (ptr1-start1);
 }
+
+// Finding the Head-Locs
+
+
 
 // Scans a prefix of the current tail down from a given node
 void scanprefix(STree *stree)

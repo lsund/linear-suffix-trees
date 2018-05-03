@@ -38,9 +38,6 @@ void init(STree *stree);
 // Slow-scan
 void scanprefix(STree *stree);
 
-// skip-count
-void rescan(STree *stree);
-
 // Insert a large node
 void completelarge(STree *stree);
 
