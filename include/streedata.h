@@ -42,7 +42,7 @@ typedef struct suffixtree {
     Wchar *sentinel;           // points to the position of the \(\$\)-symbol
 
 
-    Table inner_vertices;
+    Table inner;
     Table leaf_vertices;
 
     Uint *rootchildren;         // references to successors of root
@@ -65,7 +65,7 @@ typedef struct suffixtree {
     Uint *headnode;             // left component of head location
 
     Uint *alloc_leftbound;    // refers to the last address, such that at
-    // least LARGEINTS integers are
+    // least LARGE_WIDTH integers are
     // available. So a large node can be stored in
     // the available amount of space.
     Uint *nonmaximal;           // bit table: if node with headposition \(i\) is

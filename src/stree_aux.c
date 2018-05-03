@@ -18,23 +18,23 @@ Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
 
         distance = 1 +
-            DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - (vertexp)));
+            DIV_SMALL_WIDTH((Uint) (stree->inner.next_free - (vertexp)));
         *depth = stree->currentdepth + distance;
         *head = stree->leaf_vertices.next_free_num - distance;
 
     } else {
 
-        if(ISLARGE(*(vertexp))) {
+        if(IS_LARGE(*(vertexp))) {
 
-            *depth = GETDEPTH(vertexp);
-            *head = GETHEADPOS(vertexp);
+            *depth = DEPTH(vertexp);
+            *head = HEAD(vertexp);
 
         } else {
 
-            distance = GETDISTANCE(vertexp);
-            GETCHAINEND(largep, vertexp, distance);
-            *depth = GETDEPTH(largep) + distance;
-            *head = GETHEADPOS(largep) - distance;
+            distance = DISTANCE(vertexp);
+            largep = CHAIN_END(vertexp, distance);
+            *depth = DEPTH(largep) + distance;
+            *head = HEAD(largep) - distance;
 
         }
     }
@@ -45,16 +45,16 @@ Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *
 Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
-        *distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - vertexp));
+        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next_free - vertexp));
         return stree->leaf_vertices.next_free_num - *distance;
     } else
     {
-        if(ISLARGE(*(vertexp))) {
-            return GETHEADPOS(vertexp);
+        if(IS_LARGE(*(vertexp))) {
+            return HEAD(vertexp);
         } else {
-            *distance = GETDISTANCE(vertexp);
-            GETCHAINEND(*largep, vertexp, *distance);
-            return GETHEADPOS(*largep) - *distance;
+            *distance = DISTANCE(vertexp);
+            *largep = CHAIN_END(vertexp, *distance);
+            return HEAD(*largep) - *distance;
         }
     }
 }
@@ -62,15 +62,15 @@ Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint *distance)
 Uint get_depth(STree *stree, Uint *vertexp, Uint *distance, Uint **largep)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
-        *distance = 1 + DIVBYSMALLINTS((Uint) (stree->inner_vertices.next_free - vertexp));
+        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next_free - vertexp));
         return stree->currentdepth  + *distance;
     } else {
-        if(ISLARGE(*vertexp)) {
-            return GETDEPTH(vertexp);
+        if(IS_LARGE(*vertexp)) {
+            return DEPTH(vertexp);
         } else {
-            *distance = GETDISTANCE(vertexp);
-            GETCHAINEND(*largep, vertexp, *distance);
-            return GETDEPTH(*largep) + *distance;
+            *distance = DISTANCE(vertexp);
+            *largep = CHAIN_END(vertexp, *distance);
+            return DEPTH(*largep) + *distance;
         }
     }
 }
@@ -81,15 +81,15 @@ Uint get_depth_after_head(STree *stree, Uint *vertexp, Uint *distance, Uint **la
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
          return stree->currentdepth + *distance;
     } else {
-        if(ISLARGE(*vertexp)) {
-            return GETDEPTH(vertexp);
+        if(IS_LARGE(*vertexp)) {
+            return DEPTH(vertexp);
         } else {
-            return GETDEPTH(*largep) + *distance;
+            return DEPTH(*largep) + *distance;
         }
     }
 }
 
-static Uint getlargelinkconstruction(STree *stree)
+static Uint suffix_link(STree *stree)
 {
     Wchar secondchar;
 
@@ -112,10 +112,10 @@ static Uint getlargelinkconstruction(STree *stree)
 
 void follow_link(STree *stree)
 {
-    if(ISLARGE(*(stree->headnode))) {
-        stree->headnode = stree->inner_vertices.first + GETSUFFIXLINK(stree->headnode);
+    if(IS_LARGE(*(stree->headnode))) {
+        stree->headnode = stree->inner.first + suffix_link(stree);
     } else {
-        stree->headnode += SMALLINTS;
+        stree->headnode += SMALL_WIDTH;
     }
     stree->headnodedepth--;
 }

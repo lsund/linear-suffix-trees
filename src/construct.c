@@ -107,7 +107,7 @@ Sint construct(STree *stree)
                 // Case 2.2.3
                 if(head_is_node(stree)) {
 
-                    SETSUFFIXLINK(INDEX_INNER(stree,stree->headnode));
+                    SET_SUFFIXLINK(INDEX(stree,stree->headnode));
                     completelarge(stree);
                     scanprefix(stree);
 
@@ -115,17 +115,17 @@ Sint construct(STree *stree)
                     // artificial large node
                     if(stree->smallnotcompleted == MAXDISTANCE) {
 
-                        SETSUFFIXLINK(stree->inner_vertices.next_free_num + LARGEINTS);
+                        SET_SUFFIXLINK(stree->inner.next_free_num + LARGE_WIDTH);
                         completelarge(stree);
 
                     } else {
                         if(stree->chainstart == NULL) {
                             // Start new chain
-                            stree->chainstart = stree->inner_vertices.next_free;
+                            stree->chainstart = stree->inner.next_free;
                         }
                         (stree->smallnotcompleted)++;
-                        (stree->inner_vertices.next_free) += SMALLINTS;      // case (2.2.4)
-                        (stree->inner_vertices.next_free_num) += SMALLINTS;
+                        (stree->inner.next_free) += SMALL_WIDTH;      // case (2.2.4)
+                        (stree->inner.next_free_num) += SMALL_WIDTH;
                         stree->smallnode++;
                     }
                 }
