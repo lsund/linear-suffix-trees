@@ -12,7 +12,7 @@
 
 Uint textlen;
 
-void get_chainend(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
+void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
         *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next - vertexp));

@@ -60,7 +60,7 @@ typedef struct suffixtree {
     Uint *rootchildren;         // references to successors of root
 
     Uint head_depth;         // the depth of the headnode
-    Uint insertnode;            // the node the split edge leads to
+    Uint split_vertex;            // the node the split edge leads to
     Uint insertprev;            // the edge preceeding the split edge
     Uint chain_remain;     // the number of small nodes in the current chain
 

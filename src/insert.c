@@ -89,15 +89,15 @@ void insert_inner(STree *stree)
                     stree->inner.next_num);
         }
     }
-    if(IS_LEAF(stree->insertnode)) {
+    if(IS_LEAF(stree->split_vertex)) {
         // split edge is leaf edge
-        insertleafptr = stree->leaves.first + LEAF_NUM(stree->insertnode);
+        insertleafptr = stree->leaves.first + LEAF_NUM(stree->split_vertex);
         if (stree->tailptr == sentinel ||
                 *(stree->headend+1) < *(stree->tailptr))
         {
             // first child =oldleaf
             // inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE(stree->insertnode), *insertleafptr);
+            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE(stree->split_vertex), *insertleafptr);
             // Recall new leaf address
             stree->setlink = stree->leaves.next;
             stree->setatnewleaf = True;
@@ -108,21 +108,21 @@ void insert_inner(STree *stree)
             // First child = new leaf
             // inherit brother
             SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE_LEAF(stree->leaves.next_num), *insertleafptr);
-            *(stree->leaves.next) = stree->insertnode;  // old leaf = right brother of of new leaf
+            *(stree->leaves.next) = stree->split_vertex;  // old leaf = right brother of of new leaf
             // Recall leaf address
             stree->setlink = insertleafptr;
             stree->setatnewleaf = False;
         }
     } else {
         // split edge leads to branching node
-        insertnodeptr = stree->inner.first + LEAF_NUM(stree->insertnode);
+        insertnodeptr = stree->inner.first + LEAF_NUM(stree->split_vertex);
         insertnodeptrbrother = SIBLING(insertnodeptr);
         if (stree->tailptr == sentinel ||
                 *(stree->headend+1) < *(stree->tailptr))
         {
             // First child is new branch
             // inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE(stree->insertnode), insertnodeptrbrother);
+            SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE(stree->split_vertex), insertnodeptrbrother);
             // Recall new leaf address
             stree->setlink = stree->leaves.next;
             stree->setatnewleaf = True;
@@ -132,7 +132,7 @@ void insert_inner(STree *stree)
             // First child is new leaf
             // Inherit brother
             SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE_LEAF(stree->leaves.next_num), insertnodeptrbrother);
-            *(stree->leaves.next) = stree->insertnode;   // new branch is brother of new leaf
+            *(stree->leaves.next) = stree->split_vertex;   // new branch is brother of new leaf
             stree->setlink = insertnodeptr + 1;
             stree->setatnewleaf = False;
         }

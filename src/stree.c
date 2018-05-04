@@ -113,7 +113,7 @@ void init(STree *stree)
     stree->leaves.next      = stree->leaves.first + 1;
     stree->inner.next     = stree->inner.first + LARGE_WIDTH;
     stree->inner.next_num = LARGE_WIDTH;
-    stree->insertnode                   = UNDEF;
+    stree->split_vertex                   = UNDEF;
     stree->insertprev                   = UNDEF;
     stree->chain_remain            = 0;
     stree->chainstart                   = NULL;

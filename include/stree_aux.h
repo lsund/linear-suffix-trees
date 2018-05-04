@@ -53,6 +53,7 @@
 #define IS_LAST(C)          ((C) >= sentinel)
 #define IS_SENTINEL(C)  ((C) == sentinel)
 #define IS_NOTHING(P)                 ((P) & NOTHING)
+#define IS_SOMETHING(P)         (!IS_NOTHING((P)))
 #define IS_ROOT(ST, V)          ((ST)->inner.first == V)
 #define IS_UNDEF(V)          ((V) == UNDEFREFERENCE)
 #define IS_HEAD_VERTEX      (stree->headend == NULL)
@@ -64,7 +65,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
 
-// The vertices can be implemented as a collection of integers.
+// The vertices are be implemented as a collection of integers.
 //
 // For each small vertex there is a record that stores the distance,
 // child and sibling. For each large vertex w there is a record that stores
@@ -136,8 +137,9 @@
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
-void get_chainend(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
+void update_chain(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
 
+// The smallest integer i such that vertexp = head(i)
 Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint distance);
 
 Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **largep);
