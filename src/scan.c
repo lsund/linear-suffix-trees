@@ -20,27 +20,21 @@ static void skip_edge(
 {
     loc->string.start  = head;
     loc->string.length = *depth + plen;
-    patt->start          += edgelen;
-    *depth              += edgelen;
+    patt->start        += edgelen;
+    *depth             += edgelen;
     loc->next          = vertexp;
     loc->remain        = 0;
 }
 
 static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
 {
-    if (remain > 0) {
-        Wchar *patt_start = patt->start + remain;
-        Wchar *text_start = start + remain;
-        Wchar *text_end = sentinel - 1;
-        Uint lcp_res = lcp(patt_start, patt->end, text_start, text_end);
-        return remain + lcp_res;
-    } else {
-        Wchar *patt_start = patt->start + 1;
-        Wchar *text_start = start + 1;
-        Wchar *text_end = sentinel - 1;
-        Uint lcp_res = lcp(patt_start, patt->end, text_start, text_end);
-        return 1 + lcp_res;
+    if (remain < 0) {
+        remain = 1;
     }
+    Pattern textpatt  = make_patt(start + remain, sentinel - 1);
+    Pattern curr_patt = make_patt(patt->start + remain, patt-> end);
+    Uint lcp_res      = lcp_patt(textpatt, curr_patt);
+    return remain + lcp_res;
 }
 
 
@@ -60,16 +54,14 @@ static Uint  match_leaf(Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 {
 
-
-    /* Wchar *patt    = patt_start; */
-    Uint *vertexp   = start_vertex;
-    Uint *chainend    = NULL;
-    Uint head       = 0;
-    Uint depth      = 0;
-    Uint distance   = 0;
-    Uint remain     = 0;
-    Wchar firstchar = 0;
-    Uint edgelen    = 0;
+    VertexP vertexp  = start_vertex;
+    VertexP chainend = NULL;
+    Vertex  head     = 0;
+    Uint depth       = 0;
+    Uint distance    = 0;
+    Uint remain      = 0;
+    Wchar firstchar  = 0;
+    Uint edgelen     = 0;
 
     if(!IS_ROOT(stree, vertexp)) {
 
@@ -95,7 +87,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
         if(IS_ROOT(stree, vertexp)) {
 
-            Uint rootchild = ROOT_CHILD(stree, firstchar);
+            Uint rootchild = ROOT_CHILD(firstchar);
 
             if (IS_UNDEF(rootchild)) {
                 return patt.start;
@@ -215,3 +207,166 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
         }
     }
 }
+
+
+// Scans a prefix of the current tail down from a given node
+void scantail(STree *stree)
+{
+    VertexP vertexp = NULL;
+    VertexP chainend = NULL;
+    Uint leafindex;
+    Uint depth;
+    Uint edgelen;
+    Vertex node;
+    Uint distance = 0;
+    Uint prevnode;
+    Uint prefixlen;
+    Uint head;
+    Wchar *leftborder = (Wchar *) NULL;
+    Wchar firstchar;
+    Wchar edgechar = 0;
+
+    if(IS_ROOT_DEPTH) {
+
+        // There is no sentinel
+        if(IS_SENTINEL(stree->tailptr)) {
+            stree->headend = NULL;
+            return;
+        }
+
+        firstchar = *(stree->tailptr);
+        node = ROOT_CHILD(firstchar);
+        if(node  == UNDEF) {
+            stree->headend = NULL;
+            return;
+        }
+
+        // successor edge is leaf, compare tail and leaf edge label
+        if(IS_LEAF(node)) {
+
+            Wchar *edgestart = text + LEAF_NUM(node);
+            Wchar *edgeend = sentinel - 1;
+            Wchar *tailstart = stree->tailptr + 1;
+            prefixlen = 1 + lcp(edgestart + 1, edgeend, tailstart, sentinel - 1);
+            (stree->tailptr) += prefixlen;
+            stree->headstart = edgestart;
+            stree->headend = edgestart + (prefixlen-1);
+            stree->insertnode = node;
+
+            return;
+        }
+        vertexp = stree->inner.first + LEAF_NUM(node);
+
+        get_chainend(stree, vertexp, &chainend, &distance);
+        head = get_head(stree, vertexp, &chainend, distance);
+        depth = get_depth(stree, vertexp, distance, &chainend);
+
+        leftborder = text + head;
+        Wchar *leftend = leftborder + depth - 1;
+        Wchar *tailstart = stree->tailptr + 1;
+        Wchar *tailend = sentinel - 1;
+        prefixlen = 1 + lcp(tailstart, tailend, leftborder + 1, leftend);
+
+        (stree->tailptr)+= prefixlen;
+        if(depth > prefixlen)   // cannot reach the successor, fall out of tree
+        {
+            stree->headstart = leftborder;
+            stree->headend = leftborder + (prefixlen - 1);
+            stree->insertnode = node;
+            return;
+        }
+        stree->headnode = vertexp;
+        stree->head_depth = depth;
+    }
+    while(True)  // \emph{headnode} is not the root
+    {
+        prevnode = UNDEF;
+        node = CHILD(stree->headnode);
+        if(stree->tailptr == sentinel)  //  \$-edge
+        {
+            do // there is no \$-edge, so find last successor, of which it becomes right brother
+            {
+                prevnode = node;
+                if(IS_LEAF(node))
+                {
+                    node = stree->leaves.first[LEAF_NUM(node)];
+                } else
+                {
+                    node = SIBLING(stree->inner.first + LEAF_NUM(node));
+                }
+            } while(!IS_NOTHING(node));
+            stree->insertnode = NOTHING;
+            stree->insertprev = prevnode;
+            stree->headend = NULL;
+            return;
+        }
+        firstchar = *(stree->tailptr);
+
+        do // find successor edge with firstchar = firstchar
+        {
+            if(IS_LEAF(node))   // successor is leaf
+            {
+                leafindex = LEAF_NUM(node);
+                leftborder = text + (stree->head_depth + leafindex);
+                if((edgechar = *leftborder) >= firstchar)   // edge will not come later
+                {
+                    break;
+                }
+                prevnode = node;
+                node = stree->leaves.first[leafindex];
+            } else  // successor is branch node
+            {
+                vertexp = stree->inner.first + LEAF_NUM(node);
+
+                get_chainend(stree, vertexp, &chainend, &distance);
+                head = get_head(stree, vertexp, &chainend, distance);
+
+                leftborder = text + (stree->head_depth + head);
+                if((edgechar = *leftborder) >= firstchar)  // edge will not come later
+                {
+                    break;
+                }
+                prevnode = node;
+                node = SIBLING(vertexp);
+            }
+        } while(!IS_NOTHING(node));
+        if(IS_NOTHING(node) || edgechar > firstchar)  // edge not found
+        {
+            stree->insertprev = prevnode;   // new edge will become brother of this
+            stree->headend = NULL;
+            return;
+        }
+        if(IS_LEAF(node))  // correct edge is leaf edge, compare its label with tail
+        {
+            Wchar *tailstart = stree->tailptr + 1;
+            Wchar *tailend = sentinel - 1;
+            prefixlen = 1 + lcp(tailstart, tailend, leftborder + 1, sentinel - 1);
+            (stree->tailptr) += prefixlen;
+            stree->headstart = leftborder;
+            stree->headend = leftborder + (prefixlen-1);
+            stree->insertnode = node;
+            stree->insertprev = prevnode;
+            return;
+        }
+        depth = get_depth(stree, vertexp, distance, &chainend);
+        edgelen = depth - stree->head_depth;
+
+        Wchar *tailstart = stree->tailptr + 1;
+        Wchar *tailend = sentinel - 1;
+        Wchar *leftend = leftborder + edgelen - 1;
+        prefixlen = 1 + lcp(tailstart, tailend, leftborder + 1, leftend);
+
+            (stree->tailptr) += prefixlen;
+        if(edgelen > prefixlen)  // cannot reach next node
+        {
+            stree->headstart = leftborder;
+            stree->headend = leftborder + (prefixlen-1);
+            stree->insertnode = node;
+            stree->insertprev = prevnode;
+            return;
+        }
+        stree->headnode = vertexp;
+        stree->head_depth = depth;
+    }
+}
+

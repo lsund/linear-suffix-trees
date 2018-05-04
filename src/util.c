@@ -12,9 +12,21 @@ Uint lcp(Wchar *start1, Wchar *end1, Wchar *start2, Wchar *end2)
     return (Uint) (ptr1 - start1);
 }
 
+Uint lcp_patt(Pattern patt1, Pattern patt2)
+{
+    return lcp(patt1.start, patt1.end, patt2.start, patt2.end);
+}
+
 Uint max(Uint a, Uint b)
 {
     return a > b ? a : b;
 }
 
 
+Pattern make_patt(Wchar *start, Wchar *end)
+{
+    Pattern ret;
+    ret.start = start;
+    ret.end = end;
+    return ret;
+}

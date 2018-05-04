@@ -103,7 +103,7 @@
 #define EXTRA_ALLOCSIZE         max(0.05 * MULT_SMALL_WIDTH(textlen + 1), 48);
 #define LEAF_REF(ST, V)    (ST)->inner.first + LEAF_NUM((V))
 #define LEAF_VERTEX(ST, N) (ST)->leaves.first[(N)]
-#define ROOT_CHILD(ST, C)   ((ST)->rootchildren[(Uint) (C)])
+#define ROOT_CHILD(C)   (stree->rootchildren[(Uint) (C)])
 // Index of a branch and leaf relative to the first address
 #define INDEX(A)      ((Uint) ((A) - ROOT(stree)))
 

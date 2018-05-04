@@ -13,6 +13,7 @@
 #include "stree_aux.h"
 #include "insert.h"
 #include "skip_count.h"
+#include "scan.h"
 
 Wchar *text;
 Uint textlen;
@@ -46,13 +47,13 @@ Sint construct(STree *stree)
         if(IS_HEAD_ROOT) {
             // Case 1
             (stree->tailptr)++;
-            scanprefix(stree);
+            scantail(stree);
         } else {
             // Case 2
             if(IS_HEAD_VERTEX) {
                 // Case 2.1: Head is node
                 follow_link(stree);
-                scanprefix(stree);
+                scantail(stree);
             } else {
                 // Case 2.2
                 if(IS_ROOT_DEPTH) {
@@ -74,7 +75,7 @@ Sint construct(STree *stree)
 
                     SET_SUFFIXLINK(INDEX(stree->headnode));
                     completelarge(stree);
-                    scanprefix(stree);
+                    scantail(stree);
 
                 } else {
                     // artificial large node

@@ -68,4 +68,11 @@ typedef struct {
   Uint filelength;      // the length of the corresponding file
 } Fileinfo;             // \Typedef{Fileinfo}
 
+
+typedef struct pattern {
+    Wchar *start;
+    Wchar *end;
+} Pattern;
+
+
 #endif
