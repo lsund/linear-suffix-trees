@@ -1,20 +1,15 @@
 
 #include "util.h"
 
-Uint lcp(Wchar *start1, Wchar *end1, Wchar *start2, Wchar *end2)
+Uint lcp(Pattern patt1, Pattern patt2)
 {
-    register Wchar *ptr1 = start1, *ptr2 = start2;
+    register Wchar *probe1 = patt1.start, *probe2 = patt2.start;
 
-    while(ptr1 <= end1 && ptr2 <= end2 && *ptr1 == *ptr2) {
-        ptr1++;
-        ptr2++;
+    while(probe1 <= patt1.end && probe2 <= patt2.end && *probe1 == *probe2) {
+        probe1++;
+        probe2++;
     }
-    return (Uint) (ptr1 - start1);
-}
-
-Uint lcp_patt(Pattern patt1, Pattern patt2)
-{
-    return lcp(patt1.start, patt1.end, patt2.start, patt2.end);
+    return (Uint) (probe1 - patt1.start);
 }
 
 Uint max(Uint a, Uint b)
@@ -28,5 +23,13 @@ Pattern make_patt(Wchar *start, Wchar *end)
     Pattern ret;
     ret.start = start;
     ret.end = end;
+    return ret;
+}
+
+Pattern patt_inc(Pattern patt, Uint n)
+{
+    Pattern ret;
+    ret.start = patt.start + n;
+    ret.end = patt.end;
     return ret;
 }

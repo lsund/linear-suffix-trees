@@ -33,7 +33,7 @@ static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
     }
     Pattern textpatt  = make_patt(start + remain, sentinel - 1);
     Pattern curr_patt = make_patt(patt->start + remain, patt-> end);
-    Uint lcp_res      = lcp_patt(textpatt, curr_patt);
+    Uint lcp_res      = lcp(textpatt, curr_patt);
     return remain + lcp_res;
 }
 
@@ -182,12 +182,15 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                 plen = edgelen;
                 remain -= plen;
             } else {
-                Uint lcp_res = lcp(patt.start + remain, patt.end, label + remain, label + edgelen-1);
-                plen = remain + lcp_res;
-                remain = 0;
+                Pattern rem_patt  = patt_inc(patt, remain);
+                Pattern labelpatt = make_patt(label + remain, label + edgelen - 1);
+                Uint lcp_res      = lcp(rem_patt, labelpatt);
+                plen              = remain + lcp_res;
+                remain            = 0;
             }
         } else {
-            plen = 1 + lcp(patt.start + 1, patt.end, label + 1, label+edgelen - 1);
+            Pattern labelpatt = make_patt(label + 1, label + edgelen - 1);
+            plen = 1 + lcp(patt_inc(patt, 1), labelpatt);
         }
 
 
@@ -244,13 +247,12 @@ void scantail(STree *stree)
         // successor edge is leaf, compare tail and leaf edge label
         if(IS_LEAF(node)) {
 
-            Wchar *edgestart = text + LEAF_NUM(node);
-            Wchar *edgeend = sentinel - 1;
-            Wchar *tailstart = stree->tailptr + 1;
-            prefixlen = 1 + lcp(edgestart + 1, edgeend, tailstart, sentinel - 1);
+            Pattern edgepatt = make_patt(text + LEAF_NUM(node) + 1, sentinel - 1);
+            Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
+            prefixlen = 1 + lcp(edgepatt, tailpatt);
             (stree->tailptr) += prefixlen;
-            stree->headstart = edgestart;
-            stree->headend = edgestart + (prefixlen-1);
+            stree->headstart = edgepatt.start - 1;
+            stree->headend = edgepatt.start - 1 + (prefixlen-1);
             stree->insertnode = node;
 
             return;
@@ -262,10 +264,10 @@ void scantail(STree *stree)
         depth = get_depth(stree, vertexp, distance, &chainend);
 
         leftborder = text + head;
-        Wchar *leftend = leftborder + depth - 1;
-        Wchar *tailstart = stree->tailptr + 1;
-        Wchar *tailend = sentinel - 1;
-        prefixlen = 1 + lcp(tailstart, tailend, leftborder + 1, leftend);
+
+        Pattern edgepatt = make_patt(leftborder + 1, leftborder + depth - 1);
+        Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
+        prefixlen = 1 + lcp(edgepatt, tailpatt);
 
         (stree->tailptr)+= prefixlen;
         if(depth > prefixlen)   // cannot reach the successor, fall out of tree
@@ -336,11 +338,13 @@ void scantail(STree *stree)
             stree->headend = NULL;
             return;
         }
-        if(IS_LEAF(node))  // correct edge is leaf edge, compare its label with tail
-        {
-            Wchar *tailstart = stree->tailptr + 1;
-            Wchar *tailend = sentinel - 1;
-            prefixlen = 1 + lcp(tailstart, tailend, leftborder + 1, sentinel - 1);
+        if(IS_LEAF(node)) {
+            // correct edge is leaf edge, compare its label with tail
+            Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
+            Pattern edgepatt = make_patt(leftborder + 1, sentinel - 1);
+
+            prefixlen = 1 + lcp(tailpatt, edgepatt);
+
             (stree->tailptr) += prefixlen;
             stree->headstart = leftborder;
             stree->headend = leftborder + (prefixlen-1);
@@ -351,12 +355,12 @@ void scantail(STree *stree)
         depth = get_depth(stree, vertexp, distance, &chainend);
         edgelen = depth - stree->head_depth;
 
-        Wchar *tailstart = stree->tailptr + 1;
-        Wchar *tailend = sentinel - 1;
-        Wchar *leftend = leftborder + edgelen - 1;
-        prefixlen = 1 + lcp(tailstart, tailend, leftborder + 1, leftend);
+        Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
+        Pattern edgepatt = make_patt(leftborder + 1, leftborder + edgelen - 1);
 
-            (stree->tailptr) += prefixlen;
+        prefixlen = 1 + lcp(tailpatt, edgepatt);
+
+        (stree->tailptr) += prefixlen;
         if(edgelen > prefixlen)  // cannot reach next node
         {
             stree->headstart = leftborder;

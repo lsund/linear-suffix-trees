@@ -62,7 +62,7 @@ char *test_count(char *patternfile, char *textfile, Uint count)
 
 char *compare_vs_naive(char *patternfile, char *textfile)
 {
-    int maxpatterns = 100;
+    int maxpatterns = 150;
 
     Uint patternslen;
     setlocale(LC_ALL, "en_US.utf8");
