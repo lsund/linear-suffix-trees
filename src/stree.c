@@ -14,15 +14,13 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen;
 
-void completelarge(STree *stree)
+void reduce_depth(STree *stree)
 {
     Uint distance, *backwards;
 
-    if(stree->chain_remain > 0)
-    {
+    if(stree->chain_remain > 0) {
         backwards = stree->inner.next;
-        for(distance = 1; distance <= stree->chain_remain; distance++)
-        {
+        for(distance = 1; distance <= stree->chain_remain; distance++) {
             backwards -= SMALL_WIDTH;
             SET_DISTANCE(backwards,distance);
         }
@@ -96,7 +94,7 @@ void init(STree *stree)
     stree->allocated
         = stree->inner.first + stree->inner.size - LARGE_WIDTH;
     stree->headnode = stree->inner.next = stree->inner.first;
-    stree->headend = NULL;
+    stree->vertex_succ_head = NULL;
     stree->head_depth = stree->maxbranchdepth = 0;
 
     stree->inner.next = stree->inner.first;
@@ -106,19 +104,19 @@ void init(STree *stree)
     SET_HEAD(0);
     SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE_LEAF(0), 0);
     stree->rootchildren[(Uint) *text] = MAKE_LEAF(0); // Necessary?
-    stree->leaves.first[0]                 = 0;
+    stree->leaves.first[0]            = 0;
 
-    stree->leafcounts                   = NULL;
-    stree->leaves.next_num  = 1;
-    stree->leaves.next      = stree->leaves.first + 1;
-    stree->inner.next     = stree->inner.first + LARGE_WIDTH;
-    stree->inner.next_num = LARGE_WIDTH;
-    stree->split_vertex                   = UNDEF;
-    stree->insertprev                   = UNDEF;
-    stree->chain_remain            = 0;
-    stree->chainstart                   = NULL;
-    stree->n_large                    = stree->n_small = 0;
-
+    stree->leafcounts                 = NULL;
+    stree->leaves.next_num            = 1;
+    stree->leaves.next                = stree->leaves.first + 1;
+    stree->inner.next                 = stree->inner.first + LARGE_WIDTH;
+    stree->inner.next_num             = LARGE_WIDTH;
+    stree->split_vertex               = UNDEF;
+    stree->insertprev                 = UNDEF;
+    stree->chain_remain               = 0;
+    stree->chainstart                 = NULL;
+    stree->n_large                    = stree->n_small                    = 0;
+    stree->nonmaximal                 = NULL;
 
 }
 

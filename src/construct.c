@@ -24,11 +24,20 @@ Uint textlen;
 
 static void insert_vertex(STree *stree)
 {
-    if(IS_HEAD_VERTEX) {
+    if(IS_HEAD_A_VERTEX) {
         insert_leaf(stree);
     } else {
         insert_inner(stree);
     }
+}
+
+
+static void walk_chain(STree *stree)
+{
+    stree->chain_remain   += 1;
+    stree->inner.next     += SMALL_WIDTH;      // case (2.2.4)
+    stree->inner.next_num += SMALL_WIDTH;
+    stree->n_small        += 1;
 }
 
 
@@ -38,68 +47,54 @@ static void insert_vertex(STree *stree)
 
 Sint construct(STree *stree)
 {
-    stree->nonmaximal = NULL;
-
     init(stree);
 
-    while(!IS_LAST(stree->tailptr) || IS_HEAD_ROOT) {
+    while(!IS_SENTINEL(stree->tailptr)) {
 
         if(IS_HEAD_ROOT) {
-            // Case 1
+
             (stree->tailptr)++;
-            scantail(stree);
+            walk(stree);
+
+        } else if (IS_HEAD_A_VERTEX) {
+
+            follow_link(stree);
+            walk(stree);
+
         } else {
-            // Case 2
-            if(IS_HEAD_VERTEX) {
-                // Case 2.1: Head is node
+
+            if(!IS_HEADDEPTH_ZERO) {
+
                 follow_link(stree);
-                scantail(stree);
-            } else {
-                // Case 2.2
-                if(IS_ROOT_DEPTH) {
-                    // Case 2.2.1: at root, do not use links
-                    if(IS_HEAD_EMPTY) {
-                        // No need to skip-count
-                        stree->headend = NULL;
-                    } else {
-                        (stree->headstart)++;
-                        skip_count(stree);
-                    }
-                // Case 2.2.2
+                skip_count(stree);
+
+            } else if (stree->headstart == stree->vertex_succ_head) {
+                    stree->vertex_succ_head = NULL;
                 } else {
-                    follow_link(stree);
+                    stree->headstart++;
                     skip_count(stree);
-                }
-                // Case 2.2.3
-                if(IS_HEAD_VERTEX) {
-
-                    SET_SUFFIXLINK(INDEX(stree->headnode));
-                    completelarge(stree);
-                    scantail(stree);
-
-                } else {
-                    // artificial large node
-                    if(stree->chain_remain == MAXDISTANCE) {
-
-                        SET_SUFFIXLINK(stree->inner.next_num + LARGE_WIDTH);
-                        completelarge(stree);
-
-                    } else {
-                        if(stree->chainstart == NULL) {
-                            // Start new chain
-                            stree->chainstart = stree->inner.next;
-                        }
-                        stree->chain_remain++;
-                        stree->inner.next += SMALL_WIDTH;      // case (2.2.4)
-                        stree->inner.next_num += SMALL_WIDTH;
-                        stree->n_small++;
-                    }
-                }
             }
+
+            if(IS_HEAD_A_VERTEX) {
+
+                SET_SUFFIXLINK(INDEX(stree->headnode));
+                reduce_depth(stree);
+                walk(stree);
+
+            } else if (IS_CHAIN_LONG) {
+
+                SET_SUFFIXLINK(stree->inner.next_num + LARGE_WIDTH);
+                reduce_depth(stree);
+
+            } else {
+                if(IS_CHAIN_UNDEF) {
+                    stree->chainstart = stree->inner.next;
+                }
+                walk_chain(stree);
+            }
+
         }
-
         insert_vertex(stree);
-
     }
 
     stree->chainstart = NULL;

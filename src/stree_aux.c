@@ -60,10 +60,10 @@ static Uint suffix_link(STree *stree)
     }
     if(stree->head_depth == 2) {
         // determine second char of egde
-        if(stree->headend == NULL) {
+        if(stree->vertex_succ_head == NULL) {
             secondchar = *(stree->tailptr-1);
         } else {
-            secondchar = *(stree->tailptr - (stree->headend - stree->headstart + 2));
+            secondchar = *(stree->tailptr - (stree->vertex_succ_head - stree->headstart + 2));
         }
         return stree->rootchildren[(Uint) secondchar];
     }

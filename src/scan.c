@@ -67,7 +67,7 @@ static void find_last_successor(STree *stree, Vertex *prev_p, Vertex *vertex_p)
 static void update_stree(STree *stree, Wchar *label_start, Uint plen, Uint scanprobe_val, Uint prev)
 {
     stree->headstart = label_start;
-    stree->headend = label_start + (plen-1);
+    stree->vertex_succ_head = label_start + (plen-1);
     stree->split_vertex = scanprobe_val;
     stree->insertprev = prev;
 }
@@ -253,7 +253,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
 
 // Scans a prefix of the current tail down from a given node
-void scantail(STree *stree)
+void walk(STree *stree)
 {
     VertexP scanprobe = NULL;
     VertexP chainend = NULL;
@@ -269,18 +269,18 @@ void scantail(STree *stree)
     Wchar firstchar;
     Wchar labelchar = 0;
 
-    if(IS_ROOT_DEPTH) {
+    if(IS_HEADDEPTH_ZERO) {
 
         // There is no sentinel
         if(IS_SENTINEL(stree->tailptr)) {
-            stree->headend = NULL;
+            stree->vertex_succ_head = NULL;
             return;
         }
 
         firstchar = *(stree->tailptr);
         scanprobe_val = ROOT_CHILD(firstchar);
         if(scanprobe_val == UNDEF) {
-            stree->headend = NULL;
+            stree->vertex_succ_head = NULL;
             return;
         }
 
@@ -292,7 +292,7 @@ void scantail(STree *stree)
             plen = 1 + lcp(edgepatt, tailpatt);
             (stree->tailptr) += plen;
             stree->headstart  = edgepatt.start - 1;
-            stree->headend    = edgepatt.start - 1 + (plen-1);
+            stree->vertex_succ_head    = edgepatt.start - 1 + (plen-1);
             stree->split_vertex = scanprobe_val;
 
             return;
@@ -312,7 +312,7 @@ void scantail(STree *stree)
             // cannot reach the successor, fall out of tree
             stree->split_vertex = scanprobe_val;
             stree->headstart    = label_start;
-            stree->headend      = label_start + (plen - 1);
+            stree->vertex_succ_head      = label_start + (plen - 1);
             return;
         }
         stree->headnode = scanprobe;
@@ -327,7 +327,7 @@ void scantail(STree *stree)
             find_last_successor(stree, &prev, &scanprobe_val);
             stree->split_vertex = NOTHING;
             stree->insertprev   = prev;
-            stree->headend      = NULL;
+            stree->vertex_succ_head      = NULL;
             return;
         }
         firstchar = *(stree->tailptr);
@@ -363,7 +363,7 @@ void scantail(STree *stree)
             // edge not found
             // new edge will become brother of this
             stree->insertprev = prev;
-            stree->headend = NULL;
+            stree->vertex_succ_head = NULL;
             return;
         }
 

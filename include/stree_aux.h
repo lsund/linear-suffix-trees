@@ -48,19 +48,20 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Queries
 
-#define IS_HEAD_EMPTY           (stree->headstart == stree->headend)
-#define IS_LARGE(V)                (!((V) & SMALLBIT))
+#define IS_LARGE(V)         (!((V) & SMALLBIT))
 #define IS_LAST(C)          ((C) >= sentinel)
-#define IS_SENTINEL(C)  ((C) == sentinel)
-#define IS_NOTHING(P)                 ((P) & NOTHING)
-#define IS_SOMETHING(P)         (!IS_NOTHING((P)))
-#define IS_ROOT(ST, V)          ((ST)->inner.first == V)
-#define IS_UNDEF(V)          ((V) == UNDEFREFERENCE)
-#define IS_HEAD_VERTEX      (stree->headend == NULL)
-#define IS_ROOT_DEPTH       (stree->head_depth == 0)
-#define IS_HEAD_ROOT        (IS_ROOT_DEPTH && IS_HEAD_VERTEX)
+#define IS_SENTINEL(C)      ((C) == sentinel)
+#define IS_NOTHING(P)       ((P) & NOTHING)
+#define IS_SOMETHING(P)     (!IS_NOTHING((P)))
+#define IS_ROOT(ST, V)      ((ST)->inner.first == V)
+#define IS_UNDEF(V)         ((V) == UNDEFREFERENCE)
+#define IS_HEAD_A_VERTEX    (stree->vertex_succ_head == NULL)
+#define IS_HEADDEPTH_ZERO   (stree->head_depth == 0)
+#define IS_HEAD_ROOT        IS_HEADDEPTH_ZERO && IS_HEAD_A_VERTEX
 #define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
-#define IS_LEFTMOST(V)       ((V) == UNDEF)
+#define IS_LEFTMOST(V)      ((V) == UNDEF)
+#define IS_CHAIN_UNDEF      (stree->chainstart == NULL)
+#define IS_CHAIN_LONG       (stree->chain_remain == MAXDISTANCE)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters

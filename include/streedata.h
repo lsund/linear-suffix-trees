@@ -76,7 +76,7 @@ typedef struct suffixtree {
 
     Uint *headnode;             // left component of head location
     Wchar *headstart;          // these references represent the right component
-    Wchar *headend;            // of the head location \((\overline{u},v)\).
+    Wchar *vertex_succ_head;            // of the head location \((\overline{u},v)\).
     // \emph{headstart} refers to the first character
     // of \(v\), and \emph{headend} to the last
     // character. In case, \(v=\varepsilon\),

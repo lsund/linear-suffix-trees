@@ -41,7 +41,7 @@ void file_to_string(const char *filename)
         textlen++;
     }
     text[textlen + 1] = '\0';
-    sentinel = text + textlen;
+    sentinel = text + textlen - 1;
 
     if(textlen == 0) {
         fprintf(stderr,"file \"%s\" is empty\n", filename);
