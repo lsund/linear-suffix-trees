@@ -51,29 +51,32 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
 }
 
 
-static Uint suffix_link(STree *stree)
+static Wchar second_headedge_character(STree *stree)
 {
-    Wchar secondchar;
+    if (stree->headedge.end == NULL) {
+        return *(stree->tailptr-1);
+    } else {
+        return *(stree->tailptr - (stree->headedge.end - stree->headedge.start + 2));
+    }
+}
 
-    if(stree->headedge.depth == 1) {
-        return 0;        // link refers to root
+
+static Uint* suffix_link(STree *stree)
+{
+    Uint *first = stree->inner.first;
+    if(LINK_TO_ROOT) {
+        return first;
+    } else if (LINK_TO_ROOTCHILD) {
+        return first + stree->rootchildren[(Uint) second_headedge_character(stree)];
+    } else {
+        return first + SUFFIX_LINK(stree->headedge.vertex);
     }
-    if(stree->headedge.depth == 2) {
-        // determine second char of egde
-        if(stree->headedge.end == NULL) {
-            secondchar = *(stree->tailptr-1);
-        } else {
-            secondchar = *(stree->tailptr - (stree->headedge.end - stree->headedge.start + 2));
-        }
-        return stree->rootchildren[(Uint) secondchar];
-    }
-    return SUFFIX_LINK(stree->headedge.vertex);
 }
 
 void follow_link(STree *stree)
 {
     if(IS_LARGE(*(stree->headedge.vertex))) {
-        stree->headedge.vertex = stree->inner.first + suffix_link(stree);
+        stree->headedge.vertex = suffix_link(stree);
     } else {
         stree->headedge.vertex += SMALL_VERTEXSIZE;
     }

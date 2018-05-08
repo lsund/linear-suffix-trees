@@ -97,11 +97,10 @@ typedef struct suffixtree {
     // least LARGE_VERTEXSIZE integers are available. So a large node can be
     // stored in the available amount of space.
     Uint *allocated;
-    Uint *nonmaximal;           // bit table: if node with headposition \(i\) is
-    // not maximal, then \(nonmaximal[i]\) is set.
-    Uint *leafcounts;           // holds counts of the number of leafs in subtree
-    // indexed by headposition
-    Bool setatnewleaf;          // nil-reference is stored in new leaf
+
+    // holds counts of the number of leafs in subtree indexed by headposition
+    Uint *leafcounts;
+    Bool is_nil_stored;          // nil-reference is stored in new leaf
     Wchar *tailptr;            // points to the tail
 
 } STree;

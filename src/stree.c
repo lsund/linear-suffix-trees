@@ -128,7 +128,6 @@ void init(STree *stree)
     stree->insertprev                 = UNDEF;
     stree->chain.size               = 0;
     stree->chain.first                 = NULL;
-    stree->nonmaximal                 = NULL;
 
 }
 
@@ -137,9 +136,6 @@ void freestree(STree *stree)
     FREE(stree->leaves.first);
     FREE(stree->rootchildren);
     FREE(stree->inner.first);
-    if(stree->nonmaximal != NULL) {
-        FREE(stree->nonmaximal);
-    }
     if(stree->leafcounts != NULL) {
         FREE(stree->leafcounts);
     }

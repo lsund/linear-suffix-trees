@@ -24,7 +24,7 @@ Uint textlen;
 
 static void insert_vertex(STree *stree)
 {
-    if(IS_HEAD_A_VERTEX) {
+    if(HEAD_EXISTS) {
         insert_leaf(stree);
     } else {
         insert_inner(stree);
@@ -59,7 +59,7 @@ Sint construct(STree *stree)
             stree->tailptr++;
             walk(stree);
 
-        } else if (IS_HEAD_A_VERTEX) {
+        } else if (HEAD_EXISTS) {
 
             follow_link(stree);
             walk(stree);
@@ -69,18 +69,20 @@ Sint construct(STree *stree)
 
             if(!IS_HEAD_ROOTEDGE) {
 
+                // Check so its not a rootedge before following the suffix link
                 follow_link(stree);
                 skip_count(stree);
 
-            } else if (IS_HEAD_EMPTY) {
+            } else if (IS_HEADEDGE_EMPTY) {
                 stree->headedge.end = NULL;
             } else {
+                // Otherwise simply start skipping from root
                 stree->headedge.start++;
                 skip_count(stree);
             }
 
             // Did we arrive at a vertex?
-            if(IS_HEAD_A_VERTEX) {
+            if(HEAD_EXISTS) {
                 collapse_chain(stree);
                 walk(stree);
 

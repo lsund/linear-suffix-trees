@@ -57,12 +57,14 @@
 #define IS_SOMETHING(P)     (!IS_NOTHING((P)))
 #define IS_ROOT(ST, V)      ((ST)->inner.first == V)
 #define IS_UNDEF(V)         ((V) == UNDEF)
-#define IS_HEAD_A_VERTEX    (stree->headedge.end == NULL)
-#define IS_HEAD_ROOTEDGE    (stree->headedge.depth == 0)
-#define IS_HEAD_ROOT        IS_HEAD_ROOTEDGE && IS_HEAD_A_VERTEX
-#define IS_HEAD_EMPTY       (stree->headedge.start == stree->headedge.end)
+#define HEAD_EXISTS         (stree->headedge.end == NULL)
+#define IS_HEAD_ROOTEDGE      (stree->headedge.depth == 0)
+#define IS_HEAD_ROOT        IS_HEAD_ROOTEDGE && HEAD_EXISTS
+#define IS_HEADEDGE_EMPTY   (stree->headedge.start == stree->headedge.end)
 #define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)      ((V) == UNDEF)
+#define LINK_TO_ROOT       (stree->headedge.depth == 1)
+#define LINK_TO_ROOTCHILD  (stree->headedge.depth == 2)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
