@@ -35,9 +35,8 @@ static void insert_vertex(STree *stree)
 static void walk_chain(STree *stree)
 {
     stree->chain_remain   += 1;
-    stree->inner.next     += SMALL_WIDTH;      // case (2.2.4)
+    stree->inner.next     += SMALL_WIDTH;
     stree->inner.next_num += SMALL_WIDTH;
-    stree->n_small        += 1;
 }
 
 
@@ -51,6 +50,8 @@ Sint construct(STree *stree)
 
     while(!IS_SENTINEL(stree->tailptr)) {
 
+
+        // The head at the root vertex, or directly under it
         if(IS_HEAD_ROOT) {
 
             (stree->tailptr)++;
@@ -61,6 +62,7 @@ Sint construct(STree *stree)
             follow_link(stree);
             walk(stree);
 
+        // The head is somewhere else than the root
         } else {
 
             if(!IS_HEADDEPTH_ZERO) {
@@ -69,30 +71,31 @@ Sint construct(STree *stree)
                 skip_count(stree);
 
             } else if (stree->headstart == stree->vertex_succ_head) {
-                    stree->vertex_succ_head = NULL;
-                } else {
-                    stree->headstart++;
-                    skip_count(stree);
+                stree->vertex_succ_head = NULL;
+            } else {
+                stree->headstart++;
+                skip_count(stree);
             }
 
+            // The head is a vertex
             if(IS_HEAD_A_VERTEX) {
 
                 SET_SUFFIXLINK(INDEX(stree->headnode));
                 reduce_depth(stree);
                 walk(stree);
 
+            // The head is a edge
             } else if (IS_CHAIN_LONG) {
 
                 SET_SUFFIXLINK(stree->inner.next_num + LARGE_WIDTH);
                 reduce_depth(stree);
 
+            } else if (IS_CHAIN_UNDEF) {
+                stree->chainstart = stree->inner.next;
+                walk_chain(stree);
             } else {
-                if(IS_CHAIN_UNDEF) {
-                    stree->chainstart = stree->inner.next;
-                }
                 walk_chain(stree);
             }
-
         }
         insert_vertex(stree);
     }

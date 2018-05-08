@@ -29,7 +29,6 @@ void reduce_depth(STree *stree)
     }
     stree->inner.next += LARGE_WIDTH;
     stree->inner.next_num += LARGE_WIDTH;
-    stree->n_large++;
 }
 
 void linkrootchildren(STree *stree)
@@ -115,7 +114,6 @@ void init(STree *stree)
     stree->insertprev                 = UNDEF;
     stree->chain_remain               = 0;
     stree->chainstart                 = NULL;
-    stree->n_large                    = stree->n_small                    = 0;
     stree->nonmaximal                 = NULL;
 
 }

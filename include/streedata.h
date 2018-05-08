@@ -69,8 +69,6 @@ typedef struct suffixtree {
     Uint branchnodeoffset;      // number of leafs in tree
     Uint alphasize;             // the number of different characters in t
     Uint maxbranchdepth;        // maximal depth of branching node
-    Uint n_large;             // number of large nodes
-    Uint n_small;             // number of small nodes
     Uint *setlink;              // address of a nil-reference
     Uint *chainstart;           // address of the node current chains starts at
 
