@@ -35,11 +35,19 @@ typedef struct chain {
 } Chain;
 
 
-// Adresses delimiting the head string.
+// The edge that contains the end of head
+//
+// The right component of the head location uv.
+// head_start refers to the first character of v
+// headend to the last character. In case, v = empty
+// headend = null
+// \(\emph{headend}=\emph{NULL}\).
+
 typedef struct head {
     Wchar *start;
     Wchar *end;
     Uint depth;
+    VertexP vertex;           // left component of head location, that is u
 } Head;
 
 
@@ -83,20 +91,12 @@ typedef struct suffixtree {
     Uint *setlink;              // address of a nil-reference
     Chain chain;           // address of the node current chains starts at
 
-    VertexP headnode;           // left component of head location
-    Head head;
-    /* Wchar *head_start;          // these references represent the right component */
-    /* Wchar *head_end;            // of the head location \((\overline{u},v)\). */
-    /* Uint head_depth;         // the depth of the headnode */
-    // \emph{head_start} refers to the first character
-    // of \(v\), and \emph{headend} to the last
-    // character. In case, \(v=\varepsilon\),
-    // \(\emph{headend}=\emph{NULL}\).
+    Head headedge;
 
-    Uint *allocated;    // refers to the last address, such that at
-    // least LARGE_VERTEXSIZE integers are
-    // available. So a large node can be stored in
-    // the available amount of space.
+    // refers to the last address, such that at
+    // least LARGE_VERTEXSIZE integers are available. So a large node can be
+    // stored in the available amount of space.
+    Uint *allocated;
     Uint *nonmaximal;           // bit table: if node with headposition \(i\) is
     // not maximal, then \(nonmaximal[i]\) is set.
     Uint *leafcounts;           // holds counts of the number of leafs in subtree

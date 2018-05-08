@@ -32,7 +32,7 @@ void collapse_chain(STree *stree)
 {
     Uint distance;
 
-    SET_SUFFIXLINK(INDEX(stree->headnode));
+    SET_SUFFIXLINK(INDEX(stree->headedge.vertex));
     if (stree->chain.size > 0) {
         VertexP prev = stree->inner.next;
         for(distance = 1; distance <= stree->chain.size; distance++) {
@@ -106,9 +106,9 @@ void init(STree *stree)
     stree->tailptr = text;
     stree->allocated
         = stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
-    stree->headnode = stree->inner.next = stree->inner.first;
-    stree->head.end = NULL;
-    stree->head.depth = stree->maxbranchdepth = 0;
+    stree->headedge.vertex = stree->inner.next = stree->inner.first;
+    stree->headedge.end = NULL;
+    stree->headedge.depth = stree->maxbranchdepth = 0;
 
     stree->inner.next = stree->inner.first;
     stree->inner.next_num = 0;

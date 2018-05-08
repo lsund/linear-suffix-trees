@@ -55,27 +55,27 @@ static Uint suffix_link(STree *stree)
 {
     Wchar secondchar;
 
-    if(stree->head.depth == 1) {
+    if(stree->headedge.depth == 1) {
         return 0;        // link refers to root
     }
-    if(stree->head.depth == 2) {
+    if(stree->headedge.depth == 2) {
         // determine second char of egde
-        if(stree->head.end == NULL) {
+        if(stree->headedge.end == NULL) {
             secondchar = *(stree->tailptr-1);
         } else {
-            secondchar = *(stree->tailptr - (stree->head.end - stree->head.start + 2));
+            secondchar = *(stree->tailptr - (stree->headedge.end - stree->headedge.start + 2));
         }
         return stree->rootchildren[(Uint) secondchar];
     }
-    return SUFFIX_LINK(stree->headnode);
+    return SUFFIX_LINK(stree->headedge.vertex);
 }
 
 void follow_link(STree *stree)
 {
-    if(IS_LARGE(*(stree->headnode))) {
-        stree->headnode = stree->inner.first + suffix_link(stree);
+    if(IS_LARGE(*(stree->headedge.vertex))) {
+        stree->headedge.vertex = stree->inner.first + suffix_link(stree);
     } else {
-        stree->headnode += SMALL_VERTEXSIZE;
+        stree->headedge.vertex += SMALL_VERTEXSIZE;
     }
-    stree->head.depth--;
+    stree->headedge.depth--;
 }

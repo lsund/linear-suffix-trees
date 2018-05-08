@@ -53,11 +53,10 @@ Sint construct(STree *stree)
 
     while(!IS_SENTINEL(stree->tailptr)) {
 
-
         // The head at the root vertex, or directly under it
         if(IS_HEAD_ROOT) {
 
-            (stree->tailptr)++;
+            stree->tailptr++;
             walk(stree);
 
         } else if (IS_HEAD_A_VERTEX) {
@@ -65,22 +64,22 @@ Sint construct(STree *stree)
             follow_link(stree);
             walk(stree);
 
-        // The head is somewhere else than the root
+        // The head is on an edge
         } else {
 
-            if(!IS_HEADDEPTH_ZERO) {
+            if(!IS_HEAD_ROOTEDGE) {
 
                 follow_link(stree);
                 skip_count(stree);
 
-            } else if (stree->head.start == stree->head.end) {
-                stree->head.end = NULL;
+            } else if (IS_HEAD_EMPTY) {
+                stree->headedge.end = NULL;
             } else {
-                stree->head.start++;
+                stree->headedge.start++;
                 skip_count(stree);
             }
 
-            // The head is a vertex, somewhere else than the root
+            // Did we arrive at a vertex?
             if(IS_HEAD_A_VERTEX) {
                 collapse_chain(stree);
                 walk(stree);
