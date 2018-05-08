@@ -39,6 +39,7 @@
 #define MAXINDEX                  (MSB - 1)         // Second biggest value
 #define MAXDISTANCE               MAXINDEX          // maximal distance value
 #define MAXTEXTLEN                ((MAXINDEX / ((LARGE_VERTEXSIZE+SMALL_VERTEXSIZE) / 2)) - 3)
+#define UNDEF                      (~((Uint) 0))    // All ones
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,14 +56,12 @@
 #define IS_NOTHING(P)       ((P) & NOTHING)
 #define IS_SOMETHING(P)     (!IS_NOTHING((P)))
 #define IS_ROOT(ST, V)      ((ST)->inner.first == V)
-#define IS_UNDEF(V)         ((V) == UNDEFREFERENCE)
+#define IS_UNDEF(V)         ((V) == UNDEF)
 #define IS_HEAD_A_VERTEX    (stree->vertex_succ_head == NULL)
 #define IS_HEADDEPTH_ZERO   (stree->head_depth == 0)
 #define IS_HEAD_ROOT        IS_HEADDEPTH_ZERO && IS_HEAD_A_VERTEX
 #define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)      ((V) == UNDEF)
-#define IS_CHAIN_UNDEF      (stree->chainstart == NULL)
-#define IS_CHAIN_MAXIMAL    (stree->chain_remain == MAXDISTANCE)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
@@ -76,19 +75,19 @@
 // If depth is smaller than some constant K, then it is said that the large
 // record is complete. A complete large record also stores the suffix link
 //
-// Now consider if depth(w) > K for some vertex w. Let CS be the children of w.
-// The suffix link is now stored in the rightmost child of CS. Thus, it takes
-// linear time in the alphabet to retrieve the suffix, but this does not happen
-// more than n times.
-// Note that this needs to be done only for nodes that exceed K
+// The root is refereced by the first inner vertex
+#define ROOT(ST)            ((ST)->inner.first)
+#define ROOT_CHILD(C)           (stree->rootchildren[(Uint) (C)])
 
 // Leaves
 #define LEAF_SIBLING(V)        (*(V))
-#define LEAF_NUMBER(V)            ((V) & ~(LEAFBIT | SMALLBIT))
+#define LEAF_NUMBER(V)         ((V) & ~(LEAFBIT | SMALLBIT))
+#define LEAF_VERTEX(ST, N)     (ST)->leaves.first[(N)]              // Value
 
 // Inner
 #define CHILD(V)               ((*(V)) & MAXINDEX)  // Remove the MSB
 #define SIBLING(V)             (*((V) + 1))
+#define INNER(ST, V)           (ST)->inner.first + LEAF_NUMBER((V)) // address
 
 // Small inner
 #define DISTANCE(V)            (*((V) + 2))
@@ -99,28 +98,21 @@
 #define HEAD(V)                (*((V) + 3))
 #define SUFFIX_LINK(V)         (*((V) + 4))
 
-// The root is refereced by the first inner vertex
-#define ROOT(ST)            ((ST)->inner.first)
-
 // The label for a incoming edge to a vertex wu can be obtained by dropping
 // depth(w) characters of wu.
 #define LABEL_START(ST, O)        text + (O)
 
 #define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (textlen + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (textlen + 1), 48);
-#define LEAF_REF(ST, V)         (ST)->inner.first + LEAF_NUMBER((V))
-#define LEAF_VERTEX(ST, N)      (ST)->leaves.first[(N)]
-#define ROOT_CHILD(C)           (stree->rootchildren[(Uint) (C)])
 // Index of a branch and leaf relative to the first address
-#define INDEX(A)      ((Uint) ((A) - ROOT(stree)))
+#define INDEX(A)                ((Uint) ((A) - ROOT(stree)))
 
 ///////////////////////////////////////////////////////////////////////////////
 // Constructors
 
-#define MAKE_LEAF(V)               ((V) | LEAFBIT)
+#define MAKE_LEAF(V)               ((V) | LEAFBIT)    // indicate this is a leaf
 #define MAKE_LARGE(V)              (V)
-#define MAKE_LARGE_LEAF(V)          MAKE_LEAF(V)
-#define UNDEF                       (~((Uint) 0))
+#define MAKE_LARGE_LEAF(V)         MAKE_LEAF(V)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Setters

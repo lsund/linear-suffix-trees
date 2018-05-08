@@ -14,9 +14,9 @@ static void allocate_inner_vertices(STree *stree)
 
         stree->inner.size += EXTRA_ALLOCSIZE;
 
-        Uint chainstart;
-        if(stree->chainstart != NULL) {
-            chainstart = INDEX(stree->chainstart);
+        Uint chain;
+        if(stree->chain.first != NULL) {
+            chain = INDEX(stree->chain.first);
         }
 
         Uint head = INDEX(stree->headnode);
@@ -26,8 +26,8 @@ static void allocate_inner_vertices(STree *stree)
         stree->inner.next = stree->inner.first + stree->inner.next_num;
         stree->headnode = stree->inner.first + head;
 
-        if(stree->chainstart != NULL) {
-            stree->chainstart = stree->inner.first + chainstart;
+        if(stree->chain.first != NULL) {
+            stree->chain.first = stree->inner.first + chain;
         }
         stree->allocated = new_allocbound(stree);
     }

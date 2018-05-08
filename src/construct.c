@@ -32,9 +32,12 @@ static void insert_vertex(STree *stree)
 }
 
 
-static void increment_chain(STree *stree)
+static void grow_chain(STree *stree)
 {
-    stree->chain_remain   += 1;
+    if (!stree->chain.first) {
+        init_chain(stree);
+    }
+    stree->chain.size     += 1;
     stree->inner.next     += SMALL_VERTEXSIZE;
     stree->inner.next_num += SMALL_VERTEXSIZE;
 }
@@ -77,35 +80,19 @@ Sint construct(STree *stree)
                 skip_count(stree);
             }
 
-            // The head is a vertex
+            // The head is a vertex, somewhere else than the root
             if(IS_HEAD_A_VERTEX) {
-
-                SET_SUFFIXLINK(INDEX(stree->headnode));
-                set_distances(stree);
+                collapse_chain(stree);
                 walk(stree);
 
-            // The head is a edge
-            } else if (IS_CHAIN_MAXIMAL) {
-
-                SET_SUFFIXLINK(stree->inner.next_num + LARGE_VERTEXSIZE);
-                set_distances(stree);
-
-            } else if (IS_CHAIN_UNDEF) {
-
-                stree->chainstart = stree->inner.next;
-                increment_chain(stree);
-
             } else {
-
-                increment_chain(stree);
-
+                grow_chain(stree);
             }
         }
-
         insert_vertex(stree);
     }
 
-    stree->chainstart = NULL;
+    stree->chain.first = NULL;
     linkrootchildren(stree);
 
     return 0;

@@ -144,7 +144,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                 }
             }
 
-            vertexp = LEAF_REF(stree, rootchild);
+            vertexp = INNER(stree, rootchild);
 
             update_chain(stree, vertexp, &chainend, &distance);
             head = get_head(stree, vertexp, &chainend, distance);
@@ -190,7 +190,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
                 } else {
 
-                    vertexp  = LEAF_REF(stree, vertex);
+                    vertexp  = INNER(stree, vertex);
 
                     update_chain(stree, vertexp, &chainend, &distance);
                     head = get_head(stree, vertexp, &chainend, distance);

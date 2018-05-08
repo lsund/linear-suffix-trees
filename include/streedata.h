@@ -29,6 +29,12 @@ typedef struct text {
 } Text;
 
 
+typedef struct chain {
+    VertexP first;
+    Uint size;
+} Chain;
+
+
 typedef struct suffixtree {
 
     // For each inner vertex, inner[w] stores a branch record consisting of
@@ -62,7 +68,6 @@ typedef struct suffixtree {
     Uint head_depth;         // the depth of the headnode
     Uint split_vertex;            // the node the split edge leads to
     Uint insertprev;            // the edge preceeding the split edge
-    Uint chain_remain;     // the number of small nodes in the current chain
 
     Uint onsuccpath;            // refers to node on success path of headnode
     Uint currentdepth;          // depth of the new branch node
@@ -70,9 +75,9 @@ typedef struct suffixtree {
     Uint alphasize;             // the number of different characters in t
     Uint maxbranchdepth;        // maximal depth of branching node
     Uint *setlink;              // address of a nil-reference
-    Uint *chainstart;           // address of the node current chains starts at
+    Chain chain;           // address of the node current chains starts at
 
-    Uint *headnode;             // left component of head location
+    VertexP headnode;             // left component of head location
     Wchar *headstart;          // these references represent the right component
     Wchar *vertex_succ_head;            // of the head location \((\overline{u},v)\).
     // \emph{headstart} refers to the first character

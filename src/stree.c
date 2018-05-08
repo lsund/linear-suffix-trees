@@ -14,18 +14,32 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen;
 
-void set_distances(STree *stree)
-{
-    Uint distance, *backwards;
 
-    if(stree->chain_remain > 0) {
-        backwards = stree->inner.next;
-        for(distance = 1; distance <= stree->chain_remain; distance++) {
-            backwards -= SMALL_VERTEXSIZE;
-            SET_DISTANCE(backwards, distance);
+static void unset_chain(STree *stree)
+{
+    stree->chain.size = 0;
+    stree->chain.first = NULL;
+}
+
+
+void init_chain(STree *stree)
+{
+    stree->chain.first = stree->inner.next;
+}
+
+
+void collapse_chain(STree *stree)
+{
+    Uint distance;
+
+    SET_SUFFIXLINK(INDEX(stree->headnode));
+    if (stree->chain.size > 0) {
+        VertexP prev = stree->inner.next;
+        for(distance = 1; distance <= stree->chain.size; distance++) {
+            prev -= SMALL_VERTEXSIZE;
+            SET_DISTANCE(prev, distance);
         }
-        stree->chain_remain = 0;
-        stree->chainstart = NULL;
+        unset_chain(stree);
     }
     stree->inner.next += LARGE_VERTEXSIZE;
     stree->inner.next_num += LARGE_VERTEXSIZE;
@@ -112,8 +126,8 @@ void init(STree *stree)
     stree->inner.next_num             = LARGE_VERTEXSIZE;
     stree->split_vertex               = UNDEF;
     stree->insertprev                 = UNDEF;
-    stree->chain_remain               = 0;
-    stree->chainstart                 = NULL;
+    stree->chain.size               = 0;
+    stree->chain.first                 = NULL;
     stree->nonmaximal                 = NULL;
 
 }

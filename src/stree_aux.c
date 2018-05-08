@@ -14,7 +14,7 @@ Uint textlen;
 
 void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 {
-    if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
+    if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
         *distance = 1 + (stree->inner.next - vertexp) / SMALL_VERTEXSIZE;
     } else {
         if(IS_SMALL(*(vertexp))) {
@@ -26,7 +26,7 @@ void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 
 Uint get_head(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
 {
-    if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
+    if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
         return stree->leaves.next_num - distance;
     } else {
         if(IS_LARGE(*(vertexp))) {
@@ -39,7 +39,7 @@ Uint get_head(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
 
 Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
 {
-    if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
+    if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
         return stree->currentdepth  + distance;
     } else {
         if(IS_LARGE(*vertexp)) {
