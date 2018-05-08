@@ -35,6 +35,14 @@ typedef struct chain {
 } Chain;
 
 
+// Adresses delimiting the head string.
+typedef struct head {
+    Wchar *start;
+    Wchar *end;
+    Uint depth;
+} Head;
+
+
 typedef struct suffixtree {
 
     // For each inner vertex, inner[w] stores a branch record consisting of
@@ -65,11 +73,9 @@ typedef struct suffixtree {
 
     Uint *rootchildren;         // references to successors of root
 
-    Uint head_depth;         // the depth of the headnode
     Uint split_vertex;            // the node the split edge leads to
     Uint insertprev;            // the edge preceeding the split edge
 
-    Uint onsuccpath;            // refers to node on success path of headnode
     Uint currentdepth;          // depth of the new branch node
     Uint branchnodeoffset;      // number of leafs in tree
     Uint alphasize;             // the number of different characters in t
@@ -77,9 +83,11 @@ typedef struct suffixtree {
     Uint *setlink;              // address of a nil-reference
     Chain chain;           // address of the node current chains starts at
 
-    VertexP headnode;             // left component of head location
-    Wchar *head_start;          // these references represent the right component
-    Wchar *head_end;            // of the head location \((\overline{u},v)\).
+    VertexP headnode;           // left component of head location
+    Head head;
+    /* Wchar *head_start;          // these references represent the right component */
+    /* Wchar *head_end;            // of the head location \((\overline{u},v)\). */
+    /* Uint head_depth;         // the depth of the headnode */
     // \emph{head_start} refers to the first character
     // of \(v\), and \emph{headend} to the last
     // character. In case, \(v=\varepsilon\),

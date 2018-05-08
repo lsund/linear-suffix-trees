@@ -72,7 +72,7 @@ void insert_inner(STree *stree)
     allocate_inner_vertices(stree);
     if(IS_HEADDEPTH_ZERO) {
 
-        SET_ROOTCHILD(*(stree->head_start), stree->inner.next_num);
+        SET_ROOTCHILD(*(stree->head.start), stree->inner.next_num);
         *(stree->inner.next + 1) = 0;
 
     } else if (IS_LEFTMOST(stree->insertprev)) {
@@ -93,7 +93,7 @@ void insert_inner(STree *stree)
         // split edge is leaf edge
         insertleafptr = stree->leaves.first + LEAF_NUMBER(stree->split_vertex);
         if (stree->tailptr == sentinel ||
-                *(stree->head_end+1) < *(stree->tailptr))
+                *(stree->head.end+1) < *(stree->tailptr))
         {
             // first child =oldleaf
             // inherit brother
@@ -118,7 +118,7 @@ void insert_inner(STree *stree)
         insertnodeptr = stree->inner.first + LEAF_NUMBER(stree->split_vertex);
         insertnodeptrbrother = SIBLING(insertnodeptr);
         if (stree->tailptr == sentinel ||
-                *(stree->head_end+1) < *(stree->tailptr))
+                *(stree->head.end+1) < *(stree->tailptr))
         {
             // First child is new branch
             // inherit brother
@@ -138,7 +138,7 @@ void insert_inner(STree *stree)
         }
     }
     *(stree->setlink) = NOTHING;
-    stree->currentdepth = stree->head_depth + (Uint) (stree->head_end - stree->head_start+1);
+    stree->currentdepth = stree->head.depth + (Uint) (stree->head.end - stree->head.start+1);
     SET_DEPTH(stree->currentdepth);
     SET_HEAD(stree->leaves.next_num);
     if (stree->currentdepth > stree->maxbranchdepth) {

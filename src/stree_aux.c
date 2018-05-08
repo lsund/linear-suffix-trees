@@ -55,15 +55,15 @@ static Uint suffix_link(STree *stree)
 {
     Wchar secondchar;
 
-    if(stree->head_depth == 1) {
+    if(stree->head.depth == 1) {
         return 0;        // link refers to root
     }
-    if(stree->head_depth == 2) {
+    if(stree->head.depth == 2) {
         // determine second char of egde
-        if(stree->head_end == NULL) {
+        if(stree->head.end == NULL) {
             secondchar = *(stree->tailptr-1);
         } else {
-            secondchar = *(stree->tailptr - (stree->head_end - stree->head_start + 2));
+            secondchar = *(stree->tailptr - (stree->head.end - stree->head.start + 2));
         }
         return stree->rootchildren[(Uint) secondchar];
     }
@@ -77,5 +77,5 @@ void follow_link(STree *stree)
     } else {
         stree->headnode += SMALL_VERTEXSIZE;
     }
-    stree->head_depth--;
+    stree->head.depth--;
 }

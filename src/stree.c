@@ -107,8 +107,8 @@ void init(STree *stree)
     stree->allocated
         = stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
     stree->headnode = stree->inner.next = stree->inner.first;
-    stree->head_end = NULL;
-    stree->head_depth = stree->maxbranchdepth = 0;
+    stree->head.end = NULL;
+    stree->head.depth = stree->maxbranchdepth = 0;
 
     stree->inner.next = stree->inner.first;
     stree->inner.next_num = 0;
