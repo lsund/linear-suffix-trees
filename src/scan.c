@@ -66,8 +66,8 @@ static void find_last_successor(STree *stree, Vertex *prev_p, Vertex *vertex_p)
 
 static void update_stree(STree *stree, Wchar *label_start, Uint plen, Uint scanprobe_val, Uint prev)
 {
-    stree->headstart = label_start;
-    stree->vertex_succ_head = label_start + (plen-1);
+    stree->head_start = label_start;
+    stree->head_end = label_start + (plen-1);
     stree->split_vertex = scanprobe_val;
     stree->insertprev = prev;
 }
@@ -273,14 +273,14 @@ void walk(STree *stree)
 
         // There is no sentinel
         if(IS_SENTINEL(stree->tailptr)) {
-            stree->vertex_succ_head = NULL;
+            stree->head_end = NULL;
             return;
         }
 
         firstchar = *(stree->tailptr);
         scanprobe_val = ROOT_CHILD(firstchar);
         if(scanprobe_val == UNDEF) {
-            stree->vertex_succ_head = NULL;
+            stree->head_end = NULL;
             return;
         }
 
@@ -291,8 +291,8 @@ void walk(STree *stree)
             Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
             plen = 1 + lcp(edgepatt, tailpatt);
             (stree->tailptr) += plen;
-            stree->headstart  = edgepatt.start - 1;
-            stree->vertex_succ_head    = edgepatt.start - 1 + (plen-1);
+            stree->head_start  = edgepatt.start - 1;
+            stree->head_end    = edgepatt.start - 1 + (plen-1);
             stree->split_vertex = scanprobe_val;
 
             return;
@@ -311,8 +311,8 @@ void walk(STree *stree)
         if(depth > plen) {
             // cannot reach the successor, fall out of tree
             stree->split_vertex = scanprobe_val;
-            stree->headstart    = label_start;
-            stree->vertex_succ_head      = label_start + (plen - 1);
+            stree->head_start    = label_start;
+            stree->head_end      = label_start + (plen - 1);
             return;
         }
         stree->headnode = scanprobe;
@@ -327,7 +327,7 @@ void walk(STree *stree)
             find_last_successor(stree, &prev, &scanprobe_val);
             stree->split_vertex = NOTHING;
             stree->insertprev   = prev;
-            stree->vertex_succ_head      = NULL;
+            stree->head_end      = NULL;
             return;
         }
         firstchar = *(stree->tailptr);
@@ -363,7 +363,7 @@ void walk(STree *stree)
             // edge not found
             // new edge will become brother of this
             stree->insertprev = prev;
-            stree->vertex_succ_head = NULL;
+            stree->head_end = NULL;
             return;
         }
 

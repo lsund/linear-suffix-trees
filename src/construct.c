@@ -73,10 +73,10 @@ Sint construct(STree *stree)
                 follow_link(stree);
                 skip_count(stree);
 
-            } else if (stree->headstart == stree->vertex_succ_head) {
-                stree->vertex_succ_head = NULL;
+            } else if (stree->head_start == stree->head_end) {
+                stree->head_end = NULL;
             } else {
-                stree->headstart++;
+                stree->head_start++;
                 skip_count(stree);
             }
 

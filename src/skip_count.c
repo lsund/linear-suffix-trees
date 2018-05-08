@@ -12,7 +12,7 @@ void skip_count(STree *stree)
 
     if(IS_HEADDEPTH_ZERO) {
 
-        firstchar = *(stree->headstart);
+        firstchar = *(stree->head_start);
         Uint rootchild = stree->rootchildren[(Uint) firstchar];
 
         if(IS_LEAF(rootchild)) {
@@ -25,7 +25,7 @@ void skip_count(STree *stree)
             update_chain(stree, vertex, &chainend, &distance);
             depth = get_depth(stree, vertex, distance, &chainend);
 
-            Uint wlen = (stree->vertex_succ_head - stree->headstart + 1);
+            Uint wlen = (stree->head_end - stree->head_start + 1);
 
             if(depth > wlen) {
                 // cannot reach the successor node
@@ -39,17 +39,17 @@ void skip_count(STree *stree)
 
             // location has been scanned
             if(depth == wlen) {
-                stree->vertex_succ_head = NULL;
+                stree->head_end = NULL;
                 return;
             } else {
-                (stree->headstart) += depth;
+                (stree->head_start) += depth;
             }
         }
     }
 
     while(True) {
 
-        firstchar = *(stree->headstart);
+        firstchar = *(stree->head_start);
         prevnode = UNDEF;
         Vertex headchild = CHILD(stree->headnode);
 
@@ -89,7 +89,7 @@ void skip_count(STree *stree)
 
         depth = get_depth(stree, vertex, distance, &chainend);
         edgelen = depth - stree->head_depth;
-        Uint wlen = (stree->vertex_succ_head - stree->headstart + 1);
+        Uint wlen = (stree->head_end - stree->head_start + 1);
         if(edgelen > wlen) {
             // cannot reach the succ node
             stree->split_vertex = headchild;
@@ -101,9 +101,9 @@ void skip_count(STree *stree)
         stree->head_depth = depth;
         if(edgelen == wlen) {
             // location is found
-            stree->vertex_succ_head = NULL;
+            stree->head_end = NULL;
             return;
         }
-        (stree->headstart) += edgelen;
+        (stree->head_start) += edgelen;
     }
 }

@@ -78,9 +78,9 @@ typedef struct suffixtree {
     Chain chain;           // address of the node current chains starts at
 
     VertexP headnode;             // left component of head location
-    Wchar *headstart;          // these references represent the right component
-    Wchar *vertex_succ_head;            // of the head location \((\overline{u},v)\).
-    // \emph{headstart} refers to the first character
+    Wchar *head_start;          // these references represent the right component
+    Wchar *head_end;            // of the head location \((\overline{u},v)\).
+    // \emph{head_start} refers to the first character
     // of \(v\), and \emph{headend} to the last
     // character. In case, \(v=\varepsilon\),
     // \(\emph{headend}=\emph{NULL}\).
