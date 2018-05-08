@@ -21,7 +21,7 @@ void skip_count(STree *stree)
 
         } else {
 
-            vertex = stree->inner.first + LEAF_NUM(rootchild);
+            vertex = stree->inner.first + LEAF_NUMBER(rootchild);
             update_chain(stree, vertex, &chainend, &distance);
             depth = get_depth(stree, vertex, distance, &chainend);
 
@@ -57,7 +57,7 @@ void skip_count(STree *stree)
         while(True) {
             if(IS_LEAF(headchild)) {
 
-                leafindex = LEAF_NUM(headchild);
+                leafindex = LEAF_NUMBER(headchild);
                 edgechar = text[stree->head_depth + leafindex];
 
                 if(edgechar == firstchar) {
@@ -74,7 +74,7 @@ void skip_count(STree *stree)
             } else {
 
                 // successor is branch node
-                vertex = stree->inner.first + LEAF_NUM(headchild);
+                vertex = stree->inner.first + LEAF_NUMBER(headchild);
                 update_chain(stree, vertex, &chainend, &distance);
                 head = get_head(stree, vertex, &chainend, distance);
                 edgechar = text[stree->head_depth + head];

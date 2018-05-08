@@ -4,7 +4,7 @@ Wchar *sentinel;
 
 static Uint *new_allocbound(STree *stree)
 {
-    return stree->inner.first + stree->inner.size - LARGE_WIDTH;
+    return stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
 }
 
 // Allocate space for branch vertices
@@ -44,20 +44,20 @@ void insert_leaf(STree *stree)
 
     } else if (IS_LEFTMOST(stree->insertprev)) {
 
-        *(stree->leaves.next) = CHILD(stree->headnode);
+        *stree->leaves.next = CHILD(stree->headnode);
         SET_CHILD(stree->headnode, leaf);
 
     } else if (IS_LEAF(stree->insertprev)) {
 
         // Previous node is leaf
-        Uint *prev = stree->leaves.first + LEAF_NUM(stree->insertprev);
-        *(stree->leaves.next) = LEAF_SIBLING(prev);
+        Uint *prev = stree->leaves.first + LEAF_NUMBER(stree->insertprev);
+        *stree->leaves.next = LEAF_SIBLING(prev);
         SET_LEAF_SIBLING(prev, leaf);
 
     } else {
         // previous node is branching node
-        Uint *prev = stree->inner.first + LEAF_NUM(stree->insertprev);
-        *(stree->leaves.next) = SIBLING(prev);
+        Uint *prev = stree->inner.first + LEAF_NUMBER(stree->insertprev);
+        *stree->leaves.next = SIBLING(prev);
         SET_SIBLING(prev, leaf);
     }
 
@@ -81,17 +81,17 @@ void insert_inner(STree *stree)
     } else {
         // new branch = right brother of leaf
         if(IS_LEAF(stree->insertprev)) {
-            Uint *ptr = stree->leaves.first + LEAF_NUM(stree->insertprev);
+            Uint *ptr = stree->leaves.first + LEAF_NUMBER(stree->insertprev);
             SET_LEAF_SIBLING(ptr,stree->inner.next_num);
         } else {
             // new branch = brother of branching node
-            SET_SIBLING(stree->inner.first + LEAF_NUM(stree->insertprev),
+            SET_SIBLING(stree->inner.first + LEAF_NUMBER(stree->insertprev),
                     stree->inner.next_num);
         }
     }
     if(IS_LEAF(stree->split_vertex)) {
         // split edge is leaf edge
-        insertleafptr = stree->leaves.first + LEAF_NUM(stree->split_vertex);
+        insertleafptr = stree->leaves.first + LEAF_NUMBER(stree->split_vertex);
         if (stree->tailptr == sentinel ||
                 *(stree->vertex_succ_head+1) < *(stree->tailptr))
         {
@@ -115,7 +115,7 @@ void insert_inner(STree *stree)
         }
     } else {
         // split edge leads to branching node
-        insertnodeptr = stree->inner.first + LEAF_NUM(stree->split_vertex);
+        insertnodeptr = stree->inner.first + LEAF_NUMBER(stree->split_vertex);
         insertnodeptrbrother = SIBLING(insertnodeptr);
         if (stree->tailptr == sentinel ||
                 *(stree->vertex_succ_head+1) < *(stree->tailptr))

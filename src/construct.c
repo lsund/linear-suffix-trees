@@ -35,8 +35,8 @@ static void insert_vertex(STree *stree)
 static void increment_chain(STree *stree)
 {
     stree->chain_remain   += 1;
-    stree->inner.next     += SMALL_WIDTH;
-    stree->inner.next_num += SMALL_WIDTH;
+    stree->inner.next     += SMALL_VERTEXSIZE;
+    stree->inner.next_num += SMALL_VERTEXSIZE;
 }
 
 
@@ -81,22 +81,27 @@ Sint construct(STree *stree)
             if(IS_HEAD_A_VERTEX) {
 
                 SET_SUFFIXLINK(INDEX(stree->headnode));
-                reduce_depth(stree);
+                set_distances(stree);
                 walk(stree);
 
             // The head is a edge
-            } else if (IS_CHAIN_LONG) {
+            } else if (IS_CHAIN_MAXIMAL) {
 
-                SET_SUFFIXLINK(stree->inner.next_num + LARGE_WIDTH);
-                reduce_depth(stree);
+                SET_SUFFIXLINK(stree->inner.next_num + LARGE_VERTEXSIZE);
+                set_distances(stree);
 
             } else if (IS_CHAIN_UNDEF) {
+
                 stree->chainstart = stree->inner.next;
                 increment_chain(stree);
+
             } else {
+
                 increment_chain(stree);
+
             }
         }
+
         insert_vertex(stree);
     }
 

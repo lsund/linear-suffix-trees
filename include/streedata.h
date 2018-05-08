@@ -81,7 +81,7 @@ typedef struct suffixtree {
     // \(\emph{headend}=\emph{NULL}\).
 
     Uint *allocated;    // refers to the last address, such that at
-    // least LARGE_WIDTH integers are
+    // least LARGE_VERTEXSIZE integers are
     // available. So a large node can be stored in
     // the available amount of space.
     Uint *nonmaximal;           // bit table: if node with headposition \(i\) is

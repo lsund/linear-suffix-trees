@@ -18,12 +18,8 @@
 // (not the root) is a member of exactly one chain.
 //
 // This exploits some redundancies, which allows for the improved implementation.
-#define SMALL_WIDTH           3                   // # of integers for small node
-#define LARGE_WIDTH           5                   // # of integers for large node
-#define DIV_SMALL_WIDTH(V)   ((V) / SMALL_WIDTH)  // div by SMALL_WIDTH
-#define MULT_SMALL_WIDTH(V)  ((V) * SMALL_WIDTH)  // multiply by SMALL_WIDTH
-
-#define CHAIN_END(B, D)      (B) + MULT_SMALL_WIDTH(D)
+#define SMALL_VERTEXSIZE           3                   // # of integers for small node
+#define LARGE_VERTEXSIZE           5                   // # of integers for large node
 
 /*
    We use the least significant bit to discriminate references to leafs
@@ -38,16 +34,20 @@
 // Bitdefs
 
 
-#define SMALLBIT            FIRSTBIT       // mark small node
-#define NOTHING              FIRSTBIT       // mark nil reference in brother
-#define MAXINDEX            (NOTHING - 1)   // all except for first bit
-#define MAXDISTANCE         MAXINDEX       // maximal distance value
-#define MAXTEXTLEN                ((MAXINDEX / ((LARGE_WIDTH+SMALL_WIDTH) / 2)) - 3)
+#define SMALLBIT                  MSB               // marks a small node
+#define NOTHING                   MSB               // Marks a nil referenc
+#define MAXINDEX                  (MSB - 1)         // Second biggest value
+#define MAXDISTANCE               MAXINDEX          // maximal distance value
+#define MAXTEXTLEN                ((MAXINDEX / ((LARGE_VERTEXSIZE+SMALL_VERTEXSIZE) / 2)) - 3)
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Queries
 
+// An extra bit
+// with each such integer tells whereth the reference is to a leaf or to a
+// branching vertex
+#define IS_LEAF(V)          ((V) & LEAFBIT)
 #define IS_SMALL(V)         (((V) & SMALLBIT))
 #define IS_LARGE(V)         (!((V) & SMALLBIT))
 #define IS_LAST(C)          ((C) >= sentinel)
@@ -62,7 +62,7 @@
 #define IS_NO_SPACE         (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)      ((V) == UNDEF)
 #define IS_CHAIN_UNDEF      (stree->chainstart == NULL)
-#define IS_CHAIN_LONG       (stree->chain_remain == MAXDISTANCE)
+#define IS_CHAIN_MAXIMAL    (stree->chain_remain == MAXDISTANCE)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Getters
@@ -81,19 +81,23 @@
 // linear time in the alphabet to retrieve the suffix, but this does not happen
 // more than n times.
 // Note that this needs to be done only for nodes that exceed K
-#define CHILD(V)               ((*(V)) & MAXINDEX)
+
+// Leaves
+#define LEAF_SIBLING(V)        (*(V))
+#define LEAF_NUMBER(V)            ((V) & ~(LEAFBIT | SMALLBIT))
+
+// Inner
+#define CHILD(V)               ((*(V)) & MAXINDEX)  // Remove the MSB
 #define SIBLING(V)             (*((V) + 1))
-#define LEAF_SIBLING(L)        (*(L))
-#define DEPTH(V)               (*((V) + 2))
+
+// Small inner
 #define DISTANCE(V)            (*((V) + 2))
+#define CHAIN_END(V, D)        (V) + SMALL_VERTEXSIZE * (D)
+
+// Large inner
+#define DEPTH(V)               (*((V) + 2))
 #define HEAD(V)                (*((V) + 3))
 #define SUFFIX_LINK(V)         (*((V) + 4))
-
-#define LEAF_NUM(V)           ((V) & ~(LEAFBIT | SMALLBIT))
-// An extra bit
-// with each such integer tells whereth the reference is to a leaf or to a
-// branching vertex
-#define IS_LEAF(V)                 ((V) & LEAFBIT)
 
 // The root is refereced by the first inner vertex
 #define ROOT(ST)            ((ST)->inner.first)
@@ -102,14 +106,13 @@
 // depth(w) characters of wu.
 #define LABEL_START(ST, O)        text + (O)
 
-#define START_ALLOCSIZE         max(0.5 * MULT_SMALL_WIDTH(textlen + 1), 48);
-#define EXTRA_ALLOCSIZE         max(0.05 * MULT_SMALL_WIDTH(textlen + 1), 48);
-#define LEAF_REF(ST, V)    (ST)->inner.first + LEAF_NUM((V))
-#define LEAF_VERTEX(ST, N) (ST)->leaves.first[(N)]
-#define ROOT_CHILD(C)   (stree->rootchildren[(Uint) (C)])
+#define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (textlen + 1), 48);
+#define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (textlen + 1), 48);
+#define LEAF_REF(ST, V)         (ST)->inner.first + LEAF_NUMBER((V))
+#define LEAF_VERTEX(ST, N)      (ST)->leaves.first[(N)]
+#define ROOT_CHILD(C)           (stree->rootchildren[(Uint) (C)])
 // Index of a branch and leaf relative to the first address
 #define INDEX(A)      ((Uint) ((A) - ROOT(stree)))
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Constructors
@@ -122,8 +125,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
 
-#define SET_CHILD(B, VAL)                *(B) = ((*(B)) & SMALLBIT) | (VAL)
-#define SET_SIBLING(B, VAL)               *(B + 1) = VAL
+#define SET_CHILD(V, VAL)                *(V) = ((*(V)) & SMALLBIT) | (VAL)
+#define SET_SIBLING(B, VAL)              *(B + 1) = VAL
 // The only thing a leaf stores is a reference to its right sibling. Therefore
 // to set a leaf sibling, simply set the value of the previous one to the
 // current one.
@@ -132,7 +135,7 @@
 // The SET_DISTANCE macro is used when defining the chain of small nodes. For
 // each of the small nodes, they also set the small bit.
 #define SET_DISTANCE(V, VAL)             *(V + 2) = VAL; *(V) = (*(V)) | SMALLBIT
-#define SET_SUFFIXLINK(SL)              *(stree->inner.next+4) = (SL)
+#define SET_SUFFIXLINK(SL)              *(stree->inner.next + 4) = (SL)
 #define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S)
 #define SET_DEPTH(D)                    *(stree->inner.next + 2) = D
 #define SET_HEAD(H)                     *(stree->inner.next + 3) = H

@@ -14,21 +14,21 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen;
 
-void reduce_depth(STree *stree)
+void set_distances(STree *stree)
 {
     Uint distance, *backwards;
 
     if(stree->chain_remain > 0) {
         backwards = stree->inner.next;
         for(distance = 1; distance <= stree->chain_remain; distance++) {
-            backwards -= SMALL_WIDTH;
+            backwards -= SMALL_VERTEXSIZE;
             SET_DISTANCE(backwards, distance);
         }
         stree->chain_remain = 0;
         stree->chainstart = NULL;
     }
-    stree->inner.next += LARGE_WIDTH;
-    stree->inner.next_num += LARGE_WIDTH;
+    stree->inner.next += LARGE_VERTEXSIZE;
+    stree->inner.next_num += LARGE_VERTEXSIZE;
 }
 
 void linkrootchildren(STree *stree)
@@ -49,10 +49,10 @@ void linkrootchildren(STree *stree)
             {
                 if(IS_LEAF(prev))
                 {
-                    stree->leaves.first[LEAF_NUM(prev)] = *rcptr;
+                    stree->leaves.first[LEAF_NUMBER(prev)] = *rcptr;
                 } else
                 {
-                    prevnodeptr = stree->inner.first + LEAF_NUM(prev);
+                    prevnodeptr = stree->inner.first + LEAF_NUMBER(prev);
                     SET_SIBLING(prevnodeptr,*rcptr);
                 }
             }
@@ -61,10 +61,10 @@ void linkrootchildren(STree *stree)
     }
     if(IS_LEAF(prev))
     {
-        stree->leaves.first[LEAF_NUM(prev)] = MAKE_LEAF(textlen);
+        stree->leaves.first[LEAF_NUMBER(prev)] = MAKE_LEAF(textlen);
     } else
     {
-        prevnodeptr = stree->inner.first + LEAF_NUM(prev);
+        prevnodeptr = stree->inner.first + LEAF_NUMBER(prev);
         SET_SIBLING(prevnodeptr,MAKE_LEAF(textlen));
     }
     stree->leaves.first[textlen] = NOTHING;
@@ -79,7 +79,7 @@ void init(STree *stree)
     stree->leaves.first = ALLOC(NULL, Uint, textlen + 2);
 
     stree->inner.first = ALLOC(NULL, Uint, stree->inner.size);
-    for(i=0; i<LARGE_WIDTH; i++) {
+    for(i=0; i<LARGE_VERTEXSIZE; i++) {
         stree->inner.first[i] = 0;
     }
 
@@ -91,7 +91,7 @@ void init(STree *stree)
 
     stree->tailptr = text;
     stree->allocated
-        = stree->inner.first + stree->inner.size - LARGE_WIDTH;
+        = stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
     stree->headnode = stree->inner.next = stree->inner.first;
     stree->vertex_succ_head = NULL;
     stree->head_depth = stree->maxbranchdepth = 0;
@@ -108,8 +108,8 @@ void init(STree *stree)
     stree->leafcounts                 = NULL;
     stree->leaves.next_num            = 1;
     stree->leaves.next                = stree->leaves.first + 1;
-    stree->inner.next                 = stree->inner.first + LARGE_WIDTH;
-    stree->inner.next_num             = LARGE_WIDTH;
+    stree->inner.next                 = stree->inner.first + LARGE_VERTEXSIZE;
+    stree->inner.next_num             = LARGE_VERTEXSIZE;
     stree->split_vertex               = UNDEF;
     stree->insertprev                 = UNDEF;
     stree->chain_remain               = 0;

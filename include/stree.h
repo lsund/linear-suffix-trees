@@ -38,7 +38,7 @@ void init(STree *stree);
 // Slow-scan
 void scanprefix(STree *stree);
 
-void reduce_depth(STree *stree);
+void set_distances(STree *stree);
 
 // Construct the successor chain for the children of the root. This is done of
 // the end of the algorithm in one sweep.

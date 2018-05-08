@@ -15,7 +15,7 @@ Uint textlen;
 void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 {
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
-        *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next - vertexp));
+        *distance = 1 + (stree->inner.next - vertexp) / SMALL_VERTEXSIZE;
     } else {
         if(IS_SMALL(*(vertexp))) {
             *distance = DISTANCE(vertexp);
@@ -75,7 +75,7 @@ void follow_link(STree *stree)
     if(IS_LARGE(*(stree->headnode))) {
         stree->headnode = stree->inner.first + suffix_link(stree);
     } else {
-        stree->headnode += SMALL_WIDTH;
+        stree->headnode += SMALL_VERTEXSIZE;
     }
     stree->head_depth--;
 }

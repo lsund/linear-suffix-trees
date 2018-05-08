@@ -22,24 +22,24 @@
 
 #define INTWORDSIZE\
         (UintConst(1) << LOGWORDSIZE)     // # of bits in Uint = w
-#define FIRSTBIT\
+#define MSB\
         (UintConst(1) << (INTWORDSIZE - 1)) // \(10^{w-1}\)
 #define ISBITSET(S,I)\
-        (((S) << (I)) & FIRSTBIT)         // is \(i\)th bit set?
+        (((S) << (I)) & MSB)         // is \(i\)th bit set?
 #define ITHBIT(I)\
-        (FIRSTBIT >> (I))                 // \(0^{i}10^{w-i-1}\)
+        (MSB >> (I))                 // \(0^{i}10^{w-i-1}\)
 #define SECONDBIT\
-        (FIRSTBIT >> 1)                   // \(010^{w-2}\)
+        (MSB >> 1)                   // \(010^{w-2}\)
 #define THIRDBIT\
-        (FIRSTBIT >> 2)                   // \(0010^{w-3}\)
+        (MSB >> 2)                   // \(0010^{w-3}\)
 #define FOURTHBIT\
-        (FIRSTBIT >> 3)                   // \(00010^{w-4}\)
+        (MSB >> 3)                   // \(00010^{w-4}\)
 #define FIFTHBIT\
-        (FIRSTBIT >> 4)                   // \(000010^{w-3}\)
+        (MSB >> 4)                   // \(000010^{w-3}\)
 #define FIRSTTWOBITS\
         (UintConst(3) << (INTWORDSIZE-2)) // \(11^{w-2}\)
 #define EXCEPTFIRSTBIT\
-        (~FIRSTBIT)                       // \(01^{w-1}\)
+        (~MSB)                       // \(01^{w-1}\)
 #define EXCEPTFIRSTTWOBITS\
         (EXCEPTFIRSTBIT >> 1)             // \(001^{w-2}\)
 #define EXCEPTFIRSTTHREEBITS\
