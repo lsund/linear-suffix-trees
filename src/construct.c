@@ -32,7 +32,7 @@ static void insert_vertex(STree *stree)
 }
 
 
-static void walk_chain(STree *stree)
+static void increment_chain(STree *stree)
 {
     stree->chain_remain   += 1;
     stree->inner.next     += SMALL_WIDTH;
@@ -92,9 +92,9 @@ Sint construct(STree *stree)
 
             } else if (IS_CHAIN_UNDEF) {
                 stree->chainstart = stree->inner.next;
-                walk_chain(stree);
+                increment_chain(stree);
             } else {
-                walk_chain(stree);
+                increment_chain(stree);
             }
         }
         insert_vertex(stree);

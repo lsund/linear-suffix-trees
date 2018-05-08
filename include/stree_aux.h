@@ -48,6 +48,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Queries
 
+#define IS_SMALL(V)         (((V) & SMALLBIT))
 #define IS_LARGE(V)         (!((V) & SMALLBIT))
 #define IS_LAST(C)          ((C) >= sentinel)
 #define IS_SENTINEL(C)      ((C) == sentinel)
@@ -126,7 +127,11 @@
 // The only thing a leaf stores is a reference to its right sibling. Therefore
 // to set a leaf sibling, simply set the value of the previous one to the
 // current one.
-#define SET_DISTANCE(B,VAL)             *(B + 2) = VAL; *(B) = (*(B)) | SMALLBIT
+//
+//
+// The SET_DISTANCE macro is used when defining the chain of small nodes. For
+// each of the small nodes, they also set the small bit.
+#define SET_DISTANCE(V, VAL)             *(V + 2) = VAL; *(V) = (*(V)) | SMALLBIT
 #define SET_SUFFIXLINK(SL)              *(stree->inner.next+4) = (SL)
 #define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S)
 #define SET_DEPTH(D)                    *(stree->inner.next + 2) = D

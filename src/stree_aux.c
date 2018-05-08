@@ -17,7 +17,7 @@ void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
     if(stree->chainstart != NULL && vertexp >= stree->chainstart) {
         *distance = 1 + DIV_SMALL_WIDTH((Uint) (stree->inner.next - vertexp));
     } else {
-        if(!IS_LARGE(*(vertexp))) {
+        if(IS_SMALL(*(vertexp))) {
             *distance = DISTANCE(vertexp);
             *chainend   = CHAIN_END(vertexp, *distance);
         }

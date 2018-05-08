@@ -22,7 +22,7 @@ void reduce_depth(STree *stree)
         backwards = stree->inner.next;
         for(distance = 1; distance <= stree->chain_remain; distance++) {
             backwards -= SMALL_WIDTH;
-            SET_DISTANCE(backwards,distance);
+            SET_DISTANCE(backwards, distance);
         }
         stree->chain_remain = 0;
         stree->chainstart = NULL;
