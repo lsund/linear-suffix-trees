@@ -102,7 +102,7 @@
 #define DISTANCE(P)            (*((P) + 2))
 // Large inner
 #define DEPTH(P)               (*((P) + 2))
-#define HEAD(P)                (*((P) + 3))
+#define HEADPOS(P)                (*((P) + 3))
 #define SUFFIX_LINK(P)         (*((P) + 4))
 
 #define CHAIN_END(P, D)        (P) + SMALL_VERTEXSIZE * (D)
@@ -132,7 +132,7 @@ Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *
 void update_chain(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
 
 // The smallest integer i such that vertexp = head(i)
-Uint get_head(STree *stree, Uint *vertexp, Uint **largep, Uint distance);
+Uint get_headpos(STree *stree, Uint *vertexp, Uint **largep, Uint distance);
 
 Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **largep);
 

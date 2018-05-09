@@ -143,7 +143,7 @@ void insert_inner(STree *stree)
     *(stree->setlink) = NOTHING;
     stree->currentdepth = stree->headedge.depth + (Uint) (stree->headedge.end - stree->headedge.start+1);
     DEPTH(stree->inner.next) = stree->currentdepth;
-    HEAD(stree->inner.next) =stree->leaves.next_ind;
+    HEADPOS(stree->inner.next) =stree->leaves.next_ind;
     if (stree->currentdepth > stree->maxbranchdepth) {
         stree->maxbranchdepth = stree->currentdepth;
     }

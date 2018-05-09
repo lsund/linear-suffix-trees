@@ -76,7 +76,7 @@ void skip_count(STree *stree)
                 // successor is branch node
                 vertex = stree->inner.first + INDEX(headchild);
                 update_chain(stree, vertex, &chainend, &distance);
-                head = get_head(stree, vertex, &chainend, distance);
+                head = get_headpos(stree, vertex, &chainend, distance);
                 edgechar = text[stree->headedge.depth + head];
                 // Correct edge found
                 if(edgechar == firstchar) {

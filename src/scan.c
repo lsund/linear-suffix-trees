@@ -106,7 +106,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
     if(!IS_ROOT(vertexp)) {
 
         update_chain(stree, vertexp, &chainend, &distance);
-        head = get_head(stree, vertexp, &chainend, distance);
+        head = get_headpos(stree, vertexp, &chainend, distance);
 
         update_chain(stree, vertexp, &chainend, &distance);
         depth = get_depth(stree, vertexp, distance, &chainend);
@@ -147,7 +147,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
             vertexp = INNER(rootchild);
 
             update_chain(stree, vertexp, &chainend, &distance);
-            head = get_head(stree, vertexp, &chainend, distance);
+            head = get_headpos(stree, vertexp, &chainend, distance);
 
             label   = LABEL_START(head);
 
@@ -193,7 +193,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                     vertexp  = INNER(vertex);
 
                     update_chain(stree, vertexp, &chainend, &distance);
-                    head = get_head(stree, vertexp, &chainend, distance);
+                    head = get_headpos(stree, vertexp, &chainend, distance);
 
                     label    = LABEL_START(depth + head);
                     labelchar = *label;
@@ -301,7 +301,7 @@ void walk(STree *stree)
         scanprobe = stree->inner.first + INDEX(scanprobe_val);
 
         update_chain(stree, scanprobe, &chainend, &distance);
-        head = get_head(stree, scanprobe, &chainend, distance);
+        head = get_headpos(stree, scanprobe, &chainend, distance);
         depth = get_depth(stree, scanprobe, distance, &chainend);
 
         label_start = text + head;
@@ -349,7 +349,7 @@ void walk(STree *stree)
                 scanprobe   = stree->inner.first + INDEX(scanprobe_val);
                 update_chain(stree, scanprobe, &chainend, &distance);
 
-                head      = get_head(stree, scanprobe, &chainend, distance);
+                head      = get_headpos(stree, scanprobe, &chainend, distance);
                 labelchar = get_label(stree, head, &label_start);
 
                 if (labelchar >= firstchar) break;

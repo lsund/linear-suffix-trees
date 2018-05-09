@@ -113,7 +113,7 @@ void init(STree *stree)
     stree->inner.next_ind = 0;
 
     DEPTH(stree->inner.next) = 0;
-    HEAD(stree->inner.next) = 0;
+    HEADPOS(stree->inner.next) = 0;
     SET_CHILD(stree->inner.next, WITH_LEAFBIT(0));
     SIBLING(stree->inner.next) = 0;
     SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
