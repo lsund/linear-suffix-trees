@@ -39,7 +39,7 @@ static void grow_chain(STree *stree)
     }
     stree->chain.size     += 1;
     stree->inner.next     += SMALL_VERTEXSIZE;
-    stree->inner.next_num += SMALL_VERTEXSIZE;
+    stree->inner.next_ind += SMALL_VERTEXSIZE;
 }
 
 
@@ -64,9 +64,11 @@ Sint construct(STree *stree)
             follow_link(stree);
             walk(stree);
 
-        // The head is on an edge
+        // The head does not exist and has to be created
         } else {
 
+            // We know that head exists under the suffix link, so we can use
+            // skip-count
             if(!IS_HEAD_ROOTEDGE) {
 
                 // Check so its not a rootedge before following the suffix link

@@ -28,7 +28,7 @@
         (((S) << (I)) & MSB)         // is \(i\)th bit set?
 #define ITHBIT(I)\
         (MSB >> (I))                 // \(0^{i}10^{w-i-1}\)
-#define SECONDBIT\
+#define SECOND_MSB\
         (MSB >> 1)                   // \(010^{w-2}\)
 #define THIRDBIT\
         (MSB >> 2)                   // \(0010^{w-3}\)

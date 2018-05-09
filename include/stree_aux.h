@@ -34,12 +34,13 @@
 // Bitdefs
 
 
+#define LEAFBIT                   SECOND_MSB         // mark leaf address
 #define SMALLBIT                  MSB               // marks a small node
 #define NOTHING                   MSB               // Marks a nil referenc
 #define MAXINDEX                  (MSB - 1)         // Second biggest value
 #define MAXDISTANCE               MAXINDEX          // maximal distance value
 #define MAXTEXTLEN                ((MAXINDEX / ((LARGE_VERTEXSIZE+SMALL_VERTEXSIZE) / 2)) - 3)
-#define UNDEF                      (~((Uint) 0))    // All ones
+#define UNDEF                     (~((Uint) 0))    // All ones
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -80,17 +81,21 @@
 //
 // The root is refereced by the first inner vertex
 #define ROOT(ST)            ((ST)->inner.first)
-#define ROOT_CHILD(C)           (stree->rootchildren[(Uint) (C)])
+#define ROOT_CHILD(C)       (stree->rootchildren[(Uint) (C)])
+#define INDEX(V)            ((V) & ~(LEAFBIT | SMALLBIT))
+// Index of a reference
+#define REF_TO_INDEX(A)     ((Uint) ((A) - ROOT(stree)))
 
 // Leaves
-#define LEAF_SIBLING(V)        (*(V))
-#define LEAF_NUMBER(V)         ((V) & ~(LEAFBIT | SMALLBIT))
-#define LEAF_VERTEX(ST, N)     (ST)->leaves.first[(N)]              // Value
+// Returns the sibling of the leaf at the specified address
+#define LEAF_SIBLING(A)        (*(A))
+#define LEAF_VALUE(N)          stree->leaves.first[(N)]              // Value
+#define INNER(V)               stree->inner.first + INDEX((V)) // address
+#define LEAF(V)                stree->leaves.first + INDEX((V))
 
 // Inner
 #define CHILD(V)               ((*(V)) & MAXINDEX)  // Remove the MSB
 #define SIBLING(V)             (*((V) + 1))
-#define INNER(ST, V)           (ST)->inner.first + LEAF_NUMBER((V)) // address
 
 // Small inner
 #define DISTANCE(V)            (*((V) + 2))
@@ -107,8 +112,6 @@
 
 #define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (textlen + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (textlen + 1), 48);
-// Index of a branch and leaf relative to the first address
-#define INDEX(A)                ((Uint) ((A) - ROOT(stree)))
 
 ///////////////////////////////////////////////////////////////////////////////
 // Constructors

@@ -13,12 +13,10 @@ typedef Uint Vertex;
 typedef Uint *VertexP;
 
 typedef struct table {
-
     Uint *first;
     Uint *next;
-    Uint next_num;
+    Uint next_ind;
     Uint size;
-
 } Table;
 
 
@@ -74,9 +72,6 @@ typedef struct suffixtree {
     // references. To speed this up, this list is ordered according to the
     // first character.
     Table inner;
-    // For each leaf number j, leafs store a reference to the right sibling of
-    // the corresponding suffix. If there is no such sibling, then
-    // leafs[j] = nothing
     Table leaves;
 
     Uint *rootchildren;         // references to successors of root

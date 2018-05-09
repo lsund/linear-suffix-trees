@@ -32,7 +32,7 @@ void collapse_chain(STree *stree)
 {
     Uint distance;
 
-    SET_SUFFIXLINK(INDEX(stree->headedge.vertex));
+    SET_SUFFIXLINK(REF_TO_INDEX(stree->headedge.vertex));
     if (stree->chain.size > 0) {
         VertexP prev = stree->inner.next;
         for(distance = 1; distance <= stree->chain.size; distance++) {
@@ -42,7 +42,7 @@ void collapse_chain(STree *stree)
         unset_chain(stree);
     }
     stree->inner.next += LARGE_VERTEXSIZE;
-    stree->inner.next_num += LARGE_VERTEXSIZE;
+    stree->inner.next_ind += LARGE_VERTEXSIZE;
 }
 
 void linkrootchildren(STree *stree)
@@ -63,10 +63,10 @@ void linkrootchildren(STree *stree)
             {
                 if(IS_LEAF(prev))
                 {
-                    stree->leaves.first[LEAF_NUMBER(prev)] = *rcptr;
+                    stree->leaves.first[INDEX(prev)] = *rcptr;
                 } else
                 {
-                    prevnodeptr = stree->inner.first + LEAF_NUMBER(prev);
+                    prevnodeptr = stree->inner.first + INDEX(prev);
                     SET_SIBLING(prevnodeptr,*rcptr);
                 }
             }
@@ -75,10 +75,10 @@ void linkrootchildren(STree *stree)
     }
     if(IS_LEAF(prev))
     {
-        stree->leaves.first[LEAF_NUMBER(prev)] = MAKE_LEAF(textlen);
+        stree->leaves.first[INDEX(prev)] = MAKE_LEAF(textlen);
     } else
     {
-        prevnodeptr = stree->inner.first + LEAF_NUMBER(prev);
+        prevnodeptr = stree->inner.first + INDEX(prev);
         SET_SIBLING(prevnodeptr,MAKE_LEAF(textlen));
     }
     stree->leaves.first[textlen] = NOTHING;
@@ -111,7 +111,7 @@ void init(STree *stree)
     stree->headedge.depth = stree->maxbranchdepth = 0;
 
     stree->inner.next = stree->inner.first;
-    stree->inner.next_num = 0;
+    stree->inner.next_ind = 0;
 
     SET_DEPTH(0);
     SET_HEAD(0);
@@ -120,10 +120,10 @@ void init(STree *stree)
     stree->leaves.first[0]            = 0;
 
     stree->leafcounts                 = NULL;
-    stree->leaves.next_num            = 1;
+    stree->leaves.next_ind            = 1;
     stree->leaves.next                = stree->leaves.first + 1;
     stree->inner.next                 = stree->inner.first + LARGE_VERTEXSIZE;
-    stree->inner.next_num             = LARGE_VERTEXSIZE;
+    stree->inner.next_ind             = LARGE_VERTEXSIZE;
     stree->split_vertex               = UNDEF;
     stree->insertprev                 = UNDEF;
     stree->chain.size               = 0;

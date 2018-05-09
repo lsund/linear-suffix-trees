@@ -27,7 +27,7 @@ void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 Uint get_head(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
 {
     if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
-        return stree->leaves.next_num - distance;
+        return stree->leaves.next_ind - distance;
     } else {
         if(IS_LARGE(*(vertexp))) {
             return HEAD(vertexp);

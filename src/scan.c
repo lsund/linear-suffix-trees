@@ -40,7 +40,7 @@ static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
 
 static Uint  match_leaf(Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 {
-    Uint leafnum = LEAF_NUMBER(vertex);
+    Uint leafnum = INDEX(vertex);
     loc->first   = text + leafnum;
 
     return prefixlen(loc->first, patt, remain);
@@ -54,9 +54,9 @@ static void find_last_successor(STree *stree, Vertex *prev_p, Vertex *vertex_p)
     do {
         prev = vertex;
         if(IS_LEAF(vertex)) {
-            vertex = LEAF_SIBLING(stree->leaves.first + LEAF_NUMBER(vertex));
+            vertex = LEAF_SIBLING(stree->leaves.first + INDEX(vertex));
         } else {
-            vertex = SIBLING(stree->inner.first + LEAF_NUMBER(vertex));
+            vertex = SIBLING(stree->inner.first + INDEX(vertex));
         }
     } while(IS_SOMETHING(vertex));
     *vertex_p = vertex;
@@ -144,7 +144,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                 }
             }
 
-            vertexp = INNER(stree, rootchild);
+            vertexp = INNER(rootchild);
 
             update_chain(stree, vertexp, &chainend, &distance);
             head = get_head(stree, vertexp, &chainend, distance);
@@ -164,7 +164,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
                 } else if (IS_LEAF(vertex)) {
 
-                    leafnum = LEAF_NUMBER(vertex);
+                    leafnum = INDEX(vertex);
                     label   = LABEL_START(stree, depth + leafnum);
 
                     if(IS_LAST(label)) {
@@ -186,11 +186,11 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                         }
                     }
 
-                    vertex = LEAF_VERTEX(stree, leafnum);
+                    vertex = LEAF_VALUE(leafnum);
 
                 } else {
 
-                    vertexp  = INNER(stree, vertex);
+                    vertexp  = INNER(vertex);
 
                     update_chain(stree, vertexp, &chainend, &distance);
                     head = get_head(stree, vertexp, &chainend, distance);
@@ -287,7 +287,7 @@ void walk(STree *stree)
         // successor edge is leaf, compare tail and leaf edge label
         if(IS_LEAF(scanprobe_val)) {
 
-            Pattern edgepatt = make_patt(text + LEAF_NUMBER(scanprobe_val) + 1, sentinel - 1);
+            Pattern edgepatt = make_patt(text + INDEX(scanprobe_val) + 1, sentinel - 1);
             Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
             plen = 1 + lcp(edgepatt, tailpatt);
             stree->tailptr += plen;
@@ -298,7 +298,7 @@ void walk(STree *stree)
             return;
         }
 
-        scanprobe = stree->inner.first + LEAF_NUMBER(scanprobe_val);
+        scanprobe = stree->inner.first + INDEX(scanprobe_val);
 
         update_chain(stree, scanprobe, &chainend, &distance);
         head = get_head(stree, scanprobe, &chainend, distance);
@@ -336,7 +336,7 @@ void walk(STree *stree)
             // find successor edge with firstchar = firstchar
             if(IS_LEAF(scanprobe_val)) {
 
-                leafindex = LEAF_NUMBER(scanprobe_val);
+                leafindex = INDEX(scanprobe_val);
                 labelchar = get_label(stree, leafindex, &label_start);
 
                 if(labelchar >= firstchar) break;
@@ -346,7 +346,7 @@ void walk(STree *stree)
 
             } else {
 
-                scanprobe   = stree->inner.first + LEAF_NUMBER(scanprobe_val);
+                scanprobe   = stree->inner.first + INDEX(scanprobe_val);
                 update_chain(stree, scanprobe, &chainend, &distance);
 
                 head      = get_head(stree, scanprobe, &chainend, distance);

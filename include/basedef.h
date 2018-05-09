@@ -5,8 +5,6 @@
 
 #define MAX_ALLOC           5000000
 
-#define LEAFBIT             SECONDBIT      // mark leaf address
-
 ///////////////////////////////////////////////////////////////////////////////
 // Fields
 
