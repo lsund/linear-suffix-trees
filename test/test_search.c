@@ -20,7 +20,7 @@ static bool search_pattern(STree *stree, Wchar *start)
     Pattern patt;
     patt.start = start;
     patt.end = start + pattlen;
-    Wchar *rem = scan(stree, &loc, ROOT(stree), patt);
+    Wchar *rem = scan(stree, &loc, ROOT, patt);
     return !rem || rem[0] == 0;
 }
 

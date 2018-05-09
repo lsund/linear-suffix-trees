@@ -32,12 +32,13 @@ void collapse_chain(STree *stree)
 {
     Uint distance;
 
-    SET_SUFFIXLINK(REF_TO_INDEX(stree->headedge.vertex));
+    SUFFIX_LINK(stree->inner.next) = REF_TO_INDEX(stree->headedge.vertex);
     if (stree->chain.size > 0) {
         VertexP prev = stree->inner.next;
         for(distance = 1; distance <= stree->chain.size; distance++) {
             prev -= SMALL_VERTEXSIZE;
-            SET_DISTANCE(prev, distance);
+            DISTANCE(prev) = distance;
+            *prev = WITH_SMALLBIT(prev);
         }
         unset_chain(stree);
     }
@@ -58,14 +59,12 @@ void linkrootchildren(STree *stree)
             stree->alphasize++;
             if(prev == UNDEF)
             {
-                SET_CHILD(stree->inner.first, MAKE_LARGE(*rcptr));
+                SET_CHILD(stree->inner.first, *rcptr);
             } else
             {
-                if(IS_LEAF(prev))
-                {
+                if (IS_LEAF(prev)) {
                     stree->leaves.first[INDEX(prev)] = *rcptr;
-                } else
-                {
+                } else {
                     prevnodeptr = stree->inner.first + INDEX(prev);
                     SET_SIBLING(prevnodeptr,*rcptr);
                 }
@@ -75,11 +74,11 @@ void linkrootchildren(STree *stree)
     }
     if(IS_LEAF(prev))
     {
-        stree->leaves.first[INDEX(prev)] = MAKE_LEAF(textlen);
+        stree->leaves.first[INDEX(prev)] = WITH_LEAFBIT(textlen);
     } else
     {
         prevnodeptr = stree->inner.first + INDEX(prev);
-        SET_SIBLING(prevnodeptr,MAKE_LEAF(textlen));
+        SET_SIBLING(prevnodeptr,WITH_LEAFBIT(textlen));
     }
     stree->leaves.first[textlen] = NOTHING;
 }
@@ -115,8 +114,9 @@ void init(STree *stree)
 
     SET_DEPTH(0);
     SET_HEAD(0);
-    SET_CHILD_AND_SIBLING(stree->inner.next, MAKE_LARGE_LEAF(0), 0);
-    stree->rootchildren[(Uint) *text] = MAKE_LEAF(0); // Necessary?
+    SET_CHILD(stree->inner.next, WITH_LEAFBIT(0));
+    SET_SIBLING(stree->inner.next, 0);
+    SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
     stree->leaves.first[0]            = 0;
 
     stree->leafcounts                 = NULL;

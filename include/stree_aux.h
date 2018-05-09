@@ -56,7 +56,7 @@
 #define IS_SENTINEL(C)      ((C) == sentinel)
 #define IS_NOTHING(P)       ((P) & NOTHING)
 #define IS_SOMETHING(P)     (!IS_NOTHING((P)))
-#define IS_ROOT(ST, V)      ((ST)->inner.first == V)
+#define IS_ROOT(V)          (stree->inner.first == V)
 #define IS_UNDEF(V)         ((V) == UNDEF)
 #define HEAD_EXISTS         (stree->headedge.end == NULL)
 #define IS_HEAD_ROOTEDGE      (stree->headedge.depth == 0)
@@ -80,16 +80,15 @@
 // record is complete. A complete large record also stores the suffix link
 //
 // The root is refereced by the first inner vertex
-#define ROOT(ST)            ((ST)->inner.first)
+#define ROOT                (stree->inner.first)
 #define ROOT_CHILD(C)       (stree->rootchildren[(Uint) (C)])
-#define INDEX(V)            ((V) & ~(LEAFBIT | SMALLBIT))
 // Index of a reference
-#define REF_TO_INDEX(A)     ((Uint) ((A) - ROOT(stree)))
+#define REF_TO_INDEX(A)     ((Uint) ((A) - ROOT))
+#define INDEX(V)            ((V) & ~(LEAFBIT | SMALLBIT))
 
 // Leaves
 // Returns the sibling of the leaf at the specified address
 #define LEAF_SIBLING(A)        (*(A))
-#define LEAF_VALUE(N)          stree->leaves.first[(N)]              // Value
 #define INNER(V)               stree->inner.first + INDEX((V)) // address
 #define LEAF(V)                stree->leaves.first + INDEX((V))
 
@@ -99,26 +98,21 @@
 
 // Small inner
 #define DISTANCE(V)            (*((V) + 2))
-#define CHAIN_END(V, D)        (V) + SMALL_VERTEXSIZE * (D)
-
 // Large inner
 #define DEPTH(V)               (*((V) + 2))
 #define HEAD(V)                (*((V) + 3))
 #define SUFFIX_LINK(V)         (*((V) + 4))
 
+#define CHAIN_END(V, D)        (V) + SMALL_VERTEXSIZE * (D)
+
 // The label for a incoming edge to a vertex wu can be obtained by dropping
 // depth(w) characters of wu.
-#define LABEL_START(ST, O)        text + (O)
+#define LABEL_START(O)          text + (O)
 
 #define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (textlen + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (textlen + 1), 48);
 
-///////////////////////////////////////////////////////////////////////////////
-// Constructors
-
-#define MAKE_LEAF(V)               ((V) | LEAFBIT)    // indicate this is a leaf
-#define MAKE_LARGE(V)              (V)
-#define MAKE_LARGE_LEAF(V)         MAKE_LEAF(V)
+#define WITH_LEAFBIT(V)               ((V) | LEAFBIT)    // indicate this is a leaf
 
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
@@ -130,11 +124,7 @@
 // current one.
 //
 //
-// The SET_DISTANCE macro is used when defining the chain of small nodes. For
-// each of the small nodes, they also set the small bit.
-#define SET_DISTANCE(V, VAL)             *(V + 2) = VAL; *(V) = (*(V)) | SMALLBIT
-#define SET_SUFFIXLINK(SL)              *(stree->inner.next + 4) = (SL)
-#define SET_CHILD_AND_SIBLING(B, C, S)  SET_CHILD(B, C); SET_SIBLING(B, S)
+#define WITH_SMALLBIT(V)                (*(V)) | SMALLBIT
 #define SET_DEPTH(D)                    *(stree->inner.next + 2) = D
 #define SET_HEAD(H)                     *(stree->inner.next + 3) = H
 #define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)

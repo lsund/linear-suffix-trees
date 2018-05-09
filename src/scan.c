@@ -103,7 +103,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
     Wchar firstchar  = 0;
     Uint edgelen     = 0;
 
-    if(!IS_ROOT(stree, vertexp)) {
+    if(!IS_ROOT(vertexp)) {
 
         update_chain(stree, vertexp, &chainend, &distance);
         head = get_head(stree, vertexp, &chainend, distance);
@@ -125,7 +125,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
         Wchar *label = NULL;
         Uint plen    = 0;
 
-        if(IS_ROOT(stree, vertexp)) {
+        if(IS_ROOT(vertexp)) {
 
             Uint rootchild = ROOT_CHILD(firstchar);
 
@@ -149,7 +149,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
             update_chain(stree, vertexp, &chainend, &distance);
             head = get_head(stree, vertexp, &chainend, distance);
 
-            label   = LABEL_START(stree, head);
+            label   = LABEL_START(head);
 
         } else {
 
@@ -165,7 +165,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                 } else if (IS_LEAF(vertex)) {
 
                     leafnum = INDEX(vertex);
-                    label   = LABEL_START(stree, depth + leafnum);
+                    label   = LABEL_START(depth + leafnum);
 
                     if(IS_LAST(label)) {
                         return patt.start;
@@ -186,7 +186,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                         }
                     }
 
-                    vertex = LEAF_VALUE(leafnum);
+                    vertex = LEAF_SIBLING(LEAF(leafnum));
 
                 } else {
 
@@ -195,7 +195,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
                     update_chain(stree, vertexp, &chainend, &distance);
                     head = get_head(stree, vertexp, &chainend, distance);
 
-                    label    = LABEL_START(stree, depth + head);
+                    label    = LABEL_START(depth + head);
                     labelchar = *label;
 
                     if (labelchar > firstchar) {
