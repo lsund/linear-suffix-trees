@@ -64,9 +64,9 @@ static Wchar second_headedge_character(STree *stree)
 static Uint* suffix_link(STree *stree)
 {
     Uint *first = stree->inner.first;
-    if(LINK_TO_ROOT) {
+    if(HEAD_LINKS_TO_ROOT) {
         return first;
-    } else if (LINK_TO_ROOTCHILD) {
+    } else if (HEAD_LINKS_TO_ROOTCHILD) {
         return first + stree->rootchildren[(Uint) second_headedge_character(stree)];
     } else {
         return first + SUFFIX_LINK(stree->headedge.vertex);

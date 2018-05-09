@@ -38,7 +38,7 @@ void collapse_chain(STree *stree)
         for(distance = 1; distance <= stree->chain.size; distance++) {
             prev -= SMALL_VERTEXSIZE;
             DISTANCE(prev) = distance;
-            *prev = WITH_SMALLBIT(prev);
+            *prev = WITH_SMALLBIT(*prev);
         }
         unset_chain(stree);
     }
