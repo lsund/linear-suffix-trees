@@ -52,13 +52,14 @@ void insert_leaf(STree *stree)
         // Previous node is leaf
         Uint *prev = stree->leaves.first + INDEX(stree->insertprev);
         *stree->leaves.next = LEAF_SIBLING(prev);
-        SET_LEAF_SIBLING(prev, leaf);
+
+        LEAF_SIBLING(prev) = leaf;
 
     } else {
         // previous node is branching node
         Uint *prev = stree->inner.first + INDEX(stree->insertprev);
         *stree->leaves.next = SIBLING(prev);
-        SET_SIBLING(prev, leaf);
+        SIBLING(prev) = leaf;
     }
 
     stree->leaves.next_ind++;
@@ -82,11 +83,9 @@ void insert_inner(STree *stree)
         // new branch = right brother of leaf
         if(IS_LEAF(stree->insertprev)) {
             Uint *ptr = stree->leaves.first + INDEX(stree->insertprev);
-            SET_LEAF_SIBLING(ptr,stree->inner.next_ind);
+            LEAF_SIBLING(ptr) = stree->inner.next_ind;
         } else {
-            // new branch = brother of branching node
-            SET_SIBLING(stree->inner.first + INDEX(stree->insertprev),
-                    stree->inner.next_ind);
+            SIBLING(INNER(stree->insertprev)) = stree->inner.next_ind;
         }
     }
     if(IS_LEAF(stree->split_vertex)) {
@@ -98,18 +97,17 @@ void insert_inner(STree *stree)
             // first child =oldleaf
             // inherit brother
             SET_CHILD(stree->inner.next, stree->split_vertex);
-            SET_SIBLING(stree->inner.next, *insertleafptr);
+            SIBLING(stree->inner.next) = *insertleafptr;
             // Recall new leaf address
             stree->setlink = stree->leaves.next;
             stree->is_nil_stored = True;
-            SET_LEAF_SIBLING(insertleafptr,                     // new leaf =
-                    WITH_LEAFBIT(stree->leaves.next_ind)); // right brother of old leaf
+            LEAF_SIBLING(insertleafptr) = WITH_LEAFBIT(stree->leaves.next_ind);
         } else
         {
             // First child = new leaf
             // inherit brother
             SET_CHILD(stree->inner.next, WITH_LEAFBIT(stree->leaves.next_ind));
-            SET_SIBLING(stree->inner.next, *insertleafptr);
+            SIBLING(stree->inner.next) = *insertleafptr;
             *(stree->leaves.next) = stree->split_vertex;  // old leaf = right brother of of new leaf
             // Recall leaf address
             stree->setlink = insertleafptr;
@@ -124,16 +122,19 @@ void insert_inner(STree *stree)
         {
             // First child is new branch
             // inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, stree->split_vertex, insertnodeptrbrother);
+            SET_CHILD(stree->inner.next, stree->split_vertex);
+            SIBLING(stree->inner.next) = insertnodeptrbrother;
             // Recall new leaf address
             stree->setlink = stree->leaves.next;
             stree->is_nil_stored = True;
-            SET_SIBLING(insertnodeptr,WITH_LEAFBIT(stree->leaves.next_ind)); // new leaf = brother of old branch
+            // new leaf = brother of old branch
+            SIBLING(insertnodeptr) = WITH_LEAFBIT(stree->leaves.next_ind);
         } else
         {
             // First child is new leaf
             // Inherit brother
-            SET_CHILD_AND_SIBLING(stree->inner.next, WITH_LEAFBIT(stree->leaves.next_ind), insertnodeptrbrother);
+            SET_CHILD(stree->inner.next, WITH_LEAFBIT(stree->leaves.next_ind));
+            SIBLING(stree->inner.next) = insertnodeptrbrother;
             *(stree->leaves.next) = stree->split_vertex;   // new branch is brother of new leaf
             stree->setlink = insertnodeptr + 1;
             stree->is_nil_stored = False;
@@ -141,8 +142,8 @@ void insert_inner(STree *stree)
     }
     *(stree->setlink) = NOTHING;
     stree->currentdepth = stree->headedge.depth + (Uint) (stree->headedge.end - stree->headedge.start+1);
-    SET_DEPTH(stree->currentdepth);
-    SET_HEAD(stree->leaves.next_ind);
+    DEPTH(stree->inner.next) = stree->currentdepth;
+    HEAD(stree->inner.next) =stree->leaves.next_ind;
     if (stree->currentdepth > stree->maxbranchdepth) {
         stree->maxbranchdepth = stree->currentdepth;
     }

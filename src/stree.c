@@ -66,7 +66,7 @@ void linkrootchildren(STree *stree)
                     stree->leaves.first[INDEX(prev)] = *rcptr;
                 } else {
                     prevnodeptr = stree->inner.first + INDEX(prev);
-                    SET_SIBLING(prevnodeptr,*rcptr);
+                    SIBLING(prevnodeptr) = *rcptr;
                 }
             }
             prev = *rcptr;
@@ -78,7 +78,7 @@ void linkrootchildren(STree *stree)
     } else
     {
         prevnodeptr = stree->inner.first + INDEX(prev);
-        SET_SIBLING(prevnodeptr,WITH_LEAFBIT(textlen));
+        SIBLING(prevnodeptr) = WITH_LEAFBIT(textlen);
     }
     stree->leaves.first[textlen] = NOTHING;
 }
@@ -112,10 +112,10 @@ void init(STree *stree)
     stree->inner.next = stree->inner.first;
     stree->inner.next_ind = 0;
 
-    SET_DEPTH(0);
-    SET_HEAD(0);
+    DEPTH(stree->inner.next) = 0;
+    HEAD(stree->inner.next) = 0;
     SET_CHILD(stree->inner.next, WITH_LEAFBIT(0));
-    SET_SIBLING(stree->inner.next, 0);
+    SIBLING(stree->inner.next) = 0;
     SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
     stree->leaves.first[0]            = 0;
 

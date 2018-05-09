@@ -113,22 +113,18 @@
 #define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (textlen + 1), 48);
 
 #define WITH_LEAFBIT(V)               ((V) | LEAFBIT)    // indicate this is a leaf
+#define WITH_SMALLBIT(V)                (*(V)) | SMALLBIT
 
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
 
+#define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
 #define SET_CHILD(V, VAL)                *(V) = ((*(V)) & SMALLBIT) | (VAL)
-#define SET_SIBLING(B, VAL)              *(B + 1) = VAL
 // The only thing a leaf stores is a reference to its right sibling. Therefore
 // to set a leaf sibling, simply set the value of the previous one to the
 // current one.
 //
 //
-#define WITH_SMALLBIT(V)                (*(V)) | SMALLBIT
-#define SET_DEPTH(D)                    *(stree->inner.next + 2) = D
-#define SET_HEAD(H)                     *(stree->inner.next + 3) = H
-#define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
-#define SET_LEAF_SIBLING(L, S)          *(L) = (S)
 
 
 // Get info for branch vertex
