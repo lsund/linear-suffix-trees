@@ -37,7 +37,7 @@ void insert_leaf(STree *stree)
 {
     Uint leaf = WITH_LEAFBIT(stree->leaves.next_ind);
 
-    if(IS_HEAD_ROOTEDGE && !IS_SENTINEL(stree->tailptr)) {
+    if(IS_DEPTH_0 && !IS_SENTINEL(stree->tailptr)) {
 
         SET_ROOTCHILD(*(stree->tailptr), leaf);
         *stree->leaves.next = 0;
@@ -71,7 +71,7 @@ void insert_inner(STree *stree)
     Uint *insertnodeptr, *insertleafptr, insertnodeptrbrother;
 
     allocate_inner_vertices(stree);
-    if(IS_HEAD_ROOTEDGE) {
+    if(IS_DEPTH_0) {
 
         SET_ROOTCHILD(*(stree->headedge.start), stree->inner.next_ind);
         *(stree->inner.next + 1) = 0;

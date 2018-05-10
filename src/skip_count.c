@@ -10,7 +10,7 @@ void skip_count(STree *stree)
     VertexP chainend = NULL;
     Uint distance = 0;
 
-    if(IS_HEAD_ROOTEDGE) {
+    if(IS_DEPTH_0) {
 
         firstchar = *(stree->headedge.start);
         Uint rootchild = stree->rootchildren[(Uint) firstchar];

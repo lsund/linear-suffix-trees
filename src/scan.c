@@ -269,7 +269,7 @@ void walk(STree *stree)
     Wchar firstchar;
     Wchar labelchar = 0;
 
-    if(IS_HEAD_ROOTEDGE) {
+    if(IS_DEPTH_0) {
 
         // There is no sentinel
         if(IS_SENTINEL(stree->tailptr)) {

@@ -12,7 +12,7 @@
 
 Wchar *text;
 Wchar *sentinel;
-Uint textlen;
+Uint textlen, alphasize;
 
 
 static void unset_chain(STree *stree)
@@ -27,8 +27,7 @@ void init_chain(STree *stree)
     stree->chain.first = stree->inner.next;
 }
 
-
-void finish_chain(STree *stree)
+void finalize_chain(STree *stree)
 {
     Uint distance;
 
@@ -50,13 +49,13 @@ void linkrootchildren(STree *stree)
 {
     Uint *rcptr, *prevnodeptr, prev = UNDEF;
 
-    stree->alphasize = 0;
+    alphasize = 0;
     for(rcptr = stree->rootchildren;
             rcptr <= stree->rootchildren + MAX_CHARS; rcptr++)
     {
         if(*rcptr != UNDEF)
         {
-            stree->alphasize++;
+            alphasize++;
             if(prev == UNDEF)
             {
                 SET_CHILD(stree->inner.first, *rcptr);

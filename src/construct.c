@@ -24,7 +24,7 @@ Uint textlen;
 
 static void insert_vertex(STree *stree)
 {
-    if(HEAD_EXISTS) {
+    if(HEAD_AT_VERTEX) {
         insert_leaf(stree);
     } else {
         insert_inner(stree);
@@ -53,45 +53,57 @@ Sint construct(STree *stree)
 
     while(!IS_SENTINEL(stree->tailptr)) {
 
-        // The head at the root vertex, or directly under it
+        // head(i - 1) at the root vertex
         if(IS_HEAD_ROOT) {
-
+            // Scan the maximal prefix of the current suffix = tailptr from the
+            // root. We thus compute the head/tail by walking.
             stree->tailptr++;
             walk(stree);
 
-        } else if (HEAD_EXISTS) {
+        // If head is not the root then head(i-1) = xw. We know that w is a
+        // prefix of head(i) and the location of w, so we can find w using
+        // suffix links.
+        //
+        // If The head is at a vertex, just follow the suffix link and walk the
+        // tail from there.
+        } else if (HEAD_AT_VERTEX) {
 
             follow_link(stree);
             walk(stree);
 
-        // The head does not exist and has to be created
         } else {
 
             // We know that head exists under the suffix link, so we can use
-            // skip-count
-            if(!IS_HEAD_ROOTEDGE) {
-
+            // skip-count to find it. First check if we are at the root.
+            if(IS_DEPTH_0) {
+                // At root
+                if (IS_HEADEDGE_EMPTY) {
+                    // Skip-count is not necessary
+                    stree->headedge.end = NULL;
+                } else {
+                    stree->headedge.start++;
+                    skip_count(stree);
+                }
+            } else {
                 // Check so its not a rootedge before following the suffix link
                 follow_link(stree);
                 skip_count(stree);
-
-            } else if (IS_HEADEDGE_EMPTY) {
-                stree->headedge.end = NULL;
-            } else {
-                // Otherwise simply start skipping from root
-                stree->headedge.start++;
-                skip_count(stree);
             }
 
-            // Did we arrive at a vertex?
-            if(HEAD_EXISTS) {
-                finish_chain(stree);
+            // We have now computed w.
+            // We can decide weather the head(i - 1) is small or large. If w
+            // is at a node, then its head position is smaller than i - 1.
+            // Therefore, head(i - 1) is large so the current chain ending with
+            // head(i - 1) can be collapsed and a new one started.
+            if(HEAD_AT_VERTEX) {
+                finalize_chain(stree);
                 walk(stree);
-
             } else {
+                // ... Otherwise, simply grow the chain ...
                 grow_chain(stree);
             }
         }
+        // ... and insert the new vertex
         insert_vertex(stree);
     }
 
