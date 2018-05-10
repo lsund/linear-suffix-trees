@@ -31,7 +31,7 @@ void finalize_chain(STree *stree)
 {
     Uint distance;
 
-    SUFFIX_LINK(stree->inner.next) = REF_TO_INDEX(stree->headedge.origin);
+    SUFFIX_LINK(stree->inner.next) = REF_TO_INDEX(stree->head.origin);
     if (stree->chain.size > 0) {
         VertexP prev = stree->inner.next;
         for(distance = 1; distance <= stree->chain.size; distance++) {
@@ -114,10 +114,10 @@ void init(STree *stree)
     SET_CHILD(stree->inner.next, WITH_LEAFBIT(0));
     SIBLING(stree->inner.next) = 0;
 
-    // Headedge
-    stree->headedge.origin = stree->inner.first;
-    stree->headedge.end    = NULL;
-    stree->headedge.depth  = stree->maxbranchdepth = 0;
+    // Head
+    stree->head.origin    = stree->inner.first;
+    stree->head.label.end = NULL;
+    stree->head.depth     = 0;
 
     SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
 

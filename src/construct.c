@@ -79,9 +79,9 @@ Sint construct(STree *stree)
                 // At root
                 if (IS_HEADEDGE_EMPTY) {
                     // Skip-count is not necessary
-                    stree->headedge.end = NULL;
+                    stree->head.label.end = NULL;
                 } else {
-                    stree->headedge.start++;
+                    stree->head.label.start++;
                     skip_count(stree);
                 }
             } else {

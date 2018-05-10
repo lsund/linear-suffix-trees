@@ -53,10 +53,10 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
 
 static Wchar second_headedge_character(STree *stree)
 {
-    if (stree->headedge.end == NULL) {
+    if (stree->head.label.end == NULL) {
         return *(stree->tailptr-1);
     } else {
-        return *(stree->tailptr - (stree->headedge.end - stree->headedge.start + 2));
+        return *(stree->tailptr - (stree->head.label.end - stree->head.label.start + 2));
     }
 }
 
@@ -69,16 +69,16 @@ static Uint* suffix_link(STree *stree)
     } else if (HEAD_LINKS_TO_ROOTCHILD) {
         return first + stree->rootchildren[(Uint) second_headedge_character(stree)];
     } else {
-        return first + SUFFIX_LINK(stree->headedge.origin);
+        return first + SUFFIX_LINK(stree->head.origin);
     }
 }
 
 void follow_link(STree *stree)
 {
-    if(IS_LARGE(*(stree->headedge.origin))) {
-        stree->headedge.origin = suffix_link(stree);
+    if(IS_LARGE(*(stree->head.origin))) {
+        stree->head.origin = suffix_link(stree);
     } else {
-        stree->headedge.origin += SMALL_VERTEXSIZE;
+        stree->head.origin += SMALL_VERTEXSIZE;
     }
-    stree->headedge.depth--;
+    stree->head.depth--;
 }

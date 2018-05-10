@@ -42,14 +42,14 @@
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (stree->inner.first == V)
 #define IS_UNDEF(V)                 ((V) == UNDEF)
-#define HEAD_AT_VERTEX              (stree->headedge.end == NULL)
-#define IS_DEPTH_0                  (stree->headedge.depth == 0)
+#define HEAD_AT_VERTEX              (stree->head.label.end == NULL)
+#define IS_DEPTH_0                  (stree->head.depth == 0)
 #define IS_HEAD_ROOT                IS_DEPTH_0 && HEAD_AT_VERTEX
-#define IS_HEADEDGE_EMPTY           (stree->headedge.start == stree->headedge.end)
+#define IS_HEADEDGE_EMPTY           (stree->head.label.start == stree->head.label.end)
 #define IS_NO_SPACE                 (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
-#define HEAD_LINKS_TO_ROOT          (stree->headedge.depth == 1)
-#define HEAD_LINKS_TO_ROOTCHILD     (stree->headedge.depth == 2)
+#define HEAD_LINKS_TO_ROOT          (stree->head.depth == 1)
+#define HEAD_LINKS_TO_ROOTCHILD     (stree->head.depth == 2)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices

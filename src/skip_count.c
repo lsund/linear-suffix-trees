@@ -12,7 +12,7 @@ void skip_count(STree *stree)
 
     if(IS_DEPTH_0) {
 
-        firstchar = *(stree->headedge.start);
+        firstchar = *(stree->head.label.start);
         Uint rootchild = stree->rootchildren[(Uint) firstchar];
 
         if(IS_LEAF(rootchild)) {
@@ -25,7 +25,7 @@ void skip_count(STree *stree)
             update_chain(stree, vertex, &chainend, &distance);
             depth = get_depth(stree, vertex, distance, &chainend);
 
-            Uint wlen = (stree->headedge.end - stree->headedge.start + 1);
+            Uint wlen = (stree->head.label.end - stree->head.label.start + 1);
 
             if(depth > wlen) {
                 // cannot reach the successor node
@@ -33,32 +33,32 @@ void skip_count(STree *stree)
                 return;
             } else {
                 // Go to successor vertex
-                stree->headedge.origin = vertex;
-                stree->headedge.depth = depth;
+                stree->head.origin = vertex;
+                stree->head.depth = depth;
             }
 
             // location has been scanned
             if(depth == wlen) {
-                stree->headedge.end = NULL;
+                stree->head.label.end = NULL;
                 return;
             } else {
-                (stree->headedge.start) += depth;
+                (stree->head.label.start) += depth;
             }
         }
     }
 
     while(True) {
 
-        firstchar = *(stree->headedge.start);
+        firstchar = *(stree->head.label.start);
         prevnode = UNDEF;
-        Vertex headchild = CHILD(stree->headedge.origin);
+        Vertex headchild = CHILD(stree->head.origin);
 
         // traverse the list of successors
         while(True) {
             if(IS_LEAF(headchild)) {
 
                 leafindex = INDEX(headchild);
-                edgechar = text[stree->headedge.depth + leafindex];
+                edgechar = text[stree->head.depth + leafindex];
 
                 if(edgechar == firstchar) {
                     // correct edge found
@@ -77,7 +77,7 @@ void skip_count(STree *stree)
                 vertex = stree->inner.first + INDEX(headchild);
                 update_chain(stree, vertex, &chainend, &distance);
                 head = get_headpos(stree, vertex, &chainend, distance);
-                edgechar = text[stree->headedge.depth + head];
+                edgechar = text[stree->head.depth + head];
                 // Correct edge found
                 if(edgechar == firstchar) {
                     break;
@@ -88,8 +88,8 @@ void skip_count(STree *stree)
         }
 
         depth = get_depth(stree, vertex, distance, &chainend);
-        edgelen = depth - stree->headedge.depth;
-        Uint wlen = (stree->headedge.end - stree->headedge.start + 1);
+        edgelen = depth - stree->head.depth;
+        Uint wlen = (stree->head.label.end - stree->head.label.start + 1);
         if(edgelen > wlen) {
             // cannot reach the succ node
             stree->split_vertex = headchild;
@@ -97,13 +97,13 @@ void skip_count(STree *stree)
             return;
         }
         // go to the successor node
-        stree->headedge.origin = vertex;
-        stree->headedge.depth = depth;
+        stree->head.origin = vertex;
+        stree->head.depth = depth;
         if(edgelen == wlen) {
             // location is found
-            stree->headedge.end = NULL;
+            stree->head.label.end = NULL;
             return;
         }
-        (stree->headedge.start) += edgelen;
+        (stree->head.label.start) += edgelen;
     }
 }

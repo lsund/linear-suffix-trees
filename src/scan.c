@@ -66,8 +66,8 @@ static void find_last_successor(STree *stree, Vertex *prev_p, Vertex *vertex_p)
 
 static void update_stree(STree *stree, Wchar *label_start, Uint plen, Uint scanprobe_val, Uint prev)
 {
-    stree->headedge.start = label_start;
-    stree->headedge.end = label_start + (plen-1);
+    stree->head.label.start = label_start;
+    stree->head.label.end = label_start + (plen-1);
     stree->split_vertex = scanprobe_val;
     stree->insertprev = prev;
 }
@@ -82,7 +82,7 @@ static Uint tail_prefixlen(STree *stree, Wchar *start, Wchar *end)
 
 static Wchar get_label(STree *stree, Uint offset, Wchar **label_start)
 {
-    *label_start = text + (stree->headedge.depth + offset);
+    *label_start = text + (stree->head.depth + offset);
     return **label_start;
 }
 
@@ -273,14 +273,14 @@ void walk(STree *stree)
 
         // There is no sentinel
         if(IS_SENTINEL(stree->tailptr)) {
-            stree->headedge.end = NULL;
+            stree->head.label.end = NULL;
             return;
         }
 
         firstchar = *(stree->tailptr);
         scanprobe_val = ROOT_CHILD(firstchar);
         if(scanprobe_val == UNDEF) {
-            stree->headedge.end = NULL;
+            stree->head.label.end = NULL;
             return;
         }
 
@@ -291,8 +291,8 @@ void walk(STree *stree)
             Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
             plen = 1 + lcp(edgepatt, tailpatt);
             stree->tailptr += plen;
-            stree->headedge.start  = edgepatt.start - 1;
-            stree->headedge.end    = edgepatt.start - 1 + (plen-1);
+            stree->head.label.start  = edgepatt.start - 1;
+            stree->head.label.end    = edgepatt.start - 1 + (plen-1);
             stree->split_vertex = scanprobe_val;
 
             return;
@@ -311,23 +311,23 @@ void walk(STree *stree)
         if(depth > plen) {
             // cannot reach the successor, fall out of tree
             stree->split_vertex = scanprobe_val;
-            stree->headedge.start    = label_start;
-            stree->headedge.end      = label_start + (plen - 1);
+            stree->head.label.start    = label_start;
+            stree->head.label.end      = label_start + (plen - 1);
             return;
         }
-        stree->headedge.origin = scanprobe;
-        stree->headedge.depth = depth;
+        stree->head.origin = scanprobe;
+        stree->head.depth = depth;
     }
 
     // Head is not the root
     while(True) {
         prev = UNDEF;
-        scanprobe_val = CHILD(stree->headedge.origin);
+        scanprobe_val = CHILD(stree->head.origin);
         if(IS_SENTINEL(stree->tailptr)) {
             find_last_successor(stree, &prev, &scanprobe_val);
             stree->split_vertex = NOTHING;
             stree->insertprev   = prev;
-            stree->headedge.end      = NULL;
+            stree->head.label.end      = NULL;
             return;
         }
         firstchar = *(stree->tailptr);
@@ -363,7 +363,7 @@ void walk(STree *stree)
             // edge not found
             // new edge will become brother of this
             stree->insertprev = prev;
-            stree->headedge.end = NULL;
+            stree->head.label.end = NULL;
             return;
         }
 
@@ -375,7 +375,7 @@ void walk(STree *stree)
         }
 
         depth   = get_depth(stree, scanprobe, distance, &chainend);
-        edgelen = depth - stree->headedge.depth;
+        edgelen = depth - stree->head.depth;
         plen    = tail_prefixlen(stree, label_start + 1, label_start + edgelen - 1);
         (stree->tailptr) += plen;
 
@@ -385,7 +385,7 @@ void walk(STree *stree)
             return;
         }
 
-        stree->headedge.origin = scanprobe;
-        stree->headedge.depth = depth;
+        stree->head.origin = scanprobe;
+        stree->head.depth = depth;
     }
 }
