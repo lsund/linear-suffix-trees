@@ -19,12 +19,12 @@ static void allocate_inner_vertices(STree *stree)
             chain = REF_TO_INDEX(stree->chain.first);
         }
 
-        Uint head = REF_TO_INDEX(stree->headedge.vertex);
+        Uint head = REF_TO_INDEX(stree->headedge.origin);
         Uint size = stree->inner.size;
 
         stree->inner.first = ALLOC(stree->inner.first, Uint, size);
         stree->inner.next = stree->inner.first + stree->inner.next_ind;
-        stree->headedge.vertex = stree->inner.first + head;
+        stree->headedge.origin = stree->inner.first + head;
 
         if(stree->chain.first != NULL) {
             stree->chain.first = stree->inner.first + chain;
@@ -44,8 +44,8 @@ void insert_leaf(STree *stree)
 
     } else if (IS_LEFTMOST(stree->insertprev)) {
 
-        *stree->leaves.next = CHILD(stree->headedge.vertex);
-        SET_CHILD(stree->headedge.vertex, leaf);
+        *stree->leaves.next = CHILD(stree->headedge.origin);
+        SET_CHILD(stree->headedge.origin, leaf);
 
     } else if (IS_LEAF(stree->insertprev)) {
 
@@ -78,7 +78,7 @@ void insert_inner(STree *stree)
 
     } else if (IS_LEFTMOST(stree->insertprev)) {
         // new branch = first child
-        SET_CHILD(stree->headedge.vertex,stree->inner.next_ind);
+        SET_CHILD(stree->headedge.origin, stree->inner.next_ind);
     } else {
         // new branch = right brother of leaf
         if(IS_LEAF(stree->insertprev)) {

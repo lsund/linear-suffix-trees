@@ -315,14 +315,14 @@ void walk(STree *stree)
             stree->headedge.end      = label_start + (plen - 1);
             return;
         }
-        stree->headedge.vertex = scanprobe;
+        stree->headedge.origin = scanprobe;
         stree->headedge.depth = depth;
     }
 
     // Head is not the root
     while(True) {
         prev = UNDEF;
-        scanprobe_val = CHILD(stree->headedge.vertex);
+        scanprobe_val = CHILD(stree->headedge.origin);
         if(IS_SENTINEL(stree->tailptr)) {
             find_last_successor(stree, &prev, &scanprobe_val);
             stree->split_vertex = NOTHING;
@@ -385,7 +385,7 @@ void walk(STree *stree)
             return;
         }
 
-        stree->headedge.vertex = scanprobe;
+        stree->headedge.origin = scanprobe;
         stree->headedge.depth = depth;
     }
 }

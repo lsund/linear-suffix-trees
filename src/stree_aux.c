@@ -69,16 +69,16 @@ static Uint* suffix_link(STree *stree)
     } else if (HEAD_LINKS_TO_ROOTCHILD) {
         return first + stree->rootchildren[(Uint) second_headedge_character(stree)];
     } else {
-        return first + SUFFIX_LINK(stree->headedge.vertex);
+        return first + SUFFIX_LINK(stree->headedge.origin);
     }
 }
 
 void follow_link(STree *stree)
 {
-    if(IS_LARGE(*(stree->headedge.vertex))) {
-        stree->headedge.vertex = suffix_link(stree);
+    if(IS_LARGE(*(stree->headedge.origin))) {
+        stree->headedge.origin = suffix_link(stree);
     } else {
-        stree->headedge.vertex += SMALL_VERTEXSIZE;
+        stree->headedge.origin += SMALL_VERTEXSIZE;
     }
     stree->headedge.depth--;
 }

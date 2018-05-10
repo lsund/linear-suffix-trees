@@ -50,7 +50,7 @@
 // with each such integer tells whereth the reference is to a leaf or to a
 // branching vertex
 #define IS_LEAF(V)                  ((V) & LEAFBIT)
-#define IS_SMALL(V)                 (((V) & SMALLBIT))
+#define IS_SMALL(V)                 ((V) & SMALLBIT)
 #define IS_LARGE(V)                 (!((V) & SMALLBIT))
 #define IS_LAST(C)                  ((C) >= sentinel)
 #define IS_SENTINEL(C)              ((C) == sentinel)
@@ -90,7 +90,7 @@
 #define INNER(V)               stree->inner.first + INDEX((V)) // address
 #define LEAF(V)                stree->leaves.first + INDEX((V))
 #define WITH_LEAFBIT(V)        ((V) | LEAFBIT)    // indicate this is a leaf
-#define WITH_SMALLBIT(V)       ((V)) | SMALLBIT
+#define WITH_SMALLBIT(V)       (V) | SMALLBIT
 
 #define LEAF_SIBLING(P)        (*(P))
 

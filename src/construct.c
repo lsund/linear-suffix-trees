@@ -85,7 +85,7 @@ Sint construct(STree *stree)
 
             // Did we arrive at a vertex?
             if(HEAD_EXISTS) {
-                collapse_chain(stree);
+                finish_chain(stree);
                 walk(stree);
 
             } else {

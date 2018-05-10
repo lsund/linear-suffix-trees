@@ -28,11 +28,11 @@ void init_chain(STree *stree)
 }
 
 
-void collapse_chain(STree *stree)
+void finish_chain(STree *stree)
 {
     Uint distance;
 
-    SUFFIX_LINK(stree->inner.next) = REF_TO_INDEX(stree->headedge.vertex);
+    SUFFIX_LINK(stree->inner.next) = REF_TO_INDEX(stree->headedge.origin);
     if (stree->chain.size > 0) {
         VertexP prev = stree->inner.next;
         for(distance = 1; distance <= stree->chain.size; distance++) {
@@ -103,23 +103,26 @@ void init(STree *stree)
     }
 
     stree->tailptr = text;
-    stree->allocated
-        = stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
-    stree->headedge.vertex = stree->inner.next = stree->inner.first;
-    stree->headedge.end = NULL;
-    stree->headedge.depth = stree->maxbranchdepth = 0;
 
+    Uint last = stree->inner.size - LARGE_VERTEXSIZE;
+    stree->allocated = stree->inner.first + last;
+
+    // Inner
     stree->inner.next = stree->inner.first;
     stree->inner.next_ind = 0;
-
     DEPTH(stree->inner.next) = 0;
     HEADPOS(stree->inner.next) = 0;
     SET_CHILD(stree->inner.next, WITH_LEAFBIT(0));
     SIBLING(stree->inner.next) = 0;
-    SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
-    stree->leaves.first[0]            = 0;
 
-    stree->leafcounts                 = NULL;
+    // Headedge
+    stree->headedge.origin = stree->inner.first;
+    stree->headedge.end    = NULL;
+    stree->headedge.depth  = stree->maxbranchdepth = 0;
+
+    SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
+
+    stree->leaves.first[0]            = 0;
     stree->leaves.next_ind            = 1;
     stree->leaves.next                = stree->leaves.first + 1;
     stree->inner.next                 = stree->inner.first + LARGE_VERTEXSIZE;
@@ -136,9 +139,6 @@ void freestree(STree *stree)
     FREE(stree->leaves.first);
     FREE(stree->rootchildren);
     FREE(stree->inner.first);
-    if(stree->leafcounts != NULL) {
-        FREE(stree->leafcounts);
-    }
 }
 
 

@@ -33,7 +33,7 @@ void skip_count(STree *stree)
                 return;
             } else {
                 // Go to successor vertex
-                stree->headedge.vertex = vertex;
+                stree->headedge.origin = vertex;
                 stree->headedge.depth = depth;
             }
 
@@ -51,7 +51,7 @@ void skip_count(STree *stree)
 
         firstchar = *(stree->headedge.start);
         prevnode = UNDEF;
-        Vertex headchild = CHILD(stree->headedge.vertex);
+        Vertex headchild = CHILD(stree->headedge.origin);
 
         // traverse the list of successors
         while(True) {
@@ -97,7 +97,7 @@ void skip_count(STree *stree)
             return;
         }
         // go to the successor node
-        stree->headedge.vertex = vertex;
+        stree->headedge.origin = vertex;
         stree->headedge.depth = depth;
         if(edgelen == wlen) {
             // location is found

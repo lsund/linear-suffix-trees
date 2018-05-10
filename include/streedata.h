@@ -45,7 +45,7 @@ typedef struct head {
     Wchar *start;
     Wchar *end;
     Uint depth;
-    VertexP vertex;           // left component of head location, that is u
+    VertexP origin;           // the vertex u
 } Head;
 
 
@@ -93,8 +93,6 @@ typedef struct suffixtree {
     // stored in the available amount of space.
     Uint *allocated;
 
-    // holds counts of the number of leafs in subtree indexed by headposition
-    Uint *leafcounts;
     Bool is_nil_stored;          // nil-reference is stored in new leaf
     Wchar *tailptr;            // points to the tail
 

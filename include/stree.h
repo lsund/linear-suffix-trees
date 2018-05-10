@@ -38,7 +38,7 @@ void init(STree *stree);
 // Slow-scan
 void scanprefix(STree *stree);
 
-void collapse_chain(STree *stree);
+void finish_chain(STree *stree);
 
 void init_chain(STree *stree);
 
