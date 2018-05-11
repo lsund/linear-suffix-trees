@@ -12,6 +12,18 @@
 
 Uint textlen;
 
+
+Uint head_depth(STree *stree)
+{
+    return stree->head.depth;
+}
+
+Bool is_head_vertex(STree *stree)
+{
+    return stree->head.label.end == NULL;
+}
+
+
 void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 {
     if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
@@ -54,9 +66,9 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
 static Wchar second_headedge_character(STree *stree)
 {
     if (stree->head.label.end == NULL) {
-        return *(stree->tailptr-1);
+        return *(stree->tail-1);
     } else {
-        return *(stree->tailptr - (stree->head.label.end - stree->head.label.start + 2));
+        return *(stree->tail - (stree->head.label.end - stree->head.label.start + 2));
     }
 }
 

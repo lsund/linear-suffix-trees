@@ -24,7 +24,7 @@ Uint textlen;
 
 static void insert_vertex(STree *stree)
 {
-    if(HEAD_AT_VERTEX) {
+    if(is_head_vertex(stree)) {
         insert_leaf(stree);
     } else {
         insert_inner(stree);
@@ -42,6 +42,11 @@ static void grow_chain(STree *stree)
     stree->inner.next_ind += SMALL_VERTEXSIZE;
 }
 
+static Bool label_empty(Label label)
+{
+    return label.start == label.end;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Public
@@ -49,35 +54,36 @@ static void grow_chain(STree *stree)
 
 Sint construct(STree *stree)
 {
+    // `init` gives the suffix tree structure its default values.
     init(stree);
 
-    while(!IS_SENTINEL(stree->tailptr)) {
+    while(!IS_SENTINEL(stree->tail)) {
 
         // head(i - 1) at the root vertex
-        if(IS_HEAD_ROOT) {
-            // Scan the maximal prefix of the current suffix = tailptr from the
-            // root. We thus compute the head/tail by walking.
-            stree->tailptr++;
-            walk(stree);
+        if(head_depth(stree) == 0 && is_head_vertex(stree)) {
+            // Scan the maximal prefix of the current suffix = tail from the
+            // root. We thus compute the head/tail by scanning.
+            stree->tail++;
+            scan_tail(stree);
 
         // If head is not the root then head(i-1) = xw. We know that w is a
         // prefix of head(i) and the location of w, so we can find w using
         // suffix links.
         //
-        // If The head is at a vertex, just follow the suffix link and walk the
+        // If The head is at a vertex, just follow the suffix link and scan the
         // tail from there.
-        } else if (HEAD_AT_VERTEX) {
+        } else if (is_head_vertex(stree)) {
 
             follow_link(stree);
-            walk(stree);
+            scan_tail(stree);
 
         } else {
 
             // We know that head exists under the suffix link, so we can use
             // skip-count to find it. First check if we are at the root.
-            if(IS_DEPTH_0) {
+            if(head_depth(stree) == 0) {
                 // At root
-                if (IS_HEADEDGE_EMPTY) {
+                if (label_empty(stree->head.label)) {
                     // Skip-count is not necessary
                     stree->head.label.end = NULL;
                 } else {
@@ -95,11 +101,12 @@ Sint construct(STree *stree)
             // is at a node, then its head position is smaller than i - 1.
             // Therefore, head(i - 1) is large so the current chain ending with
             // head(i - 1) can be collapsed and a new one started.
-            if(HEAD_AT_VERTEX) {
+            if(is_head_vertex(stree)) {
                 finalize_chain(stree);
-                walk(stree);
+                scan_tail(stree);
             } else {
-                // ... Otherwise, simply grow the chain ...
+                // ... Otherwise, the head location is already found.
+                // simply grow the chain ...
                 grow_chain(stree);
             }
         }

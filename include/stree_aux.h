@@ -4,8 +4,9 @@
 #include "streedata.h"
 #include "bitvector.h"
 
-#define SMALL_VERTEXSIZE           3
-#define LARGE_VERTEXSIZE           5
+#define LEAF_VERTEXSIZE             1
+#define SMALL_VERTEXSIZE            3
+#define LARGE_VERTEXSIZE            5
 
 // The label for a incoming edge to a vertex wu can be obtained by dropping
 // depth(w) characters of wu.
@@ -42,10 +43,6 @@
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (stree->inner.first == V)
 #define IS_UNDEF(V)                 ((V) == UNDEF)
-#define HEAD_AT_VERTEX              (stree->head.label.end == NULL)
-#define IS_DEPTH_0                  (stree->head.depth == 0)
-#define IS_HEAD_ROOT                IS_DEPTH_0 && HEAD_AT_VERTEX
-#define IS_HEADEDGE_EMPTY           (stree->head.label.start == stree->head.label.end)
 #define IS_NO_SPACE                 (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 #define HEAD_LINKS_TO_ROOT          (stree->head.depth == 1)
@@ -86,6 +83,10 @@
 
 #define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
 #define SET_CHILD(V, VAL)                *(V) = ((*(V)) & SMALLBIT) | (VAL)
+
+Bool is_head_vertex(STree *stree);
+
+Uint head_depth(STree *stree);
 
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);

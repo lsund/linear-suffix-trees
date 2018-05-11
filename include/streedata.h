@@ -51,7 +51,7 @@ typedef struct label {
 typedef struct head {
     Label label;
     Uint depth;
-    VertexP origin;           // the vertex u
+    VertexP origin;  // the vertex u
 } Head;
 
 
@@ -68,7 +68,7 @@ typedef struct suffixtree {
     Chain chain;                // address of the node current chains starts at
 
     Head head;
-    Wchar *tailptr;            // points to the tail
+    Wchar *tail;            // points to the tail
 
     // refers to the last address, such that at
     // least LARGE_VERTEXSIZE integers are available. So a large node can be

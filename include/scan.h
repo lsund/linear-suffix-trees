@@ -10,7 +10,7 @@
 
 Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt);
 
-void walk(STree *stree);
+void scan_tail(STree *stree);
 
 #define MATCHED(X, R, L)        (X) == (Uint) ((R) - (L) + 1)
 

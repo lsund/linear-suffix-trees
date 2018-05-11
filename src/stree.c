@@ -101,7 +101,7 @@ void init(STree *stree)
         *child = UNDEF;
     }
 
-    stree->tailptr = text;
+    stree->tail = text;
 
     Uint last = stree->inner.size - LARGE_VERTEXSIZE;
     stree->allocated = stree->inner.first + last;
@@ -122,8 +122,8 @@ void init(STree *stree)
     SET_ROOTCHILD(*text, WITH_LEAFBIT(0));
 
     stree->leaves.first[0]            = 0;
-    stree->leaves.next_ind            = 1;
-    stree->leaves.next                = stree->leaves.first + 1;
+    stree->leaves.next_ind            = LEAF_VERTEXSIZE;
+    stree->leaves.next                = stree->leaves.first + LEAF_VERTEXSIZE;
     stree->inner.next                 = stree->inner.first + LARGE_VERTEXSIZE;
     stree->inner.next_ind             = LARGE_VERTEXSIZE;
     stree->split_vertex               = UNDEF;

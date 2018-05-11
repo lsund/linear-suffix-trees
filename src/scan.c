@@ -75,7 +75,7 @@ static void update_stree(STree *stree, Wchar *label_start, Uint plen, Uint scanp
 
 static Uint tail_prefixlen(STree *stree, Wchar *start, Wchar *end)
 {
-    Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
+    Pattern tailpatt = make_patt(stree->tail + 1, sentinel - 1);
     return 1 + lcp(tailpatt, make_patt(start, end));
 }
 
@@ -127,7 +127,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
         if(IS_ROOT(vertexp)) {
 
-            Uint rootchild = ROOT_CHILD(firstchar);
+            Vertex rootchild = ROOT_CHILD(firstchar);
 
             if (IS_UNDEF(rootchild)) {
                 return patt.start;
@@ -253,7 +253,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
 
 // Scans a prefix of the current tail down from a given node
-void walk(STree *stree)
+void scan_tail(STree *stree)
 {
     VertexP scanprobe = NULL;
     VertexP chainend = NULL;
@@ -269,17 +269,18 @@ void walk(STree *stree)
     Wchar firstchar;
     Wchar labelchar = 0;
 
-    if(IS_DEPTH_0) {
+    if(head_depth(stree) == 0) {
 
         // There is no sentinel
-        if(IS_SENTINEL(stree->tailptr)) {
+        if(IS_SENTINEL(stree->tail)) {
             stree->head.label.end = NULL;
             return;
         }
 
-        firstchar = *(stree->tailptr);
+        firstchar = *(stree->tail);
         scanprobe_val = ROOT_CHILD(firstchar);
         if(scanprobe_val == UNDEF) {
+
             stree->head.label.end = NULL;
             return;
         }
@@ -288,9 +289,10 @@ void walk(STree *stree)
         if(IS_LEAF(scanprobe_val)) {
 
             Pattern edgepatt = make_patt(text + INDEX(scanprobe_val) + 1, sentinel - 1);
-            Pattern tailpatt = make_patt(stree->tailptr + 1, sentinel - 1);
+            Pattern tailpatt = make_patt(stree->tail + 1, sentinel - 1);
             plen = 1 + lcp(edgepatt, tailpatt);
-            stree->tailptr += plen;
+
+            stree->tail += plen;
             stree->head.label.start  = edgepatt.start - 1;
             stree->head.label.end    = edgepatt.start - 1 + (plen-1);
             stree->split_vertex = scanprobe_val;
@@ -307,12 +309,13 @@ void walk(STree *stree)
         label_start = text + head;
         plen = tail_prefixlen(stree, label_start + 1, label_start + depth - 1);
 
-        stree->tailptr+= plen;
+        stree->tail+= plen;
         if(depth > plen) {
+
             // cannot reach the successor, fall out of tree
-            stree->split_vertex = scanprobe_val;
-            stree->head.label.start    = label_start;
-            stree->head.label.end      = label_start + (plen - 1);
+            stree->split_vertex     = scanprobe_val;
+            stree->head.label.start = label_start;
+            stree->head.label.end   = label_start + (plen - 1);
             return;
         }
         stree->head.origin = scanprobe;
@@ -323,14 +326,14 @@ void walk(STree *stree)
     while(True) {
         prev = UNDEF;
         scanprobe_val = CHILD(stree->head.origin);
-        if(IS_SENTINEL(stree->tailptr)) {
+        if(IS_SENTINEL(stree->tail)) {
             find_last_successor(stree, &prev, &scanprobe_val);
             stree->split_vertex = NOTHING;
             stree->insertprev   = prev;
             stree->head.label.end      = NULL;
             return;
         }
-        firstchar = *(stree->tailptr);
+        firstchar = *(stree->tail);
 
         do {
             // find successor edge with firstchar = firstchar
@@ -369,7 +372,7 @@ void walk(STree *stree)
 
         if(IS_LEAF(scanprobe_val)) {
             plen = tail_prefixlen(stree, label_start + 1, sentinel - 1);
-            (stree->tailptr) += plen;
+            (stree->tail) += plen;
             update_stree(stree, label_start, plen, scanprobe_val, prev);
             return;
         }
@@ -377,7 +380,7 @@ void walk(STree *stree)
         depth   = get_depth(stree, scanprobe, distance, &chainend);
         edgelen = depth - stree->head.depth;
         plen    = tail_prefixlen(stree, label_start + 1, label_start + edgelen - 1);
-        (stree->tailptr) += plen;
+        (stree->tail) += plen;
 
         // cannot reach next node
         if(edgelen > plen) {

@@ -37,9 +37,9 @@ void insert_leaf(STree *stree)
 {
     Uint leaf = WITH_LEAFBIT(stree->leaves.next_ind);
 
-    if(IS_DEPTH_0 && !IS_SENTINEL(stree->tailptr)) {
+    if(head_depth(stree) == 0 && !IS_SENTINEL(stree->tail)) {
 
-        SET_ROOTCHILD(*(stree->tailptr), leaf);
+        SET_ROOTCHILD(*(stree->tail), leaf);
         *stree->leaves.next = 0;
 
     } else if (IS_LEFTMOST(stree->insertprev)) {
@@ -71,9 +71,9 @@ void insert_inner(STree *stree)
     Uint *insertnodeptr, *insertleafptr, insertnodeptrbrother;
 
     allocate_inner_vertices(stree);
-    if(IS_DEPTH_0) {
+    if(head_depth(stree) == 0) {
 
-        SET_ROOTCHILD(*(stree->head.label.start), stree->inner.next_ind);
+        SET_ROOTCHILD(*stree->head.label.start, stree->inner.next_ind);
         *(stree->inner.next + 1) = 0;
 
     } else if (IS_LEFTMOST(stree->insertprev)) {
@@ -91,8 +91,8 @@ void insert_inner(STree *stree)
     if(IS_LEAF(stree->split_vertex)) {
         // split edge is leaf edge
         insertleafptr = stree->leaves.first + INDEX(stree->split_vertex);
-        if (stree->tailptr == sentinel ||
-                *(stree->head.label.end + 1) < *(stree->tailptr))
+        if (stree->tail == sentinel ||
+                *(stree->head.label.end + 1) < *(stree->tail))
         {
             // first child =oldleaf
             // inherit brother
@@ -115,8 +115,8 @@ void insert_inner(STree *stree)
         // split edge leads to branching node
         insertnodeptr = stree->inner.first + INDEX(stree->split_vertex);
         insertnodeptrbrother = SIBLING(insertnodeptr);
-        if (stree->tailptr == sentinel ||
-                *(stree->head.label.end+1) < *(stree->tailptr))
+        if (stree->tail == sentinel ||
+                *(stree->head.label.end+1) < *(stree->tail))
         {
             // First child is new branch
             // inherit brother
