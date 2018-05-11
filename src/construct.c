@@ -54,68 +54,95 @@ static Bool label_empty(Label label)
 
 Sint construct(STree *stree)
 {
-    // `init` gives the suffix tree structure its default values.
+    // `init` allocates initial memory and gives the suffix tree fields default
+    // values.
     init(stree);
 
+    // The last suffix is just `$`. Since it is unique, it does not exist as a
+    // root leaf. Therefore, `stree->tail` will consist of the sentinel
+    // character only at the last iteration.
     while(!IS_SENTINEL(stree->tail)) {
 
-        // head(i - 1) at the root vertex
+        // In the i'th iteration, the task of the algorithm is to locate
+        // head(i + 1) and inserts a new edge at this point.
+
+        // head(i) is the root.
         if(head_depth(stree) == 0 && is_head_vertex(stree)) {
-            // Scan the maximal prefix of the current suffix = tail from the
-            // root. We thus compute the head/tail by scanning.
+
+            // Since head is at the root, tail has to increment by one to
+            // consider the next suffix.
             stree->tail++;
+            // Then to find head(i + 1), scan the maximal prefix of tail(i)
+            // starting at the root.
             scan_tail(stree);
 
-        // If head is not the root then head(i-1) = xw. We know that w is a
-        // prefix of head(i) and the location of w, so we can find w using
-        // suffix links.
-        //
-        // If The head is at a vertex, just follow the suffix link and scan the
-        // tail from there.
-        } else if (is_head_vertex(stree)) {
-
-            follow_link(stree);
-            scan_tail(stree);
-
+        // When head(i) is not empty, then head(i) = `t[i]w` for the character
+        // t[i] and the string w then one exploits the fact that w is a prefix
+        // of head(i + 1), and that the location of w can be found using suffix
+        // links.
         } else {
 
-            // We know that head exists under the suffix link, so we can use
-            // skip-count to find it. First check if we are at the root.
-            if(head_depth(stree) == 0) {
-                // At root
-                if (label_empty(stree->head.label)) {
-                    // Skip-count is not necessary
-                    stree->head.label.end = NULL;
+            // If head(i) is not the last vertex that was created, then there
+            // already exists a suffix link from head(i) to `w` ...
+            if (is_head_vertex(stree)) {
+
+                // ... which can just be followed ...
+                follow_link(stree);
+                // and then scanning the tail as before.
+                scan_tail(stree);
+
+            // If head(i) was the last vertex created, then the suffix link
+            // does not yet exist. Let us call the edge label leading up to
+            // head(i) for `av`.
+            } else {
+
+                // First, `w` has to be found.
+
+                // If head(i) is on a root edge, just skip-count down from the
+                // root, since `v` is a prefix of head(i + 1).
+                if(head_depth(stree) == 0) {
+
+                    if (label_empty(stree->head.label)) {
+                        // For an empty label, no need to search anything.
+                        stree->head.label.end = NULL;
+                    } else {
+                        // Don't want to scan the first character of head(i).
+                        stree->head.label.start++;
+                        skip_count(stree);
+                    }
+
                 } else {
-                    stree->head.label.start++;
+
+                    // Let u = parent(head(i)). The suffix link for u exists,
+                    // and this can be followed.
+                    follow_link(stree);
+                    // Then, skip count the string av from that point.
                     skip_count(stree);
                 }
-            } else {
-                // Check so its not a rootedge before following the suffix link
-                follow_link(stree);
-                skip_count(stree);
-            }
 
-            // We have now computed w.
-            // We can decide weather the head(i - 1) is small or large. If w
-            // is at a node, then its head position is smaller than i - 1.
-            // Therefore, head(i - 1) is large so the current chain ending with
-            // head(i - 1) can be collapsed and a new one started.
-            if(is_head_vertex(stree)) {
-                finalize_chain(stree);
-                scan_tail(stree);
-            } else {
-                // ... Otherwise, the head location is already found.
-                // simply grow the chain ...
-                grow_chain(stree);
+                // w is now computed, and have enough information to decide
+                // wether head(i) is small or large. If w is at a node, then
+                // its head position is smaller than i. Therefore,
+                // head(i) is large so the current chain ending with
+                // head(i) can be finilized and a new one started.
+                if(is_head_vertex(stree)) {
+                    finalize_chain(stree);
+                    // To find head(i + 1), it suffices to scan the tail down
+                    // from w.
+                    scan_tail(stree);
+                } else {
+                    // Otherwise, head(i + 1) is already found. head(i) is
+                    // small and implicitly added to the chain.
+                    grow_chain(stree);
+                }
             }
         }
-        // ... and insert the new vertex
+        // Now finally insert the new leaf vertex.
         insert_vertex(stree);
     }
 
-    stree->chain.first = NULL;
-    linkrootchildren(stree);
+    /* stree->chain.first = NULL; */
+    /* linkrootchildren(stree); */
 
     return 0;
 }
