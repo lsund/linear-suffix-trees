@@ -86,6 +86,8 @@
 
 Bool is_head_vertex(STree *stree);
 
+Bool is_head_old(STree *stree);
+
 Uint head_depth(STree *stree);
 
 // Get info for branch vertex

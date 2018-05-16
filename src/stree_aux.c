@@ -24,6 +24,12 @@ Bool is_head_vertex(STree *stree)
 }
 
 
+Bool is_head_old(STree *stree)
+{
+    return is_head_vertex(stree);
+}
+
+
 void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
 {
     if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
