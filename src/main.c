@@ -20,12 +20,12 @@ Uint textlen;
 int main(int argc, char *argv[])
 {
     STree stree;
-    char *filename = argv[1];
 
     if (argc != 2) {
         fprintf(stderr, "Need exactly one argument");
         return EXIT_FAILURE;
     }
+    char *filename = argv[1];
 
     file_to_string(filename);
 
