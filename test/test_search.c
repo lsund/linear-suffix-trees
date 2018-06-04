@@ -103,9 +103,12 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     return NULL;
 }
 
+/* char *leafcounts() */
+/* { */
+/* } */
+
 char *utest_search()
 {
-
     char *error;
 
     mu_message(DATA, "Trivial\n");
@@ -115,19 +118,23 @@ char *utest_search()
             );
     if (error) return error;
 
-    mu_message(DATA, "Random existing patterns\n");
-    error = compare_vs_naive(
-                "/home/lsund/Data/testdata/members/random-patterns.txt",
-                "/home/lsund/Data/testdata/members/diffsize/005.txt"
-            );
-    if (error) return error;
+    /* mu_message(DATA, "Smyth\n"); */
+    /* error = leafcounts("data/smyth.txt"); */
+    /* if (error) return error; */
 
-    mu_message(DATA, "Random non-existing patterns\n");
-    error = compare_vs_naive(
-                "/home/lsund/Data/testdata/members/random-patterns-non-existing.txt",
-                "/home/lsund/Data/testdata/members/diffsize/005.txt"
-            );
-    if (error) return error;
+    /* mu_message(DATA, "Random existing patterns\n"); */
+    /* error = compare_vs_naive( */
+    /*             "/home/lsund/Data/testdata/members/random-patterns.txt", */
+    /*             "/home/lsund/Data/testdata/members/diffsize/005.txt" */
+    /*         ); */
+    /* if (error) return error; */
+
+    /* mu_message(DATA, "Random non-existing patterns\n"); */
+    /* error = compare_vs_naive( */
+    /*             "/home/lsund/Data/testdata/members/random-patterns-non-existing.txt", */
+    /*             "/home/lsund/Data/testdata/members/diffsize/005.txt" */
+    /*         ); */
+    /* if (error) return error; */
 
     /* mu_message(DATA, "Akz patterns\n"); */
     /* error = compare_vs_naive( */

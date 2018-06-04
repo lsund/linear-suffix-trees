@@ -31,7 +31,7 @@
         {\
           (A)->allocated##TYPE += L;\
           (A)->space##TYPE\
-             = (TYPE *) allocandusespaceviaptr(__FILE__,(Uint) __LINE__,\
+             = (TYPE *) alloc_use((Uint) __LINE__,\
                                                (A)->space##TYPE,\
                                                (Uint) sizeof(TYPE),\
                                                (A)->allocated##TYPE);\

@@ -131,6 +131,7 @@ void init(STree *stree)
     stree->chain.size               = 0;
     stree->chain.first                 = NULL;
 
+
 }
 
 void freestree(STree *stree)

@@ -55,6 +55,7 @@
 #define ROOT_CHILD(C)       (stree->rootchildren[(Uint) (C)])
 // Index of a reference
 #define REF_TO_INDEX(P)     ((Uint) ((P) - ROOT))
+#define LEAFREF_TO_INDEX(ST,A)    ((Uint) ((A) - (ST)->leaves.first))
 #define INDEX(V)            ((V) & ~(LEAFBIT | SMALLBIT))
 
 // Returns the sibling of the leaf at the specified address

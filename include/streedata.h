@@ -75,6 +75,8 @@ typedef struct suffixtree {
     // stored in the available amount of space.
     Uint *allocated;
 
+    Uint *leafcounts;
+
 } STree;
 
 #endif
