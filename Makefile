@@ -32,7 +32,16 @@ dirs:
 	mkdir -p obj bin
 
 run: clean dirs mcc
-	./bin/mcc data/data.xml
+	./bin/mcc /home/lsund/Data/testdata/akz/data.xml
+
+quarter: clean dirs mcc
+	./bin/mcc /home/lsund/Data/testdata/doctronic/data-diffsize/quarter.xml
+
+half: clean dirs mcc
+	./bin/mcc /home/lsund/Data/testdata/doctronic/data-diffsize/half.xml
+
+full: clean dirs mcc
+	./bin/mcc /home/lsund/Data/testdata/doctronic/data-diffsize/full.xml
 
 runtest: clean test
 	./bin/test

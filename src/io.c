@@ -37,6 +37,10 @@ void file_to_string(const char *filename)
     Uint c;
     textlen = 0;
     while ((c = fgetwc(in)) != WEOF) {
+        if (textlen > MAX_ALLOC) {
+            fprintf(stderr, "Trying to allocate too much space\n");
+            exit(EXIT_FAILURE);
+        }
         text[textlen] = c;
         textlen++;
     }

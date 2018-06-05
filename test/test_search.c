@@ -198,7 +198,7 @@ char *utest_patterns()
 
 char *test_search()
 {
-    /* mu_run_utest(utest_patterns); */
+    mu_run_utest(utest_patterns);
     mu_run_utest(utest_leaves);
 
     return NULL;

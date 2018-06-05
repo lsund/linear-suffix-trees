@@ -10,6 +10,7 @@
 
 
 #include "construct.h"
+#include <locale.h>
 #include "io.h"
 
 
@@ -27,16 +28,14 @@ int main(int argc, char *argv[])
     }
     char *filename = argv[1];
 
+    setlocale(LC_ALL, "en_US.utf8");
     file_to_string(filename);
 
     initclock();
 
     fprintf(stdout, "Creating a suffix tree for text of length %lu\n", textlen);
 
-    if(construct(&stree) != 0) {
-        fprintf(stderr,"Could not create suffix tree");
-        return EXIT_FAILURE;
-    }
+    construct(&stree);
 
     return EXIT_SUCCESS;
 }
