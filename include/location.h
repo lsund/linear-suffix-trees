@@ -7,12 +7,12 @@
 // A location is implemented by the type `Loc`
 typedef struct
 {
-    String string;     // string represented by location
-    Uint *prev;    // reference to previous node (which is branching)
+    String string;           // string represented by location
+    Uint *prev;              // reference to previous node (which is branching)
     Wchar *first;            // first character
-    Uint edgelen;           // length of edge
-    Uint remain;            // number of remaining characters on edge
-    Uint *next;   // reference to node the edge points to
+    Uint edgelen;            // length of edge
+    Uint remain;             // number of remaining characters on edge
+    Uint *next;              // reference to node the edge points to
 } Loc;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to

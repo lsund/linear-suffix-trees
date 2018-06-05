@@ -13,14 +13,13 @@ size_t strlenw(Wchar *s)
 Wchar *text;
 Uint textlen, max_codepoint;
 
-static bool search_pattern(STree *stree, Wchar *start)
+static bool search_pattern(STree *stree, Wchar *start, Loc *loc)
 {
-    Loc loc;
     Uint pattlen = strlenw(start);
     Pattern patt;
     patt.start = start;
     patt.end = start + pattlen;
-    Wchar *rem = scan(stree, &loc, ROOT, patt);
+    Wchar *rem = scan(stree, loc, ROOT, patt);
     return !rem || rem[0] == 0;
 }
 
@@ -39,13 +38,14 @@ char *test_count(char *patternfile, char *textfile, Uint count)
     STree stree;
     construct(&stree);
 
+    Loc loc;
 
     Uint exists_n = 0;
     for (Uint j = 0; j < (Uint) npatterns; j++) {
 
         Wchar *current_pattern = patterns[j];
 
-        bool exists = search_pattern(&stree, current_pattern);
+        bool exists = search_pattern(&stree, current_pattern, &loc);
 
         exists ? exists_n++ : (void) 0;
     }
@@ -72,6 +72,8 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     STree stree;
     construct(&stree);
 
+    Loc loc;
+
 
     int exists_n = 0, rexists_n = 0;
     for (Uint j = 0; j < min(npatterns, maxpatterns); j++) {
@@ -81,7 +83,7 @@ char *compare_vs_naive(char *patternfile, char *textfile)
 
         Wchar *end = current_pattern + patternlen;
 
-        bool exists = search_pattern(&stree, current_pattern);
+        bool exists = search_pattern(&stree, current_pattern, &loc);
         bool rexists = naive_search(current_pattern, end);
 
         exists ? exists_n++ : (void) 0;
@@ -103,9 +105,39 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     return NULL;
 }
 
-/* char *leafcounts() */
-/* { */
-/* } */
+char *leafcounts(const char *fname)
+{
+    setlocale(LC_ALL, "en_US.utf8");
+    file_to_string(fname);
+    STree stree;
+    construct(&stree);
+
+    /* Vertex sibling = LEAF_SIBLING(stree.leaves.first + INDEX(child)); */
+    /* Vertex sibling2 = SIBLING(stree.inner.first + INDEX(sibling)); */
+    /* printf("sibling: %lu\n", INDEX(sibling)); */
+    /* printf("sibling: %lu\n", INDEX(sibling2)); */
+
+    Wchar current_pattern[5] = L"1221";
+    Loc loc;
+    bool exists = search_pattern(&stree, current_pattern, &loc);
+
+    printf("%d\n", exists);
+
+
+    /* Wchar c = L'1'; */
+    /* Vertex rootchild = stree.rootchildren[c]; */
+    /* VertexP rootref = stree.inner.first + INDEX(rootchild); */
+    /* VertexP childref = stree.inner.first + INDEX(child); */
+    Reference start;
+    start.address = loc.next;
+    start.toleaf = False;
+    ArrayUint stack;
+    INITARRAY(&stack, Uint);
+
+    makeleaflist(&stree, &stack, &start);
+
+    return NULL;
+}
 
 char *utest_search()
 {
@@ -118,9 +150,9 @@ char *utest_search()
             );
     if (error) return error;
 
-    /* mu_message(DATA, "Smyth\n"); */
-    /* error = leafcounts("data/smyth.txt"); */
-    /* if (error) return error; */
+    mu_message(DATA, "Leafs: Smyth\n");
+    error = leafcounts("data/smyth.txt");
+    if (error) return error;
 
     /* mu_message(DATA, "Random existing patterns\n"); */
     /* error = compare_vs_naive( */

@@ -2,13 +2,20 @@
 #ifndef DFS_H
 #define DFS_H
 
+#include "arraydef.h"
+#include "spaceman.h"
 #include "stree.h"
 
-Sint depthfirststree(STree *stree,Uint * *startnode,
-        Sint (*processleaf)(Uint,Uint *,void *),
-        Bool (*processbranch1)(Uint *,void *),
-        Sint (*processbranch2)(Uint *,void *),
-        Bool (*stoptraversal)(void *),void *stopinfo,void *info
-    );
+typedef struct reference {
+    Bool toleaf;    // Points to a leaf?
+    Uint *address;
+} Reference;
+
+
+Sint depthfirststree(STree *stree,Reference *startnode,
+        Sint (*processleaf)(Uint, ArrayUint *), ArrayUint *leaves);
+
+
+Sint makeleaflist(STree *stree, ArrayUint *leaflist, Reference *start);
 
 #endif

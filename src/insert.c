@@ -37,29 +37,35 @@ void insert_leaf(STree *stree)
 {
     Uint leaf = WITH_LEAFBIT(stree->leaves.next_ind);
 
-    if(head_depth(stree) == 0 && !IS_SENTINEL(stree->tail)) {
+    if (head_depth(stree) == 0) {
+        if (!IS_SENTINEL(stree->tail)) {
+            SET_ROOTCHILD(*(stree->tail), leaf);
+            *stree->leaves.next = 0;
+        }
+    }
 
-        SET_ROOTCHILD(*(stree->tail), leaf);
-        *stree->leaves.next = 0;
+    else {
+        if (IS_LEFTMOST(stree->insertprev)) {
 
-    } else if (IS_LEFTMOST(stree->insertprev)) {
+            *stree->leaves.next = CHILD(stree->head.origin);
+            SET_CHILD(stree->head.origin, leaf);
 
-        *stree->leaves.next = CHILD(stree->head.origin);
-        SET_CHILD(stree->head.origin, leaf);
+        } else {
+            if (IS_LEAF(stree->insertprev)) {
 
-    } else if (IS_LEAF(stree->insertprev)) {
+                // Previous node is leaf
+                Uint *prev = stree->leaves.first + INDEX(stree->insertprev);
+                *stree->leaves.next = LEAF_SIBLING(prev);
 
-        // Previous node is leaf
-        Uint *prev = stree->leaves.first + INDEX(stree->insertprev);
-        *stree->leaves.next = LEAF_SIBLING(prev);
+                LEAF_SIBLING(prev) = leaf;
 
-        LEAF_SIBLING(prev) = leaf;
-
-    } else {
-        // previous node is branching node
-        Uint *prev = stree->inner.first + INDEX(stree->insertprev);
-        *stree->leaves.next = SIBLING(prev);
-        SIBLING(prev) = leaf;
+            } else {
+                // previous node is branching node
+                Uint *prev = stree->inner.first + INDEX(stree->insertprev);
+                *stree->leaves.next = SIBLING(prev);
+                SIBLING(prev) = leaf;
+            }
+        }
     }
 
     stree->leaves.next_ind++;
