@@ -62,7 +62,7 @@ char *test_count(char *patternfile, char *textfile, Uint count)
 
 char *compare_vs_naive(char *patternfile, char *textfile)
 {
-    int maxpatterns = 150;
+    int maxpatterns = 200;
 
     Uint patternslen;
     setlocale(LC_ALL, "en_US.utf8");
@@ -73,7 +73,6 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     construct(&stree);
 
     Loc loc;
-
 
     int exists_n = 0, rexists_n = 0;
     for (Uint j = 0; j < min(npatterns, maxpatterns); j++) {
@@ -112,25 +111,15 @@ char *leafcounts(const char *fname)
     STree stree;
     construct(&stree);
 
-    /* Vertex sibling = LEAF_SIBLING(stree.leaves.first + INDEX(child)); */
-    /* Vertex sibling2 = SIBLING(stree.inner.first + INDEX(sibling)); */
-    /* printf("sibling: %lu\n", INDEX(sibling)); */
-    /* printf("sibling: %lu\n", INDEX(sibling2)); */
 
-    Wchar current_pattern[5] = L"1221";
+    Wchar current_pattern[5] = L"211";
     Loc loc;
     bool exists = search_pattern(&stree, current_pattern, &loc);
+    printf("exists: %d\n", exists);
 
-    printf("%d\n", exists);
-
-
-    /* Wchar c = L'1'; */
-    /* Vertex rootchild = stree.rootchildren[c]; */
-    /* VertexP rootref = stree.inner.first + INDEX(rootchild); */
-    /* VertexP childref = stree.inner.first + INDEX(child); */
     Reference start;
+    start.toleaf = loc.leafedge;
     start.address = loc.next;
-    start.toleaf = False;
     ArrayUint stack;
     INITARRAY(&stack, Uint);
 
@@ -139,10 +128,20 @@ char *leafcounts(const char *fname)
     return NULL;
 }
 
-char *utest_search()
+char *utest_leaves()
 {
     char *error;
+    mu_message(DATA, "Leafs: Smyth\n");
+    error = leafcounts("data/smyth.txt");
+    if (error) return error;
 
+    return NULL;
+}
+
+char *utest_patterns()
+{
+
+    char *error;
     mu_message(DATA, "Trivial\n");
     error = compare_vs_naive(
                 "data/trivial-patterns.txt",
@@ -150,59 +149,57 @@ char *utest_search()
             );
     if (error) return error;
 
-    mu_message(DATA, "Leafs: Smyth\n");
-    error = leafcounts("data/smyth.txt");
+
+    mu_message(DATA, "Random existing patterns\n");
+    error = compare_vs_naive(
+                "/home/lsund/Data/testdata/members/random-patterns.txt",
+                "/home/lsund/Data/testdata/members/diffsize/005.txt"
+            );
     if (error) return error;
 
-    /* mu_message(DATA, "Random existing patterns\n"); */
-    /* error = compare_vs_naive( */
-    /*             "/home/lsund/Data/testdata/members/random-patterns.txt", */
-    /*             "/home/lsund/Data/testdata/members/diffsize/005.txt" */
-    /*         ); */
-    /* if (error) return error; */
+    mu_message(DATA, "Random non-existing patterns\n");
+    error = compare_vs_naive(
+                "/home/lsund/Data/testdata/members/random-patterns-non-existing.txt",
+                "/home/lsund/Data/testdata/members/diffsize/005.txt"
+            );
+    if (error) return error;
 
-    /* mu_message(DATA, "Random non-existing patterns\n"); */
-    /* error = compare_vs_naive( */
-    /*             "/home/lsund/Data/testdata/members/random-patterns-non-existing.txt", */
-    /*             "/home/lsund/Data/testdata/members/diffsize/005.txt" */
-    /*         ); */
-    /* if (error) return error; */
+    mu_message(DATA, "Akz patterns\n");
+    error = compare_vs_naive(
+                "/home/lsund/Data/testdata/akz/10000.txt",
+                "/home/lsund/Data/testdata/akz/data.xml"
+            );
+    if (error) return error;
 
-    /* mu_message(DATA, "Akz patterns\n"); */
-    /* error = compare_vs_naive( */
-    /*             "data/akz/10000.txt", */
-    /*             "data/akz/data.xml" */
-    /*         ); */
-    /* if (error) return error; */
+    mu_message(DATA, "Akz patterns, take 2\n");
+    error = compare_vs_naive(
+                "/home/lsund/Data/testdata/doctronic/diffsize/12000.txt",
+                "/home/lsund/Data/testdata/doctronic/data-diffsize/small.xml");
+    if (error) return error;
 
-    /* mu_message(DATA, "Akz patterns, take 2\n"); */
-    /* error = compare_vs_naive( */
-    /*             "data/doctronic/diffsize/12000.txt", */
-    /*             "data/doctronic/data-diffsize/small.xml"); */
-    /* if (error) return error; */
+    mu_message(DATA, "Count: Akz patterns\n");
+    error = test_count(
+                "/home/lsund/Data/testdata/akz/10000.txt",
+                "/home/lsund/Data/testdata/akz/data.xml",
+                174
+            );
+    if (error) return error;
 
-    /* mu_message(DATA, "Count: Akz patterns\n"); */
-    /* error = test_count( */
-    /*             "data/akz/10000.txt", */
-    /*             "data/akz/data.xml", */
-    /*             174 */
-    /*         ); */
-    /* if (error) return error; */
-
-    /* mu_message(DATA, "Count: Akz patterns, take 2\n"); */
-    /* error = test_count( */
-    /*             "data/doctronic/diffsize/12000.txt", */
-    /*             "data/doctronic/data-diffsize/small.xml", */
-    /*             170 */
-    /*         ); */
-    /* if (error) return error; */
+    mu_message(DATA, "Count: Akz patterns, take 2\n");
+    error = test_count(
+                "/home/lsund/Data/testdata/doctronic/diffsize/12000.txt",
+                "/home/lsund/Data/testdata/doctronic/data-diffsize/small.xml",
+                170
+            );
+    if (error) return error;
 
     return NULL;
 }
 
 char *test_search()
 {
-    mu_run_utest(utest_search);
+    /* mu_run_utest(utest_patterns); */
+    mu_run_utest(utest_leaves);
 
     return NULL;
 }

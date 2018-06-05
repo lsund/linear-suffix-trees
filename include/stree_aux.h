@@ -74,7 +74,7 @@
 #define DISTANCE(P)            (*((P) + 2))
 // Large inner
 #define DEPTH(P)               (*((P) + 2))
-#define HEADPOS(P)                (*((P) + 3))
+#define HEADPOS(P)             (*((P) + 3))
 #define SUFFIX_LINK(P)         (*((P) + 4))
 
 #define CHAIN_END(P, D)        (P) + SMALL_VERTEXSIZE * (D)

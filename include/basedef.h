@@ -26,7 +26,9 @@
 // Transform bytes into megabytes
 #define MEGABYTES(V)            ((double) (V)/((UintConst(1) << 20) - 1))
 
-#define MAX_CHARS               UCHAR_MAX
+#define MAX_CHARS               100000
+#define MAX_PATTERNS 20000
+
 
 // Fast division
 #define DIV2(N)      ((N) >> 1)
@@ -44,7 +46,7 @@
 #define MOD8(N)      ((N) & 7)
 
 #if WcharBYTES == 1
-#define LARGESTCHARINDEX          UCHAR_MAX
+#define LARGESTCHARINDEX          MAX_CHARS
 #else
 #define LARGESTCHARINDEX          stree->lastcharindex
 #endif

@@ -22,6 +22,7 @@ static void skip_edge(
     loc->string.length = *depth + plen;
     patt->start        += edgelen;
     *depth             += edgelen;
+    loc->prev          = loc->next;
     loc->next          = vertexp;
     loc->remain        = 0;
 }
@@ -137,6 +138,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
                 plen = match_leaf(loc, rootchild, &patt, remain);
 
+                loc->leafedge = true;
                 if(MATCHED(plen, patt.end, patt.start)) {
                     return NULL;
                 } else {
@@ -178,10 +180,12 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 
                     if(labelchar == firstchar) {
 
+                        loc->leafedge = true;
                         plen = prefixlen(label, &patt, remain);
                         if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
                         } else {
+                            loc->next = LEAF(vertex);
                             return patt.start + plen;
                         }
                     }
@@ -216,6 +220,7 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
         update_chain(stree, vertexp, &chainend, &distance);
         depth = get_depth(stree, vertexp, distance, &chainend);
         edgelen = depth - prevdepth;
+        loc->edgelen = edgelen;
 
         if(remain > 0) {
             if(remain >= edgelen) {

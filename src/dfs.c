@@ -26,37 +26,11 @@ typedef struct
     ArrayUint countstack;
 } Countstate;
 
-static Sint processleaf(/*@unused@*/ Uint leafnumber,
-        /*@unused@*/ VertexP lcpnode,void *info)
-{
-    leafnumber = 0;
-    lcpnode = NULL;
-
-    Countstate *cstate = (Countstate *) info;
-
-    cstate->countstack.spaceUint[cstate->countstack.nextfreeUint - 1]++;
-    return 0;
-}
-
 #define ACCESSDEPTH          UintConst(1)
 #define ACCESSHEADPOS        (UintConst(1) << 1)
 #define ACCESSSUFFIXLINK     (UintConst(1) << 2)
 #define ACCESSFIRSTCHILD     (UintConst(1) << 3)
 #define ACCESSBRANCHBROTHER  (UintConst(1) << 4)
-
-Uint getlargelinkstree(/*@unused@*/ STree *stree, VertexP btptr,Uint depth)
-{
-    stree = NULL;
-    if(depth == UintConst(1))
-    {
-        return 0;
-    }
-    return *(btptr+4);
-}
-
-#ifdef REPNUM
-static Uint tmpleafcount, repnum = 0;
-#endif
 
 typedef Uint *Bref;
 
@@ -73,7 +47,7 @@ DECLAREARRAYSTRUCT(Bref);
     currentnode.toleaf = False;\
 }
 
-Sint depthfirststree(STree *stree, Reference *startnode,
+Sint stree_dfs(STree *stree, Reference *start,
         Sint (*processleaf) (Uint, ArrayUint *), ArrayUint *leaves)
 {
     stree->leafcounts = ALLOC(NULL, Uint, stree->leaves.next_ind + 1);
@@ -83,17 +57,14 @@ Sint depthfirststree(STree *stree, Reference *startnode,
     Reference currentnode;
     ArrayBref stack;
 
-    if(startnode->toleaf)
+    if(start->toleaf)
     {
-        if(processleaf((Uint) (startnode->address - stree->leaves.first), leaves) != 0)
-        {
-            return -1;
-        }
+        processleaf((Uint) (start->address - stree->leaves.first), leaves);
         return 0;
     }
 
     currentnode.toleaf = False;
-    currentnode.address = startnode->address;
+    currentnode.address = start->address;
     INITARRAY(&stack,Bref);
     STOREINARRAY(&stack,Bref,128,currentnode.address);
     SETCURRENT(CHILD(currentnode.address));
@@ -101,13 +72,10 @@ Sint depthfirststree(STree *stree, Reference *startnode,
         while(True)
         {
             if(currentnode.toleaf) {
-                fprintf(stderr, "visit leaf %lu ",
-                        (Uint) LEAFREF_TO_INDEX(stree, currentnode.address));
-                fprintf(stderr,"below %lu\n",(Uint) REF_TO_INDEX(startnode->address));
-                if(processleaf(LEAFREF_TO_INDEX(stree,currentnode.address), leaves) != 0)
-                {
-                    return -1;
-                }
+                /* fprintf(stderr, "visit leaf %lu ", */
+                /*         (Uint) LEAFREF_TO_INDEX(stree, currentnode.address)); */
+                /* fprintf(stderr,"below %lu\n",(Uint) REF_TO_INDEX(start->address)); */
+                processleaf(LEAFREF_TO_INDEX(stree,currentnode.address), leaves);
                 brotherval = LEAF_SIBLING(currentnode.address);
                 /* printf("sibling: %lu\n", INDEX(brotherval)); */
                 if(IS_NOTHING(brotherval)) {
@@ -124,9 +92,9 @@ Sint depthfirststree(STree *stree, Reference *startnode,
                         break;
                     }
                     (stack.nextfreeBref)--;
-                    fprintf(stderr,"#pop[%lu]=",(Uint) stack.nextfreeBref);
-                    fprintf(stderr,"%lu\n",
-                            (Uint) REF_TO_INDEX(stack.spaceBref[stack.nextfreeBref]));
+                    /* fprintf(stderr,"#pop[%lu]=",(Uint) stack.nextfreeBref); */
+                    /* fprintf(stderr,"%lu\n", */
+                    /*         (Uint) REF_TO_INDEX(stack.spaceBref[stack.nextfreeBref])); */
                     brotherval = SIBLING(stack.spaceBref[stack.nextfreeBref]);
                     if(!IS_NOTHING(brotherval))
                     {
@@ -135,12 +103,12 @@ Sint depthfirststree(STree *stree, Reference *startnode,
                         readyforpop = False;
                     }
                 } else {
-                    fprintf(stderr,"#process1 %lu\n",
-                            (Uint) REF_TO_INDEX(currentnode.address));
+                    /* fprintf(stderr,"#process1 %lu\n", */
+                    /*         (Uint) REF_TO_INDEX(currentnode.address)); */
                     if(godown) {
                         STOREINARRAY(&stack,Bref,128,currentnode.address);
-                        fprintf(stderr,"#push[%lu]=",(Uint) (stack.nextfreeBref-1));
-                        fprintf(stderr,"%lu\n",(Uint) REF_TO_INDEX(currentnode.address));
+                        /* fprintf(stderr,"#push[%lu]=",(Uint) (stack.nextfreeBref-1)); */
+                        /* fprintf(stderr,"%lu\n",(Uint) REF_TO_INDEX(currentnode.address)); */
                         child = CHILD(currentnode.address);
                         SETCURRENT(child);    // current comes from child
                     } else {
@@ -161,16 +129,16 @@ Sint depthfirststree(STree *stree, Reference *startnode,
 static Sint insertinleaflist(Uint leafindex, ArrayUint *leaves)
 {
     n_leaves++;
-    fprintf(stderr,"insertinleaflist %lu\n",(Uint) leafindex);
+    /* fprintf(stderr,"insertinleaflist %lu\n",(Uint) leafindex); */
     CHECKARRAYSPACE(leaves, Uint, 256);
     leaves->spaceUint[leaves->nextfreeUint++] = leafindex;
 
     return 0;
 }
 
-Sint makeleaflist(STree *stree,ArrayUint *leaves,Reference *start)
+Sint makeleaflist(STree *stree,ArrayUint *leaves, Reference *start)
 {
-    if(depthfirststree(stree,start,insertinleaflist, leaves) != 0)
+    if(stree_dfs(stree,start,insertinleaflist, leaves) != 0)
     {
         return -1;
     }

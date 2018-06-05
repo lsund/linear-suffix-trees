@@ -13,6 +13,7 @@ typedef struct
     Uint edgelen;            // length of edge
     Uint remain;             // number of remaining characters on edge
     Uint *next;              // reference to node the edge points to
+    Bool leafedge;           // Is the location on a leafedge
 } Loc;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to

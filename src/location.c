@@ -20,6 +20,7 @@ void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
     loc->string.start  = head;
     loc->string.length = depth;
     loc->remain        = 0;
+    loc->leafedge      = False;
 }
 
 

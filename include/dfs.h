@@ -12,7 +12,7 @@ typedef struct reference {
 } Reference;
 
 
-Sint depthfirststree(STree *stree,Reference *startnode,
+Sint stree_dfs(STree *stree,Reference *start,
         Sint (*processleaf)(Uint, ArrayUint *), ArrayUint *leaves);
 
 
