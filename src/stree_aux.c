@@ -18,7 +18,7 @@ Uint head_label_depth(STree *stree)
     return stree->head.depth;
 }
 
-Bool head_ends_on_vertex(STree *stree)
+Bool base_is_vertex(STree *stree)
 {
     return stree->head.label.end == NULL;
 }
@@ -26,7 +26,7 @@ Bool head_ends_on_vertex(STree *stree)
 
 Bool is_head_old(STree *stree)
 {
-    return head_ends_on_vertex(stree);
+    return base_is_vertex(stree);
 }
 
 
@@ -68,24 +68,11 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
     }
 }
 
-
-static Wchar second_headedge_character(STree *stree)
-{
-    if (stree->head.label.end == NULL) {
-        return *(stree->tail-1);
-    } else {
-        return *(stree->tail - (stree->head.label.end - stree->head.label.start + 2));
-    }
-}
-
-
 static Uint* suffix_link(STree *stree)
 {
     Uint *first = stree->inner.first;
-    if(HEAD_LINKS_TO_ROOT) {
+    if(stree->head.depth == 1) {
         return first;
-    } else if (HEAD_LINKS_TO_ROOTCHILD) {
-        return first + stree->rootchildren[(Uint) second_headedge_character(stree)];
     } else {
         return first + SUFFIX_LINK(stree->head.origin);
     }
@@ -93,7 +80,7 @@ static Uint* suffix_link(STree *stree)
 
 void follow_link(STree *stree)
 {
-    if(IS_LARGE(*(stree->head.origin))) {
+    if(IS_LARGE(*stree->head.origin)) {
         stree->head.origin = suffix_link(stree);
     } else {
         stree->head.origin += SMALL_VERTEXSIZE;

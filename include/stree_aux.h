@@ -45,8 +45,6 @@
 #define IS_UNDEF(V)                 ((V) == UNDEF)
 #define IS_NO_SPACE                 (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
-#define HEAD_LINKS_TO_ROOT          (stree->head.depth == 1)
-#define HEAD_LINKS_TO_ROOTCHILD     (stree->head.depth == 2)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices
@@ -85,7 +83,7 @@
 #define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
 #define SET_CHILD(V, VAL)                *(V) = ((*(V)) & SMALLBIT) | (VAL)
 
-Bool head_ends_on_vertex(STree *stree);
+Bool base_is_vertex(STree *stree);
 
 Bool is_head_old(STree *stree);
 

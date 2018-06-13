@@ -38,7 +38,7 @@ void init(STree *stree);
 // Slow-scan
 void scanprefix(STree *stree);
 
-void finalize_chain(STree *stree);
+void set_chain_distances(STree *stree);
 
 void init_chain(STree *stree);
 

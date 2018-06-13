@@ -15,7 +15,7 @@ Wchar *sentinel;
 Uint textlen, alphasize;
 
 
-static void unset_chain(STree *stree)
+static void new_chain(STree *stree)
 {
     stree->chain.size = 0;
     stree->chain.first = NULL;
@@ -27,7 +27,7 @@ void init_chain(STree *stree)
     stree->chain.first = stree->inner.next;
 }
 
-void finalize_chain(STree *stree)
+void set_chain_distances(STree *stree)
 {
     Uint distance;
 
@@ -39,7 +39,7 @@ void finalize_chain(STree *stree)
             DISTANCE(prev) = distance;
             *prev = WITH_SMALLBIT(*prev);
         }
-        unset_chain(stree);
+        new_chain(stree);
     }
     stree->inner.next += LARGE_VERTEXSIZE;
     stree->inner.next_ind += LARGE_VERTEXSIZE;
