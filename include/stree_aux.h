@@ -85,11 +85,11 @@
 #define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
 #define SET_CHILD(V, VAL)                *(V) = ((*(V)) & SMALLBIT) | (VAL)
 
-Bool is_head_vertex(STree *stree);
+Bool head_ends_on_vertex(STree *stree);
 
 Bool is_head_old(STree *stree);
 
-Uint head_depth(STree *stree);
+Uint head_label_depth(STree *stree);
 
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);

@@ -8,9 +8,9 @@
 #include "externs.h"
 
 // Insert a leaf edge from the current base vertex
-void insert_leaf(STree *stree);
+void insert(STree *stree);
 
 // Insert inner veretx and split appropriate edges
-void insert_inner(STree *stree);
+void split_and_insert(STree *stree);
 
 #endif

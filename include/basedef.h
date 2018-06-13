@@ -3,8 +3,8 @@
 
 #include "bitvector.h"
 
-#define MAX_ALLOC           5000000 // 5 MB
-/* #define MAX_ALLOC           100000000 // 100 MB */
+/* #define MAX_ALLOC           5000000 // 5 MB */
+#define MAX_ALLOC           100000000 // 100 MB
 /* #define MAX_ALLOC           150000000 // 150 MB */
 /* #define MAX_ALLOC           450000000 // 450 MB */
 

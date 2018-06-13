@@ -111,8 +111,8 @@ char *leafcounts(const char *fname)
     STree stree;
     construct(&stree);
 
-
     Wchar current_pattern[5] = L"211";
+
     Loc loc;
     bool exists = search_pattern(&stree, current_pattern, &loc);
     printf("exists: %d\n", exists);
@@ -140,6 +140,7 @@ char *utest_leaves()
 
 char *utest_patterns()
 {
+
 
     char *error;
     mu_message(DATA, "Trivial\n");

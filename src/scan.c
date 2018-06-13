@@ -274,7 +274,7 @@ void scan_tail(STree *stree)
     Wchar firstchar;
     Wchar labelchar = 0;
 
-    if(head_depth(stree) == 0) {
+    if(head_label_depth(stree) == 0) {
 
         // There is no sentinel
         if(IS_SENTINEL(stree->tail)) {
@@ -285,7 +285,6 @@ void scan_tail(STree *stree)
         firstchar = *(stree->tail);
         scanprobe_val = ROOT_CHILD(firstchar);
         if(scanprobe_val == UNDEF) {
-
             stree->head.label.end = NULL;
             return;
         }

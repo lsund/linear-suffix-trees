@@ -13,12 +13,12 @@
 Uint textlen;
 
 
-Uint head_depth(STree *stree)
+Uint head_label_depth(STree *stree)
 {
     return stree->head.depth;
 }
 
-Bool is_head_vertex(STree *stree)
+Bool head_ends_on_vertex(STree *stree)
 {
     return stree->head.label.end == NULL;
 }
@@ -26,7 +26,7 @@ Bool is_head_vertex(STree *stree)
 
 Bool is_head_old(STree *stree)
 {
-    return is_head_vertex(stree);
+    return head_ends_on_vertex(stree);
 }
 
 
