@@ -39,11 +39,11 @@ DECLAREARRAYSTRUCT(Bref);
 #define SETCURRENT(V)\
     if(IS_LEAF(V))\
 {\
-    currentnode.address = stree->leaves.first + INDEX(V);\
+    currentnode.address = stree->leaves.first + LEAF_INDEX(V);\
     currentnode.toleaf = True;\
 } else\
 {\
-    currentnode.address = stree->inner.first + INDEX(V);\
+    currentnode.address = INNER(V);\
     currentnode.toleaf = False;\
 }
 

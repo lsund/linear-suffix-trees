@@ -53,19 +53,23 @@
 #define ROOT_CHILD(C)       (stree->rootchildren[(Uint) (C)])
 // Index of a reference
 #define REF_TO_INDEX(P)         ((Uint) ((P) - ROOT))
-#define LEAFREF_TO_INDEX(ST,A) ((Uint) ((A) - (ST)->leaves.first))
-#define INDEX(V)                ((V) & ~(LEAFBIT | SMALLBIT))
+#define LEAFREF_TO_INDEX(ST,A)  ((Uint) ((A) - (ST)->leaves.first))
 
 // Returns the sibling of the leaf at the specified address
-#define INNER(V)               stree->inner.first + INDEX((V)) // address
-#define LEAF(V)                stree->leaves.first + INDEX((V))
-#define WITH_LEAFBIT(V)        ((V) | LEAFBIT)    // indicate this is a leaf
-#define WITH_SMALLBIT(V)       (V) | SMALLBIT
+#define INNER(V)               stree->inner.first + LEAF_INDEX((V)) // address
+#define LEAF(V)                stree->leaves.first + INNER_INDEX((V))
+#define WITH_LEAFBIT(V)        ((V) | LEAFBIT)
+#define WITH_SMALLBIT(V)       ((V) | SMALLBIT)
 
 #define LEAF_SIBLING(P)        (*(P))
 
-// Inner
-#define CHILD(P)               ((*(P)) & MAXINDEX)  // Remove the MSB
+// LEAF
+#define LEAF_INDEX(V)           ((V) & ~(MSB | SECOND_MSB))
+#define INNER_INDEX(V)          ((V) & ~(MSB))
+
+// INNER
+#define CHILD(P)               ((*(P)) & ~(MSB))
+
 #define SIBLING(P)             (*((P) + 1))
 
 // Small inner
@@ -81,7 +85,7 @@
 // Setters
 
 #define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
-#define SET_CHILD(V, VAL)                *(V) = ((*(V)) & SMALLBIT) | (VAL)
+#define SET_CHILD(V, VAL)               *(V) = ((*(V)) & MSB) | (VAL)
 
 Bool base_is_vertex(STree *stree);
 

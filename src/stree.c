@@ -62,21 +62,19 @@ void linkrootchildren(STree *stree)
             } else
             {
                 if (IS_LEAF(prev)) {
-                    stree->leaves.first[INDEX(prev)] = *rcptr;
+                    stree->leaves.first[LEAF_INDEX(prev)] = *rcptr;
                 } else {
-                    prevnodeptr = stree->inner.first + INDEX(prev);
+                    prevnodeptr = INNER(prev);
                     SIBLING(prevnodeptr) = *rcptr;
                 }
             }
             prev = *rcptr;
         }
     }
-    if(IS_LEAF(prev))
-    {
-        stree->leaves.first[INDEX(prev)] = WITH_LEAFBIT(textlen);
-    } else
-    {
-        prevnodeptr = stree->inner.first + INDEX(prev);
+    if(IS_LEAF(prev)) {
+        stree->leaves.first[LEAF_INDEX(prev)] = WITH_LEAFBIT(textlen);
+    } else {
+        prevnodeptr = INNER(prev);
         SIBLING(prevnodeptr) = WITH_LEAFBIT(textlen);
     }
     stree->leaves.first[textlen] = NOTHING;
