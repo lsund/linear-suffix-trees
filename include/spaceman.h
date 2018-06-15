@@ -20,15 +20,6 @@ typedef struct {
 
 void *alloc_use(Uint line, void *ptr, Uint size, Uint number);
 
-void freespaceviaptr(char *file,Uint line,void *ptr);
-
 Uint getspacepeak(void);
-
-#define FREE(P)\
-        if((P) != NULL)\
-        {\
-          freespaceviaptr(__FILE__,(Uint) __LINE__,P);\
-          P = NULL;\
-        }
 
 #endif

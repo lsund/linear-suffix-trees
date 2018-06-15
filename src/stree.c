@@ -27,9 +27,9 @@ VertexP next_leaf(STree *stree)
 
 void stree_free(STree *stree)
 {
-    FREE(stree->leaves.first);
-    FREE(stree->rootchildren);
-    FREE(stree->inner.first);
+    free(stree->leaves.first);
+    free(stree->rootchildren);
+    free(stree->inner.first);
 }
 
 
