@@ -258,12 +258,12 @@ Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt)
 // Scans a prefix of the current tail down from a given node
 void scan_tail(STree *stree)
 {
-    VertexP scanprobe = NULL;
     VertexP chainend = NULL;
     Uint leafindex;
     Uint depth;
     Uint edgelen;
     Vertex current_vertex;
+    VertexP current_vertexp = NULL;
     Uint distance = 0;
     Uint prev;
     Uint plen;
@@ -272,7 +272,7 @@ void scan_tail(STree *stree)
     Wchar firstchar;
     Wchar labelchar = 0;
 
-    if(head_label_depth(stree) == 0) {
+    if(HEAD_IS_ROOT) {
 
         // There is no sentinel
         if(IS_SENTINEL(stree->tail)) {
@@ -295,18 +295,18 @@ void scan_tail(STree *stree)
             plen = 1 + lcp(edgepatt, tailpatt);
 
             stree->tail += plen;
-            stree->head.label.start  = edgepatt.start - 1;
-            stree->head.label.end    = edgepatt.start - 1 + (plen-1);
+            stree->head.label.start   = edgepatt.start - 1;
+            stree->head.label.end     = edgepatt.start - 1 + (plen-1);
             stree->splitvertex.origin = current_vertex;
 
             return;
         }
 
-        scanprobe = INNER(current_vertex);
+        current_vertexp = INNER(current_vertex);
 
-        update_chain(stree, scanprobe, &chainend, &distance);
-        head = get_headpos(stree, scanprobe, &chainend, distance);
-        depth = get_depth(stree, scanprobe, distance, &chainend);
+        update_chain(stree, current_vertexp, &chainend, &distance);
+        head = get_headpos(stree, current_vertexp, &chainend, distance);
+        depth = get_depth(stree, current_vertexp, distance, &chainend);
 
         label_start = text + head;
         plen = tail_prefixlen(stree, label_start + 1, label_start + depth - 1);
@@ -320,12 +320,13 @@ void scan_tail(STree *stree)
             stree->head.label.end   = label_start + (plen - 1);
             return;
         }
-        stree->head.origin = scanprobe;
+        stree->head.origin = current_vertexp;
         stree->head.depth = depth;
     }
 
     // Head is not the root
     while(True) {
+
         prev = UNDEF;
         current_vertex = CHILD(stree->head.origin);
         firstchar = *(stree->tail);
@@ -337,29 +338,35 @@ void scan_tail(STree *stree)
                 leafindex = LEAF_INDEX(current_vertex);
                 labelchar = get_label(stree, leafindex, &label_start);
 
-                if(labelchar >= firstchar) break;
+                if (labelchar >= firstchar) {
+                    break;
+                }
 
                 prev          = current_vertex;
                 current_vertex = LEAF_SIBLING(stree->leaves.first + leafindex);
 
             } else {
 
-                scanprobe   = INNER(current_vertex);
-                update_chain(stree, scanprobe, &chainend, &distance);
+                current_vertexp   = INNER(current_vertex);
+                update_chain(stree, current_vertexp, &chainend, &distance);
 
-                head      = get_headpos(stree, scanprobe, &chainend, distance);
+                head      = get_headpos(stree, current_vertexp, &chainend, distance);
                 labelchar = get_label(stree, head, &label_start);
 
-                if (labelchar >= firstchar) break;
+                if (labelchar >= firstchar) {
+                    break;
+                }
 
                 prev          = current_vertex;
-                current_vertex = SIBLING(scanprobe);
+                current_vertex = SIBLING(current_vertexp);
             }
+
         } while(IS_SOMETHING(current_vertex));
 
         if(IS_NOTHING(current_vertex) || labelchar > firstchar) {
-            // edge not found
-            // new edge will become brother of this
+
+            // No matching a-edge found
+            // New edge will become right sibling of last vertex
             stree->splitvertex.left_sibling = prev;
             stree->head.label.end = NULL;
             return;
@@ -372,7 +379,7 @@ void scan_tail(STree *stree)
             return;
         }
 
-        depth   = get_depth(stree, scanprobe, distance, &chainend);
+        depth   = get_depth(stree, current_vertexp, distance, &chainend);
         edgelen = depth - stree->head.depth;
         plen    = tail_prefixlen(stree, label_start + 1, label_start + edgelen - 1);
         (stree->tail) += plen;
@@ -383,7 +390,7 @@ void scan_tail(STree *stree)
             return;
         }
 
-        stree->head.origin = scanprobe;
+        stree->head.origin = current_vertexp;
         stree->head.depth = depth;
     }
 }

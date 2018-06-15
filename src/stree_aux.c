@@ -13,11 +13,6 @@
 Uint textlen;
 
 
-Uint head_label_depth(STree *stree)
-{
-    return stree->head.depth;
-}
-
 Bool base_is_vertex(STree *stree)
 {
     return stree->head.label.end == NULL;

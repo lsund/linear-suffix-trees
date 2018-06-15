@@ -18,6 +18,7 @@ OBJ=         obj/stree.o\
              obj/space.o\
              obj/io.o\
              obj/skip_count.o\
+			 obj/init.o\
              obj/clock.o\
              obj/scan.o\
              obj/insert.o\

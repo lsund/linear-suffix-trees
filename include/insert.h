@@ -6,6 +6,7 @@
 #include "stree_aux.h"
 #include "basedef.h"
 #include "externs.h"
+#include "stree.h"
 
 // Insert a leaf edge from the current base vertex
 void insert(STree *stree);

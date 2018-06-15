@@ -46,6 +46,8 @@
 #define IS_NO_SPACE                 (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 
+#define HEAD_IS_ROOT                (stree->head.depth == 0)
+
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices
 
@@ -58,8 +60,8 @@
 // Returns the sibling of the leaf at the specified address
 #define INNER(V)               stree->inner.first + LEAF_INDEX((V)) // address
 #define LEAF(V)                stree->leaves.first + INNER_INDEX((V))
-#define WITH_LEAFBIT(V)        ((V) | LEAFBIT)
-#define WITH_SMALLBIT(V)       ((V) | SMALLBIT)
+#define MAKE_LEAF(V)            ((V) | LEAFBIT)
+#define MAKE_SMALL(V)           ((V) | SMALLBIT)
 
 #define LEAF_SIBLING(P)        (*(P))
 
@@ -90,8 +92,6 @@
 Bool base_is_vertex(STree *stree);
 
 Bool is_head_old(STree *stree);
-
-Uint head_label_depth(STree *stree);
 
 // Get info for branch vertex
 Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);

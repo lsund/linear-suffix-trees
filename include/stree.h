@@ -8,7 +8,6 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-
 #ifndef STREE_H
 #define STREE_H
 
@@ -27,22 +26,10 @@
 #include "arraydef.h"
 #include "bitvector.h"
 #include "stree_aux.h"
+#include "init.h"
 
+void stree_free(STree *stree);
 
-void setdepthheadposition(STree *stree,Uint depth, Uint headposition);
-
-void setsuffixlink(STree *stree,Uint slink);
-
-void init(STree *stree);
-
-// Slow-scan
-void scanprefix(STree *stree);
-
-void set_chain_distances(STree *stree);
-
-void init_chain(STree *stree);
-
-void freestree(STree *stree);
-
+VertexP next_inner(STree *stree);
 
 #endif
