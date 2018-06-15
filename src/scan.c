@@ -22,8 +22,8 @@ static void skip_edge(
     loc->string.length = *depth + plen;
     patt->start        += edgelen;
     *depth             += edgelen;
-    loc->prev          = loc->next;
-    loc->next          = vertexp;
+    loc->prev          = loc->nxt;
+    loc->nxt          = vertexp;
     loc->remain        = 0;
 }
 
@@ -42,9 +42,9 @@ static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
 static Uint  match_leaf(Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 {
     Uint leafnum = LEAF_INDEX(vertex);
-    loc->first   = text + leafnum;
+    loc->fst   = text + leafnum;
 
-    return prefixlen(loc->first, patt, remain);
+    return prefixlen(loc->fst, patt, remain);
 }
 
 
@@ -99,7 +99,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
     Uint depth       = 0;
     Uint distance    = 0;
     Uint remain      = 0;
-    Wchar firstchar  = 0;
+    Wchar fstchar  = 0;
     Uint edgelen     = 0;
 
     if(!IS_ROOT(vertexp)) {
@@ -119,14 +119,14 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
             return NULL;
         }
 
-        firstchar    = *patt.start;
+        fstchar    = *patt.start;
         Uint leafnum = 0;
         Wchar *label = NULL;
         Uint plen    = 0;
 
         if(IS_ROOT(vertexp)) {
 
-            Vertex rootchild = ROOT_CHILD(firstchar);
+            Vertex rootchild = ROOT_CHILD(fstchar);
 
             if (IS_UNDEF(rootchild)) {
                 return patt.start;
@@ -172,18 +172,18 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                     }
 
                     labelchar = *label;
-                    if(labelchar > firstchar) {
+                    if(labelchar > fstchar) {
                         return patt.start;
                     }
 
-                    if(labelchar == firstchar) {
+                    if(labelchar == fstchar) {
 
                         loc->leafedge = true;
                         plen = prefixlen(label, &patt, remain);
                         if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
                         } else {
-                            loc->next = LEAF(vertex);
+                            loc->nxt = LEAF(vertex);
                             return patt.start + plen;
                         }
                     }
@@ -200,11 +200,11 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                     label    = LABEL_START(depth + head);
                     labelchar = *label;
 
-                    if (labelchar > firstchar) {
+                    if (labelchar > fstchar) {
                         return patt.start;
                     }
 
-                    if(labelchar == firstchar) {
+                    if(labelchar == fstchar) {
                         break;
                     }
 
@@ -269,7 +269,7 @@ void scan_tail(STree *st)
     Uint plen;
     Uint head;
     Wchar *label_start = NULL;
-    Wchar firstchar;
+    Wchar fstchar;
     Wchar labelchar = 0;
 
     if(HEAD_IS_ROOT) {
@@ -280,8 +280,8 @@ void scan_tail(STree *st)
             return;
         }
 
-        firstchar = *(st->tail);
-        current_vertex = ROOT_CHILD(firstchar);
+        fstchar = *(st->tail);
+        current_vertex = ROOT_CHILD(fstchar);
         if(current_vertex == UNDEF) {
             st->head.label.end = NULL;
             return;
@@ -329,21 +329,21 @@ void scan_tail(STree *st)
 
         prev = UNDEF;
         current_vertex = CHILD(st->head.origin);
-        firstchar = *(st->tail);
+        fstchar = *(st->tail);
 
         do {
-            // find successor edge with firstchar = firstchar
+            // find successor edge with fstchar = fstchar
             if(IS_LEAF(current_vertex)) {
 
                 leafindex = LEAF_INDEX(current_vertex);
                 labelchar = get_label(st, leafindex, &label_start);
 
-                if (labelchar >= firstchar) {
+                if (labelchar >= fstchar) {
                     break;
                 }
 
                 prev          = current_vertex;
-                current_vertex = LEAF_SIBLING(st->leaves.first + leafindex);
+                current_vertex = LEAF_SIBLING(st->ls.fst + leafindex);
 
             } else {
 
@@ -353,7 +353,7 @@ void scan_tail(STree *st)
                 head      = get_headpos(st, current_vertexp, &chainend, distance);
                 labelchar = get_label(st, head, &label_start);
 
-                if (labelchar >= firstchar) {
+                if (labelchar >= fstchar) {
                     break;
                 }
 
@@ -363,7 +363,7 @@ void scan_tail(STree *st)
 
         } while(IS_SOMETHING(current_vertex));
 
-        if(IS_NOTHING(current_vertex) || labelchar > firstchar) {
+        if(IS_NOTHING(current_vertex) || labelchar > fstchar) {
 
             // No matching a-edge found
             // New edge will become right sibling of last vertex
@@ -384,7 +384,7 @@ void scan_tail(STree *st)
         plen    = tail_prefixlen(st, label_start + 1, label_start + edgelen - 1);
         (st->tail) += plen;
 
-        // cannot reach next node
+        // cannot reach nxt node
         if(edgelen > plen) {
             update_st(st, label_start, plen, current_vertex, prev);
             return;

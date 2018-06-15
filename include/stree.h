@@ -29,10 +29,10 @@
 
 void stree_free(STree *st);
 
-VertexP get_next_inner(STree *st);
+VertexP get_nxt_inner(STree *st);
 
-Uint get_next_leafnum(STree *st);
+Uint get_nxt_leafnum(STree *st);
 
-void set_next_leaf(STree *st, Vertex v);
+void set_nxt_leaf(STree *st, Vertex v);
 
 #endif

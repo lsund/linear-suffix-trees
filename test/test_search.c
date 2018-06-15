@@ -119,10 +119,10 @@ char *leafcounts(const char *fname)
 
     Reference start;
     start.toleaf = loc.leafedge;
-    start.address = loc.next;
+    start.address = loc.nxt;
     ArrayUint stack;
     stack.spaceUint = NULL;
-    stack.allocatedUint = stack.nextfreeUint = 0;
+    stack.allocatedUint = stack.nxtfreeUint = 0;
 
     makeleaflist(&st, &stack, &start);
 

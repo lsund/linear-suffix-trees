@@ -4,7 +4,7 @@
 void skip_count(STree *st)
 {
     Uint prevnode, depth, edgelen, leafindex, head;
-    Wchar firstchar, edgechar;
+    Wchar fstchar, edgechar;
 
     VertexP vertex  = NULL;;
     VertexP chainend = NULL;
@@ -12,8 +12,8 @@ void skip_count(STree *st)
 
     if(HEAD_IS_ROOT) {
 
-        firstchar = *(st->head.label.start);
-        Uint rootchild = st->rootchildren[(Uint) firstchar];
+        fstchar = *(st->head.label.start);
+        Uint rootchild = st->rootchildren[(Uint) fstchar];
 
         if(IS_LEAF(rootchild)) {
             st->splitvertex.origin = rootchild;
@@ -49,7 +49,7 @@ void skip_count(STree *st)
 
     while(True) {
 
-        firstchar = *(st->head.label.start);
+        fstchar = *(st->head.label.start);
         prevnode = UNDEF;
         Vertex headchild = CHILD(st->head.origin);
 
@@ -60,7 +60,7 @@ void skip_count(STree *st)
                 leafindex = LEAF_INDEX(headchild);
                 edgechar = text[st->head.depth + leafindex];
 
-                if(edgechar == firstchar) {
+                if(edgechar == fstchar) {
                     // correct edge found
                     st->splitvertex.origin = headchild;
                     st->splitvertex.left_sibling = prevnode;
@@ -68,7 +68,7 @@ void skip_count(STree *st)
                 }
 
                 prevnode = headchild;
-                headchild = st->leaves.first[leafindex];
+                headchild = st->ls.fst[leafindex];
                 continue;
 
             } else {
@@ -79,7 +79,7 @@ void skip_count(STree *st)
                 head = get_headpos(st, vertex, &chainend, distance);
                 edgechar = text[st->head.depth + head];
                 // Correct edge found
-                if(edgechar == firstchar) {
+                if(edgechar == fstchar) {
                     break;
                 }
                 prevnode = headchild;

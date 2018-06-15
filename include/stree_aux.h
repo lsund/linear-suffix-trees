@@ -41,7 +41,7 @@
 #define IS_SENTINEL(C)              ((C) == sentinel)
 #define IS_NOTHING(P)               ((P) & NOTHING)
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
-#define IS_ROOT(V)                  (st->inner.first == V)
+#define IS_ROOT(V)                  (st->is.fst == V)
 #define IS_UNDEF(V)                 ((V) == UNDEF)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 
@@ -50,15 +50,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices
 
-#define ROOT                    (st->inner.first)
+#define ROOT                    (st->is.fst)
 #define ROOT_CHILD(C)           (st->rootchildren[(Uint) (C)])
 // Index of a reference
 #define REF_TO_INDEX(P)         ((Uint) ((P) - ROOT))
-#define LEAFREF_TO_INDEX(ST,A)  ((Uint) ((A) - (ST)->leaves.first))
+#define LEAFREF_TO_INDEX(ST,A)  ((Uint) ((A) - (ST)->ls.fst))
 
 // Returns the sibling of the leaf at the specified address
-#define INNER(V)               st->inner.first + LEAF_INDEX((V)) // address
-#define LEAF(V)                st->leaves.first + INNER_INDEX((V))
+#define INNER(V)                st->is.fst + LEAF_INDEX((V)) // address
+#define LEAF(V)                 st->ls.fst + INNER_INDEX((V))
 #define MAKE_LEAF(V)            ((V) | LEAFBIT)
 #define MAKE_SMALL(V)           ((V) | SMALLBIT)
 

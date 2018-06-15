@@ -27,8 +27,8 @@ Bool is_head_old(STree *st)
 
 void update_chain(STree *st, Uint *vertexp, Uint **chainend, Uint *distance)
 {
-    if(st->chain.first != NULL && vertexp >= st->chain.first) {
-        *distance = 1 + (st->inner.next - vertexp) / SMALL_VERTEXSIZE;
+    if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
+        *distance = 1 + (st->is.nxt - vertexp) / SMALL_VERTEXSIZE;
     } else {
         if(IS_SMALL(*(vertexp))) {
             *distance = DISTANCE(vertexp);
@@ -39,8 +39,8 @@ void update_chain(STree *st, Uint *vertexp, Uint **chainend, Uint *distance)
 
 Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
 {
-    if(st->chain.first != NULL && vertexp >= st->chain.first) {
-        return st->leaves.next_ind - distance;
+    if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
+        return st->ls.nxt_ind - distance;
     } else {
         if(IS_LARGE(*(vertexp))) {
             return HEADPOS(vertexp);
@@ -52,7 +52,7 @@ Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
 
 Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **chainend)
 {
-    if(st->chain.first != NULL && vertexp >= st->chain.first) {
+    if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
         return st->current_branchdepth  + distance;
     } else {
         if(IS_LARGE(*vertexp)) {
@@ -65,11 +65,11 @@ Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **chainend)
 
 static Uint* suffix_link(STree *st)
 {
-    Uint *first = st->inner.first;
+    Uint *fst = st->is.fst;
     if(st->head.depth == 1) {
-        return first;
+        return fst;
     } else {
-        return first + SUFFIX_LINK(st->head.origin);
+        return fst + SUFFIX_LINK(st->head.origin);
     }
 }
 

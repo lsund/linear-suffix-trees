@@ -15,7 +15,7 @@ typedef struct
     Uint headposition,        // the head position of the branching node
          depth;               // the depth of the branching node
     VertexP suffixlink;          // the suffix link is always to a branching node
-    Reference firstchild,     // the reference to the first child
+    Reference fstchild,     // the reference to the fst child
               branchbrother;  // the reference to the right brother;
     // if this doesn't exist then it's \texttt{NULL}
 } Branchinfo;               // \Typedef{Branchinfo}
@@ -35,7 +35,7 @@ typedef struct
 #define SETCURRENT(V)\
     if(IS_LEAF(V))\
 {\
-    currentnode.address = st->leaves.first + LEAF_INDEX(V);\
+    currentnode.address = st->ls.fst + LEAF_INDEX(V);\
     currentnode.toleaf = True;\
 } else\
 {\
@@ -54,20 +54,20 @@ Sint stree_dfs(STree *st, Reference *start,
 
     if(start->toleaf)
     {
-        processleaf((Uint) (start->address - st->leaves.first), leaves);
+        processleaf((Uint) (start->address - st->ls.fst), leaves);
         return 0;
     }
 
     currentnode.toleaf = False;
     currentnode.address = start->address;
     stack.spaceBref = NULL;
-    stack.allocatedBref = stack.nextfreeBref = 0;
-    if (stack.nextfreeBref >= leaves->allocatedUint) {
+    stack.allocatedBref = stack.nxtfreeBref = 0;
+    if (stack.nxtfreeBref >= leaves->allocatedUint) {
         stack.allocatedBref += 256;
         stack.spaceBref =
             realloc(leaves->spaceUint, sizeof(Uint) * leaves->allocatedUint);
     }
-    stack.spaceBref[stack.nextfreeBref++] = currentnode.address;
+    stack.spaceBref[stack.nxtfreeBref++] = currentnode.address;
     SETCURRENT(CHILD(currentnode.address));
 
         while(True)
@@ -80,32 +80,32 @@ Sint stree_dfs(STree *st, Reference *start,
                     currentnode.toleaf = False;
                 } else {
                     SETCURRENT(brotherval);     // current comes from brother
-                    lcpnode = stack.spaceBref[stack.nextfreeBref-1];
+                    lcpnode = stack.spaceBref[stack.nxtfreeBref-1];
                 }
             } else {
                 if(readyforpop) {
-                    if(stack.nextfreeBref == UintConst(1)) {
+                    if(stack.nxtfreeBref == UintConst(1)) {
                         // IS root?
                         break;
                     }
-                    (stack.nextfreeBref)--;
-                    brotherval = SIBLING(stack.spaceBref[stack.nextfreeBref]);
+                    (stack.nxtfreeBref)--;
+                    brotherval = SIBLING(stack.spaceBref[stack.nxtfreeBref]);
                     if(!IS_NOTHING(brotherval))
                     {
                         SETCURRENT(brotherval);    // current comes from brother
-                        lcpnode = stack.spaceBref[stack.nextfreeBref-1];
+                        lcpnode = stack.spaceBref[stack.nxtfreeBref-1];
                         readyforpop = False;
                     }
                 } else {
                     if(godown) {
                         stack.spaceBref = NULL;
-                        stack.allocatedBref = stack.nextfreeBref = 0;
-                        if (stack.nextfreeBref >= leaves->allocatedUint) {
+                        stack.allocatedBref = stack.nxtfreeBref = 0;
+                        if (stack.nxtfreeBref >= leaves->allocatedUint) {
                             stack.allocatedBref += 256;
                             stack.spaceBref =
                                 realloc(leaves->spaceUint, sizeof(Uint) * leaves->allocatedUint);
                         }
-                        stack.spaceBref[stack.nextfreeBref++] = currentnode.address;
+                        stack.spaceBref[stack.nxtfreeBref++] = currentnode.address;
                         child = CHILD(currentnode.address);
                         SETCURRENT(child);    // current comes from child
                     } else {
@@ -127,13 +127,13 @@ static Sint insertinleaflist(Uint leafindex, ArrayUint *leaves)
 {
     n_leaves++;
     /* fprintf(stderr,"insertinleaflist %lu\n",(Uint) leafindex); */
-    if (leaves->nextfreeUint >= leaves->allocatedUint) {
+    if (leaves->nxtfreeUint >= leaves->allocatedUint) {
         leaves->allocatedUint += 256;
         leaves->spaceUint =
             realloc(leaves->spaceUint, sizeof(Uint) * leaves->allocatedUint);
     }
     /* CHECKARRAYSPACE(leaves, Uint, 256); */
-    leaves->spaceUint[leaves->nextfreeUint++] = leafindex;
+    leaves->spaceUint[leaves->nxtfreeUint++] = leafindex;
 
     return 0;
 }

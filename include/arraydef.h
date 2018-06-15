@@ -16,12 +16,12 @@ typedef Uint *Bref;
 
 typedef struct {
     Bref *spaceBref;
-    Uint allocatedBref, nextfreeBref;
+    Uint allocatedBref, nxtfreeBref;
 } ArrayBref;
 
 typedef struct {
     Uint *spaceUint;
-    Uint allocatedUint, nextfreeUint;
+    Uint allocatedUint, nxtfreeUint;
 } ArrayUint;
 
 #endif

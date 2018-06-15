@@ -16,7 +16,7 @@ Text text;
 
 void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
 {
-    loc->next          = vertexp;
+    loc->nxt          = vertexp;
     loc->string.start  = head;
     loc->string.length = depth;
     loc->remain        = 0;
@@ -24,26 +24,26 @@ void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
 }
 
 
-void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *first)
+void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *fst)
 {
     loc->string.start  = leafnum;
     loc->string.length = plen;
-    loc->prev          = st->inner.first;
+    loc->prev          = st->is.fst;
     loc->edgelen       = text.len - leafnum + 1;
     loc->remain        = loc->edgelen - plen;
-    loc->next          = st->leaves.first + leafnum;
-    loc->first         = first;
+    loc->nxt          = st->ls.fst + leafnum;
+    loc->fst         = fst;
 }
 
 
 
-void update_loc(Uint *next, Uint start, Uint plen, Wchar *first, Uint depth, Uint edgelen, Loc *loc)
+void update_loc(Uint *nxt, Uint start, Uint plen, Wchar *fst, Uint depth, Uint edgelen, Loc *loc)
 {
     loc->string.start  = start;
     loc->string.length = depth + plen;
-    loc->prev          = loc->next;
+    loc->prev          = loc->nxt;
     loc->edgelen       = edgelen;
     loc->remain        = loc->edgelen - plen;
-    loc->first         = first;
-    loc->next          = next;
+    loc->fst         = fst;
+    loc->nxt          = nxt;
 }

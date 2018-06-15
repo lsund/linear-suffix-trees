@@ -6,7 +6,7 @@
 #include "basedef.h"
 #include "externs.h"
 
-// Find  the location of the current head by only looking at the first
+// Find  the location of the current head by only looking at the fst
 // character of each edge.
 void skip_count(STree *st);
 

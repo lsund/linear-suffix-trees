@@ -95,7 +95,7 @@ Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
     {
         Uint j;
 
-        /* Allocate space for the next line */
+        /* Allocate space for the nxt line */
         words[i] = (Wchar *) malloc(max_line_len * sizeof(Wchar));
 
         if (words[i] == NULL) {

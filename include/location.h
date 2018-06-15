@@ -9,15 +9,15 @@ typedef struct
 {
     String string;           // string represented by location
     Uint *prev;              // reference to previous node (which is branching)
-    Wchar *first;            // first character
+    Wchar *fst;            // fst character
     Uint edgelen;            // length of edge
     Uint remain;             // number of remaining characters on edge
-    Uint *next;              // reference to node the edge points to
+    Uint *nxt;              // reference to node the edge points to
     Bool leafedge;           // Is the location on a leafedge
 } Loc;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to
-// u in `next`. Moreover, we store a position where u starts and its length
+// u in `nxt`. Moreover, we store a position where u starts and its length
 // in `string`. If the location is of form (u, v, w, uvw), then the
 // components of the location satisfies the following values:
 //
@@ -27,7 +27,7 @@ typedef struct
 //
 // 4. remain = |w|
 //
-// 5. next is a reference to uvw
+// 5. nxt is a reference to uvw
 //
 // Since w is not empty, a location is a node location iff remain = 0.
 
@@ -36,8 +36,8 @@ typedef struct
 
 void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc);
 
-void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *first);
+void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *fst);
 
-void update_loc(Uint *next, Uint start, Uint plen, Wchar *first, Uint depth, Uint edgelen, Loc *loc);
+void update_loc(Uint *nxt, Uint start, Uint plen, Wchar *fst, Uint depth, Uint edgelen, Loc *loc);
 
 #endif

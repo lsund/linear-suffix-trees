@@ -34,12 +34,12 @@ static void insert_leafedge(STree *st)
 
 static void append_chain(STree *st)
 {
-    if (!st->chain.first) {
+    if (!st->chain.fst) {
         init_chain(st);
     }
     st->chain.size     += 1;
-    st->inner.next     += SMALL_VERTEXSIZE;
-    st->inner.next_ind += SMALL_VERTEXSIZE;
+    st->is.nxt     += SMALL_VERTEXSIZE;
+    st->is.nxt_ind += SMALL_VERTEXSIZE;
 }
 
 static Bool label_empty(Label label)
@@ -63,7 +63,7 @@ static void find_base(STree *st)
     }
 }
 
-static void find_next_head(STree * st) {
+static void find_nxt_head(STree * st) {
     if(HEAD_IS_ROOT && base_is_vertex(st)) {
         st->tail++;
         scan_tail(st);
@@ -91,7 +91,7 @@ void construct(STree *st)
 {
     init(st);
     while(!IS_SENTINEL(st->tail)) {
-        find_next_head(st);
+        find_nxt_head(st);
         insert_leafedge(st);
     }
 }

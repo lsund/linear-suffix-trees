@@ -13,9 +13,9 @@ typedef Uint Vertex;
 typedef Uint *VertexP;
 
 typedef struct table {
-    Uint *first;
-    Uint *next;
-    Uint next_ind;
+    Uint *fst;
+    Uint *nxt;
+    Uint nxt_ind;
     Uint size;
 } Table;
 
@@ -29,7 +29,7 @@ typedef struct text {
 
 
 typedef struct chain {
-    VertexP first;
+    VertexP fst;
     Uint size;
 } Chain;
 
@@ -37,7 +37,7 @@ typedef struct chain {
 // The edge that contains the end of head
 //
 // The right component of the head location uv.
-// head.label.start refers to the first character of v
+// head.label.start refers to the fst character of v
 // headend to the last character. In case, v = empty
 // headend = null
 // \(\emph{headend}=\emph{NULL}\).
@@ -64,8 +64,8 @@ typedef struct splitvertex {
 typedef struct suffixtree {
 
     Uint *rootchildren;         // references to successors of root
-    Table inner;
-    Table leaves;
+    Table is;
+    Table ls;
 
     Uint current_branchdepth;          // depth of the new branch node
 
