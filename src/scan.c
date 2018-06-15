@@ -63,12 +63,12 @@ static void find_last_successor(STree *stree, Vertex *prev_p, Vertex vertex)
 }
 
 
-static void update_stree(STree *stree, Wchar *label_start, Uint plen, Uint scanprobe_val, Uint prev)
+static void update_stree(STree *stree, Wchar *label_start, Uint plen, Uint current_vertex, Uint prev)
 {
     stree->head.label.start = label_start;
     stree->head.label.end = label_start + (plen-1);
-    stree->split_vertex = scanprobe_val;
-    stree->insertprev = prev;
+    stree->splitvertex.origin = current_vertex;
+    stree->splitvertex.left_sibling = prev;
 }
 
 
@@ -263,7 +263,7 @@ void scan_tail(STree *stree)
     Uint leafindex;
     Uint depth;
     Uint edgelen;
-    Vertex scanprobe_val;
+    Vertex current_vertex;
     Uint distance = 0;
     Uint prev;
     Uint plen;
@@ -281,28 +281,28 @@ void scan_tail(STree *stree)
         }
 
         firstchar = *(stree->tail);
-        scanprobe_val = ROOT_CHILD(firstchar);
-        if(scanprobe_val == UNDEF) {
+        current_vertex = ROOT_CHILD(firstchar);
+        if(current_vertex == UNDEF) {
             stree->head.label.end = NULL;
             return;
         }
 
         // successor edge is leaf, compare tail and leaf edge label
-        if(IS_LEAF(scanprobe_val)) {
+        if(IS_LEAF(current_vertex)) {
 
-            Pattern edgepatt = make_patt(text + LEAF_INDEX(scanprobe_val) + 1, sentinel - 1);
+            Pattern edgepatt = make_patt(text + LEAF_INDEX(current_vertex) + 1, sentinel - 1);
             Pattern tailpatt = make_patt(stree->tail + 1, sentinel - 1);
             plen = 1 + lcp(edgepatt, tailpatt);
 
             stree->tail += plen;
             stree->head.label.start  = edgepatt.start - 1;
             stree->head.label.end    = edgepatt.start - 1 + (plen-1);
-            stree->split_vertex = scanprobe_val;
+            stree->splitvertex.origin = current_vertex;
 
             return;
         }
 
-        scanprobe = INNER(scanprobe_val);
+        scanprobe = INNER(current_vertex);
 
         update_chain(stree, scanprobe, &chainend, &distance);
         head = get_headpos(stree, scanprobe, &chainend, distance);
@@ -315,7 +315,7 @@ void scan_tail(STree *stree)
         if(depth > plen) {
 
             // cannot reach the successor, fall out of tree
-            stree->split_vertex     = scanprobe_val;
+            stree->splitvertex.origin     = current_vertex;
             stree->head.label.start = label_start;
             stree->head.label.end   = label_start + (plen - 1);
             return;
@@ -327,24 +327,24 @@ void scan_tail(STree *stree)
     // Head is not the root
     while(True) {
         prev = UNDEF;
-        scanprobe_val = CHILD(stree->head.origin);
+        current_vertex = CHILD(stree->head.origin);
         firstchar = *(stree->tail);
 
         do {
             // find successor edge with firstchar = firstchar
-            if(IS_LEAF(scanprobe_val)) {
+            if(IS_LEAF(current_vertex)) {
 
-                leafindex = LEAF_INDEX(scanprobe_val);
+                leafindex = LEAF_INDEX(current_vertex);
                 labelchar = get_label(stree, leafindex, &label_start);
 
                 if(labelchar >= firstchar) break;
 
-                prev          = scanprobe_val;
-                scanprobe_val = LEAF_SIBLING(stree->leaves.first + leafindex);
+                prev          = current_vertex;
+                current_vertex = LEAF_SIBLING(stree->leaves.first + leafindex);
 
             } else {
 
-                scanprobe   = INNER(scanprobe_val);
+                scanprobe   = INNER(current_vertex);
                 update_chain(stree, scanprobe, &chainend, &distance);
 
                 head      = get_headpos(stree, scanprobe, &chainend, distance);
@@ -352,23 +352,23 @@ void scan_tail(STree *stree)
 
                 if (labelchar >= firstchar) break;
 
-                prev          = scanprobe_val;
-                scanprobe_val = SIBLING(scanprobe);
+                prev          = current_vertex;
+                current_vertex = SIBLING(scanprobe);
             }
-        } while(IS_SOMETHING(scanprobe_val));
+        } while(IS_SOMETHING(current_vertex));
 
-        if(IS_NOTHING(scanprobe_val) || labelchar > firstchar) {
+        if(IS_NOTHING(current_vertex) || labelchar > firstchar) {
             // edge not found
             // new edge will become brother of this
-            stree->insertprev = prev;
+            stree->splitvertex.left_sibling = prev;
             stree->head.label.end = NULL;
             return;
         }
 
-        if(IS_LEAF(scanprobe_val)) {
+        if(IS_LEAF(current_vertex)) {
             plen = tail_prefixlen(stree, label_start + 1, sentinel - 1);
             (stree->tail) += plen;
-            update_stree(stree, label_start, plen, scanprobe_val, prev);
+            update_stree(stree, label_start, plen, current_vertex, prev);
             return;
         }
 
@@ -379,7 +379,7 @@ void scan_tail(STree *stree)
 
         // cannot reach next node
         if(edgelen > plen) {
-            update_stree(stree, label_start, plen, scanprobe_val, prev);
+            update_stree(stree, label_start, plen, current_vertex, prev);
             return;
         }
 

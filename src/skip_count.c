@@ -16,7 +16,7 @@ void skip_count(STree *stree)
         Uint rootchild = stree->rootchildren[(Uint) firstchar];
 
         if(IS_LEAF(rootchild)) {
-            stree->split_vertex = rootchild;
+            stree->splitvertex.origin = rootchild;
             return;
 
         } else {
@@ -29,7 +29,7 @@ void skip_count(STree *stree)
 
             if(depth > wlen) {
                 // cannot reach the successor node
-                stree->split_vertex = rootchild;
+                stree->splitvertex.origin = rootchild;
                 return;
             } else {
                 // Go to successor vertex
@@ -62,8 +62,8 @@ void skip_count(STree *stree)
 
                 if(edgechar == firstchar) {
                     // correct edge found
-                    stree->split_vertex = headchild;
-                    stree->insertprev = prevnode;
+                    stree->splitvertex.origin = headchild;
+                    stree->splitvertex.left_sibling = prevnode;
                     return;
                 }
 
@@ -92,8 +92,8 @@ void skip_count(STree *stree)
         Uint wlen = (stree->head.label.end - stree->head.label.start + 1);
         if(edgelen > wlen) {
             // cannot reach the succ node
-            stree->split_vertex = headchild;
-            stree->insertprev = prevnode;
+            stree->splitvertex.origin = headchild;
+            stree->splitvertex.left_sibling = prevnode;
             return;
         }
         // go to the successor node

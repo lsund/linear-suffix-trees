@@ -42,10 +42,6 @@ void set_chain_distances(STree *stree);
 
 void init_chain(STree *stree);
 
-// Construct the successor chain for the children of the root. This is done of
-// the end of the algorithm in one sweep.
-void linkrootchildren(STree *stree);
-
 void freestree(STree *stree);
 
 

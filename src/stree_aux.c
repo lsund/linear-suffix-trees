@@ -58,7 +58,7 @@ Uint get_headpos(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
 Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
 {
     if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
-        return stree->currentdepth  + distance;
+        return stree->current_branchdepth  + distance;
     } else {
         if(IS_LARGE(*vertexp)) {
             return DEPTH(vertexp);

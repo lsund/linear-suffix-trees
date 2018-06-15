@@ -45,23 +45,23 @@ void insert(STree *stree)
     }
 
     else {
-        if (IS_LEFTMOST(stree->insertprev)) {
+        if (IS_LEFTMOST(stree->splitvertex.left_sibling)) {
 
             *stree->leaves.next = CHILD(stree->head.origin);
             SET_CHILD(stree->head.origin, leaf);
 
         } else {
-            if (IS_LEAF(stree->insertprev)) {
+            if (IS_LEAF(stree->splitvertex.left_sibling)) {
 
                 // Previous node is leaf
-                Uint *prev = LEAF(stree->insertprev);
+                Uint *prev = LEAF(stree->splitvertex.left_sibling);
                 *stree->leaves.next = LEAF_SIBLING(prev);
 
                 LEAF_SIBLING(prev) = leaf;
 
             } else {
                 // previous node is branching node
-                Uint *prev = INNER(stree->insertprev);
+                Uint *prev = INNER(stree->splitvertex.left_sibling);
                 *stree->leaves.next = SIBLING(prev);
                 SIBLING(prev) = leaf;
             }
@@ -74,77 +74,79 @@ void insert(STree *stree)
 
 void split_and_insert(STree *stree)
 {
-    Uint *insertnodeptr, *insertleafptr, insertnodeptrbrother;
+    Uint *inserted, insert_sibling;
 
     allocate_inner_vertices(stree);
+
     if(head_label_depth(stree) == 0) {
 
         SET_ROOTCHILD(*stree->head.label.start, stree->inner.next_ind);
         *(stree->inner.next + 1) = 0;
 
-    } else if (IS_LEFTMOST(stree->insertprev)) {
+    } else if (IS_LEFTMOST(stree->splitvertex.left_sibling)) {
         // new branch = first child
         SET_CHILD(stree->head.origin, stree->inner.next_ind);
     } else {
         // new branch = right brother of leaf
-        if(IS_LEAF(stree->insertprev)) {
-            Uint *ptr = LEAF(stree->insertprev);
+        if(IS_LEAF(stree->splitvertex.left_sibling)) {
+            Uint *ptr = LEAF(stree->splitvertex.left_sibling);
             LEAF_SIBLING(ptr) = stree->inner.next_ind;
         } else {
-            SIBLING(INNER(stree->insertprev)) = stree->inner.next_ind;
+            SIBLING(INNER(stree->splitvertex.left_sibling)) = stree->inner.next_ind;
         }
     }
-    if(IS_LEAF(stree->split_vertex)) {
+    if(IS_LEAF(stree->splitvertex.origin)) {
         // split edge is leaf edge
-        insertleafptr = LEAF(stree->split_vertex);
-        if (stree->tail == sentinel ||
+        inserted = LEAF(stree->splitvertex.origin);
+        if (IS_SENTINEL(stree->tail) ||
                 *(stree->head.label.end + 1) < *(stree->tail))
         {
             // first child =oldleaf
             // inherit brother
-            SET_CHILD(stree->inner.next, stree->split_vertex);
-            SIBLING(stree->inner.next) = *insertleafptr;
+            SET_CHILD(stree->inner.next, stree->splitvertex.origin);
+            SIBLING(stree->inner.next) = *inserted;
             // Recall new leaf address
             *stree->leaves.next = NOTHING;
-            LEAF_SIBLING(insertleafptr) = WITH_LEAFBIT(stree->leaves.next_ind);
+            LEAF_SIBLING(inserted) = WITH_LEAFBIT(stree->leaves.next_ind);
         } else
         {
             // First child = new leaf
             // inherit brother
             SET_CHILD(stree->inner.next, WITH_LEAFBIT(stree->leaves.next_ind));
-            SIBLING(stree->inner.next) = *insertleafptr;
-            *(stree->leaves.next) = stree->split_vertex;  // old leaf = right brother of of new leaf
+            SIBLING(stree->inner.next) = *inserted;
+            *(stree->leaves.next) = stree->splitvertex.origin;  // old leaf = right brother of of new leaf
             // Recall leaf address
-            *insertleafptr = NOTHING;
+            *inserted = NOTHING;
         }
     } else {
         // split edge leads to branching node
-        insertnodeptr = INNER(stree->split_vertex);
-        insertnodeptrbrother = SIBLING(insertnodeptr);
+        inserted = INNER(stree->splitvertex.origin);
+        insert_sibling = SIBLING(inserted);
         if (stree->tail == sentinel ||
                 *(stree->head.label.end+1) < *(stree->tail))
         {
             // First child is new branch
             // inherit brother
-            SET_CHILD(stree->inner.next, stree->split_vertex);
-            SIBLING(stree->inner.next) = insertnodeptrbrother;
+            SET_CHILD(stree->inner.next, stree->splitvertex.origin);
+            SIBLING(stree->inner.next) = insert_sibling;
             // Recall new leaf address
             *stree->leaves.next = NOTHING;
             // new leaf = brother of old branch
-            SIBLING(insertnodeptr) = WITH_LEAFBIT(stree->leaves.next_ind);
+            SIBLING(inserted) = WITH_LEAFBIT(stree->leaves.next_ind);
         } else
         {
             // First child is new leaf
             // Inherit brother
             SET_CHILD(stree->inner.next, WITH_LEAFBIT(stree->leaves.next_ind));
-            SIBLING(stree->inner.next) = insertnodeptrbrother;
-            *(stree->leaves.next) = stree->split_vertex;   // new branch is brother of new leaf
-            *(insertnodeptr + 1) = NOTHING;
+            SIBLING(stree->inner.next) = insert_sibling;
+            *(stree->leaves.next) = stree->splitvertex.origin;   // new branch is brother of new leaf
+            *(inserted + 1) = NOTHING;
         }
     }
-    stree->currentdepth = stree->head.depth + (Uint) (stree->head.label.end - stree->head.label.start+1);
-    DEPTH(stree->inner.next) = stree->currentdepth;
-    HEADPOS(stree->inner.next) =stree->leaves.next_ind;
+    Uint headlabel_length      = (stree->head.label.end - stree->head.label.start + 1);
+    stree->current_branchdepth = stree->head.depth + headlabel_length;
+    DEPTH(stree->inner.next)   = stree->current_branchdepth;
+    HEADPOS(stree->inner.next) = stree->leaves.next_ind;
     stree->leaves.next_ind++;
     stree->leaves.next++;
 }

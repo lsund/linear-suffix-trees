@@ -45,42 +45,6 @@ void set_chain_distances(STree *stree)
     stree->inner.next_ind += LARGE_VERTEXSIZE;
 }
 
-void linkrootchildren(STree *stree)
-{
-    Uint *rcptr, *prevnodeptr, prev = UNDEF;
-
-    alphasize = 0;
-    for(rcptr = stree->rootchildren;
-            rcptr <= stree->rootchildren + MAX_CHARS; rcptr++)
-    {
-        if(*rcptr != UNDEF)
-        {
-            alphasize++;
-            if(prev == UNDEF)
-            {
-                SET_CHILD(stree->inner.first, *rcptr);
-            } else
-            {
-                if (IS_LEAF(prev)) {
-                    stree->leaves.first[LEAF_INDEX(prev)] = *rcptr;
-                } else {
-                    prevnodeptr = INNER(prev);
-                    SIBLING(prevnodeptr) = *rcptr;
-                }
-            }
-            prev = *rcptr;
-        }
-    }
-    if(IS_LEAF(prev)) {
-        stree->leaves.first[LEAF_INDEX(prev)] = WITH_LEAFBIT(textlen);
-    } else {
-        prevnodeptr = INNER(prev);
-        SIBLING(prevnodeptr) = WITH_LEAFBIT(textlen);
-    }
-    stree->leaves.first[textlen] = NOTHING;
-}
-
-
 void init(STree *stree)
 {
     Uint i;
@@ -124,8 +88,8 @@ void init(STree *stree)
     stree->leaves.next                = stree->leaves.first + LEAF_VERTEXSIZE;
     stree->inner.next                 = stree->inner.first + LARGE_VERTEXSIZE;
     stree->inner.next_ind             = LARGE_VERTEXSIZE;
-    stree->split_vertex               = UNDEF;
-    stree->insertprev                 = UNDEF;
+    stree->splitvertex.origin               = UNDEF;
+    stree->splitvertex.left_sibling                 = UNDEF;
     stree->chain.size               = 0;
     stree->chain.first                 = NULL;
 

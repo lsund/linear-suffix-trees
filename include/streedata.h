@@ -55,15 +55,21 @@ typedef struct head {
 } Head;
 
 
+typedef struct splitvertex {
+    Vertex origin;
+    Vertex left_sibling;
+} SplitVertex;
+
+
 typedef struct suffixtree {
 
     Uint *rootchildren;         // references to successors of root
     Table inner;
     Table leaves;
 
-    Uint split_vertex;          // the node the split edge leads to
-    Uint insertprev;            // the edge preceeding the split edge
-    Uint currentdepth;          // depth of the new branch node
+    Uint current_branchdepth;          // depth of the new branch node
+
+    SplitVertex splitvertex;
 
     Chain chain;                // address of the node current chains starts at
 

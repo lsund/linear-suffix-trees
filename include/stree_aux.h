@@ -49,8 +49,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices
 
-#define ROOT                (stree->inner.first)
-#define ROOT_CHILD(C)       (stree->rootchildren[(Uint) (C)])
+#define ROOT                    (stree->inner.first)
+#define ROOT_CHILD(C)           (stree->rootchildren[(Uint) (C)])
 // Index of a reference
 #define REF_TO_INDEX(P)         ((Uint) ((P) - ROOT))
 #define LEAFREF_TO_INDEX(ST,A)  ((Uint) ((A) - (ST)->leaves.first))
