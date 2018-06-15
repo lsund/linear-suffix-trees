@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "streedata.h"
+#include "spaceman.h"
 #include "stree_aux.h"
 #include "basedef.h"
 #include "externs.h"

@@ -19,7 +19,6 @@
 #include <stdbool.h>
 
 #include "basedef.h"
-#include "spaceman.h"
 #include "clock.h"
 #include "externs.h"
 #include "types.h"

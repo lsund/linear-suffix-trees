@@ -2,37 +2,6 @@
 
 Wchar *sentinel;
 
-static Uint *new_allocbound(STree *stree)
-{
-    return stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
-}
-
-// Allocate space for branch vertices
-static void allocate_inner_vertices(STree *stree)
-{
-    if(IS_NO_SPACE) {
-
-        stree->inner.size += EXTRA_ALLOCSIZE;
-
-        Uint chain;
-        if(stree->chain.first != NULL) {
-            chain = REF_TO_INDEX(stree->chain.first);
-        }
-
-        Uint head = REF_TO_INDEX(stree->head.origin);
-        Uint size = stree->inner.size;
-
-        stree->inner.first = realloc(stree->inner.first, sizeof(Uint) * size);
-        stree->inner.next  = next_inner(stree);
-        stree->head.origin = stree->inner.first + head;
-
-        if(stree->chain.first != NULL) {
-            stree->chain.first = stree->inner.first + chain;
-        }
-        stree->allocated = new_allocbound(stree);
-    }
-}
-
 void insert(STree *stree)
 {
     Uint leaf = MAKE_LEAF(stree->leaves.next_ind);

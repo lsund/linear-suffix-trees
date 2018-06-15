@@ -15,7 +15,7 @@ CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
 OBJ=         obj/stree.o\
 			 obj/dfs.o\
              obj/naive_search.o\
-             obj/space.o\
+             obj/spaceman.o\
              obj/io.o\
              obj/skip_count.o\
 			 obj/init.o\

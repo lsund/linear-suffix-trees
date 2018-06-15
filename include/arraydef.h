@@ -11,7 +11,6 @@
 
 
 #include "types.h"
-#include "spaceman.h"
 
 typedef Uint *Bref;
 

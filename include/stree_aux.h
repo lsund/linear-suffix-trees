@@ -43,7 +43,6 @@
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (stree->inner.first == V)
 #define IS_UNDEF(V)                 ((V) == UNDEF)
-#define IS_NO_SPACE                 (stree->inner.next >= stree->allocated)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 
 #define HEAD_IS_ROOT                (stree->head.depth == 0)
