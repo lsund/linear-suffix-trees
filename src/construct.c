@@ -49,7 +49,7 @@ static Bool label_empty(Label label)
 
 static void find_base(STree *st)
 {
-    if (HEAD_IS_ROOT) {
+    if (head_is_root(st)) {
         if (label_empty(st->head.label)) {
             st->head.label.end = NULL;
         } else {
@@ -64,7 +64,7 @@ static void find_base(STree *st)
 }
 
 static void find_nxt_head(STree * st) {
-    if(HEAD_IS_ROOT && base_is_vertex(st)) {
+    if(head_is_root(st) && base_is_vertex(st)) {
         st->tail++;
         scan_tail(st);
     } else {

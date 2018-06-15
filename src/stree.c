@@ -14,25 +14,31 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen, alphasize;
 
-VertexP get_nxt_inner(STree *st)
+
+Bool head_is_root(STree *st)
+{
+    return st->head.depth == 0;
+}
+
+VertexP get_next_inner(STree *st)
 {
     return st->is.fst + st->is.nxt_ind;
 }
 
 
-VertexP get_nxt_leaf(STree *st)
+VertexP get_next_leaf(STree *st)
 {
     return st->ls.fst + st->ls.nxt_ind;
 }
 
 
-Uint get_nxt_leafnum(STree *st)
+Uint get_next_leafnum(STree *st)
 {
     return st->ls.nxt_ind | LEAFBIT;
 }
 
 
-void set_nxt_leaf(STree *st, Vertex v)
+void set_next_leaf(STree *st, Vertex v)
 {
     *st->ls.nxt = v;
 }

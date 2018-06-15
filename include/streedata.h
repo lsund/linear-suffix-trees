@@ -51,7 +51,7 @@ typedef struct label {
 typedef struct head {
     Label label;
     Uint depth;
-    VertexP origin;  // the vertex u
+    VertexP vertex;  // the vertex u
 } Head;
 
 

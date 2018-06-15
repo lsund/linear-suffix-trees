@@ -10,7 +10,7 @@ void skip_count(STree *st)
     VertexP chainend = NULL;
     Uint distance = 0;
 
-    if(HEAD_IS_ROOT) {
+    if(head_is_root(st)) {
 
         fstchar = *(st->head.label.start);
         Uint rootchild = st->rootchildren[(Uint) fstchar];
@@ -33,7 +33,7 @@ void skip_count(STree *st)
                 return;
             } else {
                 // Go to successor vertex
-                st->head.origin = vertex;
+                st->head.vertex = vertex;
                 st->head.depth = depth;
             }
 
@@ -51,7 +51,7 @@ void skip_count(STree *st)
 
         fstchar = *(st->head.label.start);
         prevnode = UNDEF;
-        Vertex headchild = CHILD(st->head.origin);
+        Vertex headchild = CHILD(st->head.vertex);
 
         // traverse the list of successors
         while(True) {
@@ -97,7 +97,7 @@ void skip_count(STree *st)
             return;
         }
         // go to the successor node
-        st->head.origin = vertex;
+        st->head.vertex = vertex;
         st->head.depth = depth;
         if(edgelen == wlen) {
             // location is found

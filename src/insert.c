@@ -4,9 +4,9 @@ Wchar *sentinel;
 
 void insert(STree *st)
 {
-    Uint leaf = get_nxt_leafnum(st);
+    Uint leaf = get_next_leafnum(st);
 
-    if (HEAD_IS_ROOT) {
+    if (head_is_root(st)) {
 
         if (!IS_SENTINEL(st->tail)) {
             SET_ROOTCHILD(*(st->tail), leaf);
@@ -17,9 +17,9 @@ void insert(STree *st)
 
         if (IS_UNDEF(st->splitvertex.left_sibling)) {
 
-            set_nxt_leaf(st, CHILD(st->head.origin));
+            set_next_leaf(st, CHILD(st->head.vertex));
 
-            SET_CHILD(st->head.origin, leaf);
+            SET_CHILD(st->head.vertex, leaf);
 
         } else {
 
@@ -48,14 +48,14 @@ void split_and_insert(STree *st)
 
     allocate_inner_vertices(st);
 
-    if(HEAD_IS_ROOT) {
+    if(head_is_root(st)) {
 
         SET_ROOTCHILD(*st->head.label.start, st->is.nxt_ind);
         *(st->is.nxt + 1) = 0;
 
     } else if (IS_LEFTMOST(st->splitvertex.left_sibling)) {
         // new branch = fst child
-        SET_CHILD(st->head.origin, st->is.nxt_ind);
+        SET_CHILD(st->head.vertex, st->is.nxt_ind);
     } else {
         // new branch = right brother of leaf
         if(IS_LEAF(st->splitvertex.left_sibling)) {
@@ -77,12 +77,12 @@ void split_and_insert(STree *st)
             SIBLING(st->is.nxt) = *inserted;
             // Recall new leaf address
             *st->ls.nxt = NOTHING;
-            LEAF_SIBLING(inserted) = get_nxt_leafnum(st);
+            LEAF_SIBLING(inserted) = get_next_leafnum(st);
         } else
         {
             // First child = new leaf
             // inherit brother
-            SET_CHILD(st->is.nxt, get_nxt_leafnum(st));
+            SET_CHILD(st->is.nxt, get_next_leafnum(st));
             SIBLING(st->is.nxt) = *inserted;
             *(st->ls.nxt) = st->splitvertex.origin;  // old leaf = right brother of of new leaf
             // Recall leaf address

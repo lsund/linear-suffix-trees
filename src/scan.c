@@ -272,7 +272,7 @@ void scan_tail(STree *st)
     Wchar fstchar;
     Wchar labelchar = 0;
 
-    if(HEAD_IS_ROOT) {
+    if(head_is_root(st)) {
 
         // There is no sentinel
         if(IS_SENTINEL(st->tail)) {
@@ -320,7 +320,7 @@ void scan_tail(STree *st)
             st->head.label.end   = label_start + (plen - 1);
             return;
         }
-        st->head.origin = current_vertexp;
+        st->head.vertex = current_vertexp;
         st->head.depth = depth;
     }
 
@@ -328,7 +328,7 @@ void scan_tail(STree *st)
     while(True) {
 
         prev = UNDEF;
-        current_vertex = CHILD(st->head.origin);
+        current_vertex = CHILD(st->head.vertex);
         fstchar = *(st->tail);
 
         do {
@@ -390,7 +390,7 @@ void scan_tail(STree *st)
             return;
         }
 
-        st->head.origin = current_vertexp;
+        st->head.vertex = current_vertexp;
         st->head.depth = depth;
     }
 }

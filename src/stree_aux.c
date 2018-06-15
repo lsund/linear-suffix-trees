@@ -69,16 +69,16 @@ static Uint* suffix_link(STree *st)
     if(st->head.depth == 1) {
         return fst;
     } else {
-        return fst + SUFFIX_LINK(st->head.origin);
+        return fst + SUFFIX_LINK(st->head.vertex);
     }
 }
 
 void follow_link(STree *st)
 {
-    if(IS_LARGE(*st->head.origin)) {
-        st->head.origin = suffix_link(st);
+    if(IS_LARGE(*st->head.vertex)) {
+        st->head.vertex = suffix_link(st);
     } else {
-        st->head.origin += SMALL_VERTEXSIZE;
+        st->head.vertex += SMALL_VERTEXSIZE;
     }
     st->head.depth--;
 }

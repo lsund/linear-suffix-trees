@@ -45,8 +45,6 @@
 #define IS_UNDEF(V)                 ((V) == UNDEF)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 
-#define HEAD_IS_ROOT                (st->head.depth == 0)
-
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices
 
