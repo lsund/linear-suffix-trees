@@ -24,14 +24,14 @@ void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
 }
 
 
-void make_loc(STree *stree, Uint leafnum, Uint plen, Loc *loc, Wchar *first)
+void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *first)
 {
     loc->string.start  = leafnum;
     loc->string.length = plen;
-    loc->prev          = stree->inner.first;
+    loc->prev          = st->inner.first;
     loc->edgelen       = text.len - leafnum + 1;
     loc->remain        = loc->edgelen - plen;
-    loc->next          = stree->leaves.first + leafnum;
+    loc->next          = st->leaves.first + leafnum;
     loc->first         = first;
 }
 

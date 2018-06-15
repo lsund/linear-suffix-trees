@@ -15,7 +15,6 @@
 #include "naive_search.h"
 #include "externs.h"
 #include "basedef.h"
-#include "stree.h"
 #include "scan.h"
 #include "stree.h"
 #include "construct.h"

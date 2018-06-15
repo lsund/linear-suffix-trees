@@ -13,13 +13,13 @@ size_t strlenw(Wchar *s)
 Wchar *text;
 Uint textlen, max_codepoint;
 
-static bool search_pattern(STree *stree, Wchar *start, Loc *loc)
+static bool search_pattern(STree *st, Wchar *start, Loc *loc)
 {
     Uint pattlen = strlenw(start);
     Pattern patt;
     patt.start = start;
     patt.end = start + pattlen;
-    Wchar *rem = scan(stree, loc, ROOT, patt);
+    Wchar *rem = scan(st, loc, ROOT, patt);
     return !rem || rem[0] == 0;
 }
 
@@ -35,8 +35,8 @@ char *test_count(char *patternfile, char *textfile, Uint count)
     file_to_string(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
-    STree stree;
-    construct(&stree);
+    STree st;
+    construct(&st);
 
     Loc loc;
 
@@ -45,7 +45,7 @@ char *test_count(char *patternfile, char *textfile, Uint count)
 
         Wchar *current_pattern = patterns[j];
 
-        bool exists = search_pattern(&stree, current_pattern, &loc);
+        bool exists = search_pattern(&st, current_pattern, &loc);
 
         exists ? exists_n++ : (void) 0;
     }
@@ -69,8 +69,8 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     file_to_string(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
     int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
-    STree stree;
-    construct(&stree);
+    STree st;
+    construct(&st);
 
     Loc loc;
 
@@ -82,7 +82,7 @@ char *compare_vs_naive(char *patternfile, char *textfile)
 
         Wchar *end = current_pattern + patternlen;
 
-        bool exists = search_pattern(&stree, current_pattern, &loc);
+        bool exists = search_pattern(&st, current_pattern, &loc);
         bool rexists = naive_search(current_pattern, end);
 
         exists ? exists_n++ : (void) 0;
@@ -108,13 +108,13 @@ char *leafcounts(const char *fname)
 {
     setlocale(LC_ALL, "en_US.utf8");
     file_to_string(fname);
-    STree stree;
-    construct(&stree);
+    STree st;
+    construct(&st);
 
     Wchar current_pattern[5] = L"211";
 
     Loc loc;
-    bool exists = search_pattern(&stree, current_pattern, &loc);
+    bool exists = search_pattern(&st, current_pattern, &loc);
     printf("exists: %d\n", exists);
 
     Reference start;
@@ -124,7 +124,7 @@ char *leafcounts(const char *fname)
     stack.spaceUint = NULL;
     stack.allocatedUint = stack.nextfreeUint = 0;
 
-    makeleaflist(&stree, &stack, &start);
+    makeleaflist(&st, &stack, &start);
 
     return NULL;
 }

@@ -22,7 +22,7 @@ typedef struct
 
 typedef struct
 {
-    STree *stree;                      // suffix tree info
+    STree *st;                      // suffix tree info
     ArrayUint countstack;
 } Countstate;
 
@@ -35,7 +35,7 @@ typedef struct
 #define SETCURRENT(V)\
     if(IS_LEAF(V))\
 {\
-    currentnode.address = stree->leaves.first + LEAF_INDEX(V);\
+    currentnode.address = st->leaves.first + LEAF_INDEX(V);\
     currentnode.toleaf = True;\
 } else\
 {\
@@ -43,7 +43,7 @@ typedef struct
     currentnode.toleaf = False;\
 }
 
-Sint stree_dfs(STree *stree, Reference *start,
+Sint stree_dfs(STree *st, Reference *start,
         Sint (*processleaf) (Uint, ArrayUint *), ArrayUint *leaves)
 {
     Bool godown = True, readyforpop = False;
@@ -54,7 +54,7 @@ Sint stree_dfs(STree *stree, Reference *start,
 
     if(start->toleaf)
     {
-        processleaf((Uint) (start->address - stree->leaves.first), leaves);
+        processleaf((Uint) (start->address - st->leaves.first), leaves);
         return 0;
     }
 
@@ -73,7 +73,7 @@ Sint stree_dfs(STree *stree, Reference *start,
         while(True)
         {
             if(currentnode.toleaf) {
-                processleaf(LEAFREF_TO_INDEX(stree,currentnode.address), leaves);
+                processleaf(LEAFREF_TO_INDEX(st,currentnode.address), leaves);
                 brotherval = LEAF_SIBLING(currentnode.address);
                 if(IS_NOTHING(brotherval)) {
                     readyforpop = True;
@@ -138,9 +138,9 @@ static Sint insertinleaflist(Uint leafindex, ArrayUint *leaves)
     return 0;
 }
 
-Sint makeleaflist(STree *stree,ArrayUint *leaves, Reference *start)
+Sint makeleaflist(STree *st,ArrayUint *leaves, Reference *start)
 {
-    if(stree_dfs(stree,start,insertinleaflist, leaves) != 0)
+    if(stree_dfs(st,start,insertinleaflist, leaves) != 0)
     {
         return -1;
     }

@@ -15,7 +15,7 @@
 #include "stree.h"
 
 
-Sint construct(STree *stree);
+Sint construct(STree *st);
 
 
 #endif

@@ -10,9 +10,9 @@
 #include "stree.h"
 
 // Insert a leaf edge from the current base vertex
-void insert(STree *stree);
+void insert(STree *st);
 
 // Insert inner veretx and split appropriate edges
-void split_and_insert(STree *stree);
+void split_and_insert(STree *st);
 
 #endif

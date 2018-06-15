@@ -20,7 +20,7 @@ Uint textlen;
 
 int main(int argc, char *argv[])
 {
-    STree stree;
+    STree st;
 
     if (argc != 2) {
         fprintf(stderr, "Need exactly one argument");
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     fprintf(stdout, "Creating a suffix tree for text of length %lu\n", textlen);
 
-    construct(&stree);
+    construct(&st);
 
     return EXIT_SUCCESS;
 }

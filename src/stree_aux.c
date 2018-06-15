@@ -13,22 +13,22 @@
 Uint textlen;
 
 
-Bool base_is_vertex(STree *stree)
+Bool base_is_vertex(STree *st)
 {
-    return stree->head.label.end == NULL;
+    return st->head.label.end == NULL;
 }
 
 
-Bool is_head_old(STree *stree)
+Bool is_head_old(STree *st)
 {
-    return base_is_vertex(stree);
+    return base_is_vertex(st);
 }
 
 
-void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
+void update_chain(STree *st, Uint *vertexp, Uint **chainend, Uint *distance)
 {
-    if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
-        *distance = 1 + (stree->inner.next - vertexp) / SMALL_VERTEXSIZE;
+    if(st->chain.first != NULL && vertexp >= st->chain.first) {
+        *distance = 1 + (st->inner.next - vertexp) / SMALL_VERTEXSIZE;
     } else {
         if(IS_SMALL(*(vertexp))) {
             *distance = DISTANCE(vertexp);
@@ -37,10 +37,10 @@ void update_chain(STree *stree, Uint *vertexp, Uint **chainend, Uint *distance)
     }
 }
 
-Uint get_headpos(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
+Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
 {
-    if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
-        return stree->leaves.next_ind - distance;
+    if(st->chain.first != NULL && vertexp >= st->chain.first) {
+        return st->leaves.next_ind - distance;
     } else {
         if(IS_LARGE(*(vertexp))) {
             return HEADPOS(vertexp);
@@ -50,10 +50,10 @@ Uint get_headpos(STree *stree, Uint *vertexp, Uint **chainend, Uint distance)
     }
 }
 
-Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
+Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **chainend)
 {
-    if(stree->chain.first != NULL && vertexp >= stree->chain.first) {
-        return stree->current_branchdepth  + distance;
+    if(st->chain.first != NULL && vertexp >= st->chain.first) {
+        return st->current_branchdepth  + distance;
     } else {
         if(IS_LARGE(*vertexp)) {
             return DEPTH(vertexp);
@@ -63,22 +63,22 @@ Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **chainend)
     }
 }
 
-static Uint* suffix_link(STree *stree)
+static Uint* suffix_link(STree *st)
 {
-    Uint *first = stree->inner.first;
-    if(stree->head.depth == 1) {
+    Uint *first = st->inner.first;
+    if(st->head.depth == 1) {
         return first;
     } else {
-        return first + SUFFIX_LINK(stree->head.origin);
+        return first + SUFFIX_LINK(st->head.origin);
     }
 }
 
-void follow_link(STree *stree)
+void follow_link(STree *st)
 {
-    if(IS_LARGE(*stree->head.origin)) {
-        stree->head.origin = suffix_link(stree);
+    if(IS_LARGE(*st->head.origin)) {
+        st->head.origin = suffix_link(st);
     } else {
-        stree->head.origin += SMALL_VERTEXSIZE;
+        st->head.origin += SMALL_VERTEXSIZE;
     }
-    stree->head.depth--;
+    st->head.depth--;
 }

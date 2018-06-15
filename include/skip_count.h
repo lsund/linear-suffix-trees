@@ -8,6 +8,6 @@
 
 // Find  the location of the current head by only looking at the first
 // character of each edge.
-void skip_count(STree *stree);
+void skip_count(STree *st);
 
 #endif

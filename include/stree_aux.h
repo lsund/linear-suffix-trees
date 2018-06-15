@@ -41,24 +41,24 @@
 #define IS_SENTINEL(C)              ((C) == sentinel)
 #define IS_NOTHING(P)               ((P) & NOTHING)
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
-#define IS_ROOT(V)                  (stree->inner.first == V)
+#define IS_ROOT(V)                  (st->inner.first == V)
 #define IS_UNDEF(V)                 ((V) == UNDEF)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 
-#define HEAD_IS_ROOT                (stree->head.depth == 0)
+#define HEAD_IS_ROOT                (st->head.depth == 0)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices
 
-#define ROOT                    (stree->inner.first)
-#define ROOT_CHILD(C)           (stree->rootchildren[(Uint) (C)])
+#define ROOT                    (st->inner.first)
+#define ROOT_CHILD(C)           (st->rootchildren[(Uint) (C)])
 // Index of a reference
 #define REF_TO_INDEX(P)         ((Uint) ((P) - ROOT))
 #define LEAFREF_TO_INDEX(ST,A)  ((Uint) ((A) - (ST)->leaves.first))
 
 // Returns the sibling of the leaf at the specified address
-#define INNER(V)               stree->inner.first + LEAF_INDEX((V)) // address
-#define LEAF(V)                stree->leaves.first + INNER_INDEX((V))
+#define INNER(V)               st->inner.first + LEAF_INDEX((V)) // address
+#define LEAF(V)                st->leaves.first + INNER_INDEX((V))
 #define MAKE_LEAF(V)            ((V) | LEAFBIT)
 #define MAKE_SMALL(V)           ((V) | SMALLBIT)
 
@@ -85,25 +85,25 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
 
-#define SET_ROOTCHILD(I, C)             (stree->rootchildren[(Uint) (I)]) = (C)
+#define SET_ROOTCHILD(I, C)             (st->rootchildren[(Uint) (I)]) = (C)
 #define SET_CHILD(V, VAL)               *(V) = ((*(V)) & MSB) | (VAL)
 
-Bool base_is_vertex(STree *stree);
+Bool base_is_vertex(STree *st);
 
-Bool is_head_old(STree *stree);
+Bool is_head_old(STree *st);
 
 // Get info for branch vertex
-Uint get_depth_head(STree *stree, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
+Uint get_depth_head(STree *st, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
-void update_chain(STree *stree, Uint *vertexp, Uint **largep, Uint *distance);
+void update_chain(STree *st, Uint *vertexp, Uint **largep, Uint *distance);
 
 // The smallest integer i such that vertexp = head(i)
-Uint get_headpos(STree *stree, Uint *vertexp, Uint **largep, Uint distance);
+Uint get_headpos(STree *st, Uint *vertexp, Uint **largep, Uint distance);
 
-Uint get_depth(STree *stree, Uint *vertexp, Uint distance, Uint **largep);
+Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **largep);
 
-void follow_link(STree *stree);
+void follow_link(STree *st);
 
-void set_child_and_sibling(STree *stree, Uint child, Uint sibling);
+void set_child_and_sibling(STree *st, Uint child, Uint sibling);
 
 #endif

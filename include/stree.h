@@ -27,8 +27,12 @@
 #include "stree_aux.h"
 #include "init.h"
 
-void stree_free(STree *stree);
+void stree_free(STree *st);
 
-VertexP next_inner(STree *stree);
+VertexP get_next_inner(STree *st);
+
+Uint get_next_leafnum(STree *st);
+
+void set_next_leaf(STree *st, Vertex v);
 
 #endif

@@ -22,24 +22,24 @@ Uint textlen;
 // Private
 
 
-static void insert_leafedge(STree *stree)
+static void insert_leafedge(STree *st)
 {
-    if(base_is_vertex(stree)) {
-        insert(stree);
+    if(base_is_vertex(st)) {
+        insert(st);
     } else {
-        split_and_insert(stree);
+        split_and_insert(st);
     }
 }
 
 
-static void append_chain(STree *stree)
+static void append_chain(STree *st)
 {
-    if (!stree->chain.first) {
-        init_chain(stree);
+    if (!st->chain.first) {
+        init_chain(st);
     }
-    stree->chain.size     += 1;
-    stree->inner.next     += SMALL_VERTEXSIZE;
-    stree->inner.next_ind += SMALL_VERTEXSIZE;
+    st->chain.size     += 1;
+    st->inner.next     += SMALL_VERTEXSIZE;
+    st->inner.next_ind += SMALL_VERTEXSIZE;
 }
 
 static Bool label_empty(Label label)
@@ -47,37 +47,37 @@ static Bool label_empty(Label label)
     return label.start == label.end;
 }
 
-static void find_base(STree *stree)
+static void find_base(STree *st)
 {
     if (HEAD_IS_ROOT) {
-        if (label_empty(stree->head.label)) {
-            stree->head.label.end = NULL;
+        if (label_empty(st->head.label)) {
+            st->head.label.end = NULL;
         } else {
-            stree->head.label.start++;
-            skip_count(stree);
+            st->head.label.start++;
+            skip_count(st);
         }
 
     } else {
-        follow_link(stree);
-        skip_count(stree);
+        follow_link(st);
+        skip_count(st);
     }
 }
 
-static void find_next_head(STree * stree) {
-    if(HEAD_IS_ROOT && base_is_vertex(stree)) {
-        stree->tail++;
-        scan_tail(stree);
+static void find_next_head(STree * st) {
+    if(HEAD_IS_ROOT && base_is_vertex(st)) {
+        st->tail++;
+        scan_tail(st);
     } else {
-        if (is_head_old(stree)) {
-            follow_link(stree);
-            scan_tail(stree);
+        if (is_head_old(st)) {
+            follow_link(st);
+            scan_tail(st);
         } else {
-            find_base(stree);
-            if(base_is_vertex(stree)) {
-                set_chain_distances(stree);
-                scan_tail(stree);
+            find_base(st);
+            if(base_is_vertex(st)) {
+                set_chain_distances(st);
+                scan_tail(st);
             } else {
-                append_chain(stree);
+                append_chain(st);
             }
         }
     }
@@ -87,11 +87,11 @@ static void find_next_head(STree * stree) {
 // Public
 
 
-void construct(STree *stree)
+void construct(STree *st)
 {
-    init(stree);
-    while(!IS_SENTINEL(stree->tail)) {
-        find_next_head(stree);
-        insert_leafedge(stree);
+    init(st);
+    while(!IS_SENTINEL(st->tail)) {
+        find_next_head(st);
+        insert_leafedge(st);
     }
 }

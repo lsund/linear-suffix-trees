@@ -14,6 +14,6 @@
 #include "stree.h"
 #include "streedata.h"
 
-void allocate_inner_vertices(STree *stree);
+void allocate_inner_vertices(STree *st);
 
 #endif

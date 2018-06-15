@@ -1,33 +1,33 @@
 #include "spaceman.h"
 
-static Uint *new_allocbound(STree *stree)
+static Uint *new_allocbound(STree *st)
 {
-    return stree->inner.first + stree->inner.size - LARGE_VERTEXSIZE;
+    return st->inner.first + st->inner.size - LARGE_VERTEXSIZE;
 }
 
 // Allocate space for branch vertices
-void allocate_inner_vertices(STree *stree)
+void allocate_inner_vertices(STree *st)
 {
-    if(stree->inner.next >= stree->allocated) {
+    if(st->inner.next >= st->allocated) {
 
-        stree->inner.size += EXTRA_ALLOCSIZE;
+        st->inner.size += EXTRA_ALLOCSIZE;
 
         Uint chain;
-        if(stree->chain.first != NULL) {
-            chain = REF_TO_INDEX(stree->chain.first);
+        if(st->chain.first != NULL) {
+            chain = REF_TO_INDEX(st->chain.first);
         }
 
-        Uint head = REF_TO_INDEX(stree->head.origin);
-        Uint size = stree->inner.size;
+        Uint head = REF_TO_INDEX(st->head.origin);
+        Uint size = st->inner.size;
 
-        stree->inner.first = realloc(stree->inner.first, sizeof(Uint) * size);
-        stree->inner.next  = next_inner(stree);
-        stree->head.origin = stree->inner.first + head;
+        st->inner.first = realloc(st->inner.first, sizeof(Uint) * size);
+        st->inner.next  = get_next_inner(st);
+        st->head.origin = st->inner.first + head;
 
-        if(stree->chain.first != NULL) {
-            stree->chain.first = stree->inner.first + chain;
+        if(st->chain.first != NULL) {
+            st->chain.first = st->inner.first + chain;
         }
-        stree->allocated = new_allocbound(stree);
+        st->allocated = new_allocbound(st);
     }
 }
 

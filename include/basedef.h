@@ -51,7 +51,7 @@
 #if WcharBYTES == 1
 #define LARGESTCHARINDEX          MAX_CHARS
 #else
-#define LARGESTCHARINDEX          stree->lastcharindex
+#define LARGESTCHARINDEX          st->lastcharindex
 #endif
 
 #define MEGABYTES(V)  ((double) (V)/((UintConst(1) << 20) - 1))

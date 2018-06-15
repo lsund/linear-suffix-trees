@@ -8,9 +8,9 @@
 #include "location.h"
 #include "stree_aux.h"
 
-Wchar *scan(STree *stree, Loc *loc, Uint *start_vertex, Pattern patt);
+Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt);
 
-void scan_tail(STree *stree);
+void scan_tail(STree *st);
 
 #define MATCHED(X, R, L)        (X) == (Uint) ((R) - (L) + 1)
 

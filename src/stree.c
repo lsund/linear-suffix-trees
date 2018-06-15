@@ -14,22 +14,35 @@ Wchar *text;
 Wchar *sentinel;
 Uint textlen, alphasize;
 
-VertexP next_inner(STree *stree)
+VertexP get_next_inner(STree *st)
 {
-    return stree->inner.first + stree->inner.next_ind;
-}
-
-VertexP next_leaf(STree *stree)
-{
-    return stree->leaves.first + stree->leaves.next_ind;
+    return st->inner.first + st->inner.next_ind;
 }
 
 
-void stree_free(STree *stree)
+VertexP get_next_leaf(STree *st)
 {
-    free(stree->leaves.first);
-    free(stree->rootchildren);
-    free(stree->inner.first);
+    return st->leaves.first + st->leaves.next_ind;
+}
+
+
+Uint get_next_leafnum(STree *st)
+{
+    return st->leaves.next_ind | LEAFBIT;
+}
+
+
+void set_next_leaf(STree *st, Vertex v)
+{
+    *st->leaves.next = v;
+}
+
+
+void st_free(STree *st)
+{
+    free(st->leaves.first);
+    free(st->rootchildren);
+    free(st->inner.first);
 }
 
 

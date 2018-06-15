@@ -12,10 +12,10 @@ typedef struct reference {
 } Reference;
 
 
-Sint stree_dfs(STree *stree,Reference *start,
+Sint stree_dfs(STree *st,Reference *start,
         Sint (*processleaf)(Uint, ArrayUint *), ArrayUint *leaves);
 
 
-Sint makeleaflist(STree *stree, ArrayUint *leaflist, Reference *start);
+Sint makeleaflist(STree *st, ArrayUint *leaflist, Reference *start);
 
 #endif

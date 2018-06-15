@@ -9,6 +9,6 @@ extern Wchar *text;
 extern Wchar *sentinel, characters[MAX_CHARS + 1];
 extern Uint     root_children[MAX_CHARS + 1],
                 textlen,
-                *stree,
+                *st,
                 alphasize;
 #endif

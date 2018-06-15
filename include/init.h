@@ -4,10 +4,10 @@
 #include "stree_aux.h"
 #include "stree.h"
 
-void set_chain_distances(STree *stree);
+void set_chain_distances(STree *st);
 
-void init_chain(STree *stree);
+void init_chain(STree *st);
 
-void init(STree *stree);
+void init(STree *st);
 
 #endif
