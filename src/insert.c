@@ -22,7 +22,7 @@ static void allocate_inner_vertices(STree *stree)
         Uint head = REF_TO_INDEX(stree->head.origin);
         Uint size = stree->inner.size;
 
-        stree->inner.first = ALLOC(stree->inner.first, Uint, size);
+        stree->inner.first = realloc(stree->inner.first, sizeof(Uint) * size);
         stree->inner.next  = next_inner(stree);
         stree->head.origin = stree->inner.first + head;
 

@@ -50,7 +50,6 @@ DECLAREARRAYSTRUCT(Bref);
 Sint stree_dfs(STree *stree, Reference *start,
         Sint (*processleaf) (Uint, ArrayUint *), ArrayUint *leaves)
 {
-    stree->leafcounts = ALLOC(NULL, Uint, stree->leaves.next_ind + 1);
     Bool godown = True, readyforpop = False;
     Uint child, brotherval;
     Bref lcpnode = NULL;

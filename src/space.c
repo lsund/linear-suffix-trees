@@ -18,27 +18,6 @@
 #include "basedef.h"
 #include "spaceman.h"
 
-/*EE
-  This file contains functions to store pointers to dynamically allocated
-  spaceblocks, and to maintain the number of cells and their size in
-  each block. The arguments \texttt{file} and \texttt{line} (if they occur)
-  are always the filename and the linenumber the function is called from.
-  To supply these arguments, we recommend to call the corresponding
-  functions via some useful macros, as defined in the file
-  \texttt{spaceman.h}.
-  \begin{enumerate}
-  \item
-  The function \texttt{allocspaceviaptr} should be called
-  via the macro \texttt{ALLOC}.
-  \item
-  The function \texttt{freespaceviaptr} should be called
-  via the macro \texttt{FREE}.
-  \item
-  The function \texttt{dynamicstrdup} should be called
-  via the macro \texttt{DYNAMICSTRDUP}.
-  \end{enumerate}
-  */
-
 static Blockdescription *blocks = NULL;
 
 static Uint numberofblocks = 0, // numberofblocks
@@ -129,8 +108,7 @@ void *alloc_use(Uint line, void *ptr, Uint size,Uint number)
                 blocks[i].sizeofcells = 0;
                 blocks[i].numberofcells = 0;
             }
-        } else
-        {
+        } else {
             fprintf(stderr, "cannot find space block");
             exit(EXIT_FAILURE);
         }

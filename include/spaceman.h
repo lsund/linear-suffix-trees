@@ -24,11 +24,6 @@ void freespaceviaptr(char *file,Uint line,void *ptr);
 
 Uint getspacepeak(void);
 
-char *messagespace(void);
-
-#define ALLOC(S,T,N)\
-        (T *) alloc_use((Uint) __LINE__, S,(Uint) sizeof(T),N)
-
 #define FREE(P)\
         if((P) != NULL)\
         {\

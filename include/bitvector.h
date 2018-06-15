@@ -69,18 +69,6 @@
            ? UintConst(1) \
            : (UintConst(1) + DIVWORDSIZE((N) - UintConst(1))))
 
-#define INITBITTABGENERIC(TAB,OLDTAB,NUMOFBITS)\
-        {\
-          Uint *tabptr, tabsize = NUMOFINTSFORBITS(NUMOFBITS);\
-          ALLOC(TAB,OLDTAB,Uint,tabsize);\
-          for(tabptr = TAB; tabptr < (TAB) + tabsize; tabptr++)\
-          {\
-            *tabptr = 0;\
-          }\
-        }
-
-#define INITBITTAB(TAB,N) INITBITTABGENERIC(TAB,NULL,N)
-
 /*
   The following macro inititalizes a bitarray such that all bits
   are off.

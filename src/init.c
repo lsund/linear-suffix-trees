@@ -34,14 +34,15 @@ void init(STree *stree)
     Uint i;
 
     stree->inner.size = START_ALLOCSIZE;
-    stree->leaves.first = ALLOC(NULL, Uint, textlen + 2);
 
-    stree->inner.first = ALLOC(NULL, Uint, stree->inner.size);
+    stree->leaves.first = realloc(NULL, sizeof(Uint) * textlen + 2);
+    stree->inner.first = realloc(NULL, sizeof(Uint) * stree->inner.size);
+
     for(i=0; i<LARGE_VERTEXSIZE; i++) {
         stree->inner.first[i] = 0;
     }
 
-    stree->rootchildren = ALLOC(NULL, Uint, MAX_CHARS + 1);
+    stree->rootchildren = realloc(NULL, sizeof(Uint) *  MAX_CHARS + 1);
     for(Uint *child= stree->rootchildren; child<=stree->rootchildren + MAX_CHARS; child++)
     {
         *child = UNDEF;
