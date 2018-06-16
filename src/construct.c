@@ -10,7 +10,6 @@
 
 
 #include "stree.h"
-#include "stree_aux.h"
 #include "insert.h"
 #include "skip_count.h"
 #include "scan.h"

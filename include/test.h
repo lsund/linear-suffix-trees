@@ -19,7 +19,6 @@
 #include "stree.h"
 #include "construct.h"
 #include "dfs.h"
-#include "stree_aux.h"
 
 #define ANSI_COLOR_RED      "\x1b[31m"
 #define ANSI_COLOR_RESET    "\x1b[0m"

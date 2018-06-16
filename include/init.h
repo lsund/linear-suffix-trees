@@ -1,7 +1,6 @@
 #ifndef INIT_H
 #define INIT_H
 
-#include "stree_aux.h"
 #include "stree.h"
 
 void set_chain_distances(STree *st);
