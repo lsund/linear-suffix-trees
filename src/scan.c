@@ -67,8 +67,8 @@ static void update_st(STree *st, Wchar *label_start, Uint plen, Uint current_ver
 {
     st->head.label.start = label_start;
     st->head.label.end = label_start + (plen-1);
-    st->splitvertex.origin = current_vertex;
-    st->splitvertex.left_sibling = prev;
+    st->splitchild.vertex = current_vertex;
+    st->splitchild.left = prev;
 }
 
 
@@ -128,7 +128,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
             Vertex rootchild = ROOT_CHILD(fstchar);
 
-            if (IS_UNDEF(rootchild)) {
+            if (!EXISTS(rootchild)) {
                 return patt.start;
             }
 
@@ -274,8 +274,8 @@ void scan_tail(STree *st)
 
     if(head_is_root(st)) {
 
-        // There is no sentinel
-        if(IS_SENTINEL(st->tail)) {
+        // There is no $-edge
+        if(tail_at_lastchar(st)) {
             st->head.label.end = NULL;
             return;
         }
@@ -290,14 +290,16 @@ void scan_tail(STree *st)
         // successor edge is leaf, compare tail and leaf edge label
         if(IS_LEAF(current_vertex)) {
 
-            Pattern edgepatt = make_patt(text + LEAF_INDEX(current_vertex) + 1, sentinel - 1);
+            Wchar *suffix_start = text + LEAF_INDEX(current_vertex) + 1;
+
+            Pattern edgepatt = make_patt(suffix_start, sentinel - 1);
             Pattern tailpatt = make_patt(st->tail + 1, sentinel - 1);
-            plen = 1 + lcp(edgepatt, tailpatt);
+            plen = lcp(edgepatt, tailpatt) + 1;
 
             st->tail += plen;
             st->head.label.start   = edgepatt.start - 1;
             st->head.label.end     = edgepatt.start - 1 + (plen-1);
-            st->splitvertex.origin = current_vertex;
+            st->splitchild.vertex = current_vertex;
 
             return;
         }
@@ -315,7 +317,7 @@ void scan_tail(STree *st)
         if(depth > plen) {
 
             // cannot reach the successor, fall out of tree
-            st->splitvertex.origin     = current_vertex;
+            st->splitchild.vertex     = current_vertex;
             st->head.label.start = label_start;
             st->head.label.end   = label_start + (plen - 1);
             return;
@@ -367,7 +369,7 @@ void scan_tail(STree *st)
 
             // No matching a-edge found
             // New edge will become right sibling of last vertex
-            st->splitvertex.left_sibling = prev;
+            st->splitchild.left = prev;
             st->head.label.end = NULL;
             return;
         }

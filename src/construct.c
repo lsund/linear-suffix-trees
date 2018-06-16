@@ -90,7 +90,7 @@ static void find_nxt_head(STree * st) {
 void construct(STree *st)
 {
     init(st);
-    while(!IS_SENTINEL(st->tail)) {
+    while(!tail_at_lastchar(st)) {
         find_nxt_head(st);
         insert_leafedge(st);
     }

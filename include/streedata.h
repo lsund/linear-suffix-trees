@@ -55,9 +55,9 @@ typedef struct head {
 } Head;
 
 
-typedef struct splitvertex {
-    Vertex origin;
-    Vertex left_sibling;
+typedef struct splitchild {
+    Vertex vertex;
+    Vertex left;
 } SplitVertex;
 
 
@@ -69,7 +69,7 @@ typedef struct suffixtree {
 
     Uint current_branchdepth;          // depth of the new branch node
 
-    SplitVertex splitvertex;
+    SplitVertex splitchild;
 
     Chain chain;                // address of the node current chains starts at
 

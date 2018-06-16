@@ -27,6 +27,8 @@
 #include "stree_aux.h"
 #include "init.h"
 
+Bool tail_at_lastchar(STree *st);
+
 Bool head_is_root(STree *st);
 
 void stree_free(STree *st);

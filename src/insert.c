@@ -2,39 +2,56 @@
 
 Wchar *sentinel;
 
+static void insert_tail_under_root(STree *st, Vertex v)
+{
+    st->rootchildren[(Uint) *st->tail] = v;
+    *st->ls.nxt = 0;
+}
+
+
+static void insert_first_leaf(STree *st, Vertex v)
+{
+    set_next_leaf(st, CHILD(st->head.vertex));
+    SET_CHILD(st->head.vertex, v);
+}
+
+
+static void insert_successor_leaf(STree *st, Vertex v)
+{
+    if (IS_LEAF(st->splitchild.left)) {
+
+            Uint *prev = LEAF(st->splitchild.left);
+            *st->ls.nxt = LEAF_SIBLING(prev);
+            LEAF_SIBLING(prev) = v;
+
+    } else {
+
+            Uint *prev = INNER(st->splitchild.left);
+            *st->ls.nxt = SIBLING(prev);
+            SIBLING(prev) = v;
+    }
+}
+
+// head is already a vertex. A new leaf edge is supposed to be inserted under
+// it. In this case, splitchild == head
 void insert(STree *st)
 {
     Uint leaf = get_next_leafnum(st);
 
     if (head_is_root(st)) {
 
-        if (!IS_SENTINEL(st->tail)) {
-            SET_ROOTCHILD(*(st->tail), leaf);
-            *st->ls.nxt = 0;
+        if (!tail_at_lastchar(st)) {
+            insert_tail_under_root(st, leaf);
         }
 
     } else {
 
-        if (IS_UNDEF(st->splitvertex.left_sibling)) {
+        // head is the only child
+        if (!EXISTS(st->splitchild.left)) {
 
-            set_next_leaf(st, CHILD(st->head.vertex));
-
-            SET_CHILD(st->head.vertex, leaf);
-
+            insert_first_leaf(st, leaf);
         } else {
-
-            if (IS_LEAF(st->splitvertex.left_sibling)) {
-
-                Uint *prev = LEAF(st->splitvertex.left_sibling);
-                *st->ls.nxt = LEAF_SIBLING(prev);
-                LEAF_SIBLING(prev) = leaf;
-
-            } else {
-
-                Uint *prev = INNER(st->splitvertex.left_sibling);
-                *st->ls.nxt = SIBLING(prev);
-                SIBLING(prev) = leaf;
-            }
+            insert_successor_leaf(st, leaf);
         }
     }
 
@@ -53,27 +70,26 @@ void split_and_insert(STree *st)
         SET_ROOTCHILD(*st->head.label.start, st->is.nxt_ind);
         *(st->is.nxt + 1) = 0;
 
-    } else if (IS_LEFTMOST(st->splitvertex.left_sibling)) {
+    } else if (IS_LEFTMOST(st->splitchild.left)) {
         // new branch = fst child
         SET_CHILD(st->head.vertex, st->is.nxt_ind);
     } else {
         // new branch = right brother of leaf
-        if(IS_LEAF(st->splitvertex.left_sibling)) {
-            Uint *ptr = LEAF(st->splitvertex.left_sibling);
+        if(IS_LEAF(st->splitchild.left)) {
+            Uint *ptr = LEAF(st->splitchild.left);
             LEAF_SIBLING(ptr) = st->is.nxt_ind;
         } else {
-            SIBLING(INNER(st->splitvertex.left_sibling)) = st->is.nxt_ind;
+            SIBLING(INNER(st->splitchild.left)) = st->is.nxt_ind;
         }
     }
-    if(IS_LEAF(st->splitvertex.origin)) {
+    if(IS_LEAF(st->splitchild.vertex)) {
         // split edge is leaf edge
-        inserted = LEAF(st->splitvertex.origin);
-        if (IS_SENTINEL(st->tail) ||
-                *(st->head.label.end + 1) < *(st->tail))
+        inserted = LEAF(st->splitchild.vertex);
+        if (tail_at_lastchar(st) || *(st->head.label.end + 1) < *(st->tail))
         {
             // fst child =oldleaf
             // inherit brother
-            SET_CHILD(st->is.nxt, st->splitvertex.origin);
+            SET_CHILD(st->is.nxt, st->splitchild.vertex);
             SIBLING(st->is.nxt) = *inserted;
             // Recall new leaf address
             *st->ls.nxt = NOTHING;
@@ -84,20 +100,20 @@ void split_and_insert(STree *st)
             // inherit brother
             SET_CHILD(st->is.nxt, get_next_leafnum(st));
             SIBLING(st->is.nxt) = *inserted;
-            *(st->ls.nxt) = st->splitvertex.origin;  // old leaf = right brother of of new leaf
+            *(st->ls.nxt) = st->splitchild.vertex;  // old leaf = right brother of of new leaf
             // Recall leaf address
             *inserted = NOTHING;
         }
     } else {
         // split edge leads to branching node
-        inserted = INNER(st->splitvertex.origin);
+        inserted = INNER(st->splitchild.vertex);
         insert_sibling = SIBLING(inserted);
         if (st->tail == sentinel ||
                 *(st->head.label.end+1) < *(st->tail))
         {
             // First child is new branch
             // inherit brother
-            SET_CHILD(st->is.nxt, st->splitvertex.origin);
+            SET_CHILD(st->is.nxt, st->splitchild.vertex);
             SIBLING(st->is.nxt) = insert_sibling;
             // Recall new leaf address
             *st->ls.nxt = NOTHING;
@@ -109,7 +125,7 @@ void split_and_insert(STree *st)
             // Inherit brother
             SET_CHILD(st->is.nxt, MAKE_LEAF(st->ls.nxt_ind));
             SIBLING(st->is.nxt) = insert_sibling;
-            *(st->ls.nxt) = st->splitvertex.origin;   // new branch is brother of new leaf
+            *(st->ls.nxt) = st->splitchild.vertex;   // new branch is brother of new leaf
             *(inserted + 1) = NOTHING;
         }
     }

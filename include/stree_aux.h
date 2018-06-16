@@ -38,11 +38,10 @@
 #define IS_SMALL(V)                 ((V) & SMALLBIT)
 #define IS_LARGE(V)                 (!((V) & SMALLBIT))
 #define IS_LAST(C)                  ((C) >= sentinel)
-#define IS_SENTINEL(C)              ((C) == sentinel)
 #define IS_NOTHING(P)               ((P) & NOTHING)
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (st->is.fst == V)
-#define IS_UNDEF(V)                 ((V) == UNDEF)
+#define EXISTS(V)                   ((V) != UNDEF)
 #define IS_LEFTMOST(V)              ((V) == UNDEF)
 
 ///////////////////////////////////////////////////////////////////////////////

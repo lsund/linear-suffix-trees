@@ -15,6 +15,12 @@ Wchar *sentinel;
 Uint textlen, alphasize;
 
 
+Bool tail_at_lastchar(STree *st)
+{
+    return st->tail == sentinel;
+}
+
+
 Bool head_is_root(STree *st)
 {
     return st->head.depth == 0;
