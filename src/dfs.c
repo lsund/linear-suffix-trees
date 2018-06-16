@@ -35,11 +35,11 @@ typedef struct
 #define SETCURRENT(V)\
     if(IS_LEAF(V))\
 {\
-    currentnode.address = st->ls.fst + LEAF_INDEX(V);\
+    currentnode.address = st->ls.fst + VERTEX_TO_INDEX(V);\
     currentnode.toleaf = True;\
 } else\
 {\
-    currentnode.address = INNER(V);\
+    currentnode.address = VERTEX_TO_INNERREF(V);\
     currentnode.toleaf = False;\
 }
 
@@ -73,7 +73,7 @@ Sint stree_dfs(STree *st, Reference *start,
         while(True)
         {
             if(currentnode.toleaf) {
-                processleaf(LEAFREF_TO_INDEX(st,currentnode.address), leaves);
+                processleaf(LEAFREF_TO_INDEX(currentnode.address), leaves);
                 brotherval = LEAF_SIBLING(currentnode.address);
                 if(IS_NOTHING(brotherval)) {
                     readyforpop = True;

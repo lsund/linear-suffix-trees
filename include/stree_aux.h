@@ -50,20 +50,22 @@
 #define ROOT                    (st->is.fst)
 #define ROOT_CHILD(C)           (st->rootchildren[(Uint) (C)])
 // Index of a reference
-#define REF_TO_INDEX(P)         ((Uint) ((P) - ROOT))
-#define LEAFREF_TO_INDEX(ST,A)  ((Uint) ((A) - (ST)->ls.fst))
+#define INNERREF_TO_INDEX(P)    ((Uint) ((P) - st->is.fst))
+#define LEAFREF_TO_INDEX(P)     ((Uint) ((P) - st->ls.fst))
 
-// Returns the sibling of the leaf at the specified address
-#define INNER(V)                st->is.fst + LEAF_INDEX((V)) // address
-#define LEAF(V)                 st->ls.fst + INNER_INDEX((V))
+// The reference to this specific vertex
+#define VERTEX_TO_INNERREF(V)    st->is.fst + VERTEX_TO_INDEX((V)) // address
+#define VERTEX_TO_LEAFREF(V)     st->ls.fst + VERTEX_TO_INDEX((V))
+
+// Make a leaf vertex, or a small vertex
 #define MAKE_LEAF(V)            ((V) | LEAFBIT)
 #define MAKE_SMALL(V)           ((V) | SMALLBIT)
 
+// The right sibling of a leaf
 #define LEAF_SIBLING(P)        (*(P))
 
 // LEAF
-#define LEAF_INDEX(V)           ((V) & ~(MSB | SECOND_MSB))
-#define INNER_INDEX(V)          ((V) & ~(MSB))
+#define VERTEX_TO_INDEX(V)    ((V) & ~(MSB | SECOND_MSB))
 
 // INNER
 #define CHILD(P)               ((*(P)) & ~(MSB))
@@ -83,6 +85,8 @@
 // Setters
 
 #define SET_ROOTCHILD(I, C)             (st->rootchildren[(Uint) (I)]) = (C)
+
+// Additionally sets the child bit for the parent
 #define SET_CHILD(V, VAL)               *(V) = ((*(V)) & MSB) | (VAL)
 
 Bool base_is_vertex(STree *st);
