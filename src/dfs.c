@@ -39,7 +39,7 @@ typedef struct
     currentnode.toleaf = true;\
 } else\
 {\
-    currentnode.address = VERTEX_TO_INNERREF(V);\
+    currentnode.address = VERTEX_TO_REF(V);\
     currentnode.toleaf = false;\
 }
 

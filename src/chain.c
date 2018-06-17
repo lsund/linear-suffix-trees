@@ -27,7 +27,7 @@ void set_chain_distances(STree *st)
 {
     Uint distance;
 
-    SUFFIX_LINK(st->is.nxt) = INNERREF_TO_INDEX(st->head.vertex);
+    SUFFIX_LINK(st->is.nxt) = REF_TO_INDEX(st->head.vertex);
     if (st->chain.size > 0) {
         VertexP prev = st->is.nxt;
         for(distance = 1; distance <= st->chain.size; distance++) {

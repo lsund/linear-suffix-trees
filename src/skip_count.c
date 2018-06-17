@@ -21,7 +21,7 @@ void skip_count(STree *st)
 
         } else {
 
-            vertex = VERTEX_TO_INNERREF(rootchild);
+            vertex = VERTEX_TO_REF(rootchild);
             update_chain(st, vertex, &chainend, &distance);
             depth = get_depth(st, vertex, distance, &chainend);
 
@@ -74,7 +74,7 @@ void skip_count(STree *st)
             } else {
 
                 // successor is branch node
-                vertex = VERTEX_TO_INNERREF(headchild);
+                vertex = VERTEX_TO_REF(headchild);
                 update_chain(st, vertex, &chainend, &distance);
                 head = get_headpos(st, vertex, &chainend, distance);
                 edgechar = text.content[st->head.depth + head];

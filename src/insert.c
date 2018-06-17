@@ -27,7 +27,7 @@ static void insert_leaf(STree *st, Vertex v)
 
     } else {
 
-            Uint *prev               = VERTEX_TO_INNERREF(st->split.left);
+            Uint *prev               = VERTEX_TO_REF(st->split.left);
             LEAF_SIBLING(st->ls.nxt) = SIBLING(prev);
             SIBLING(prev)            = v;
     }
@@ -57,7 +57,7 @@ static void insert_new_inner(STree *st)
             LEAF_SIBLING(leftp) = st->is.nxt_ind;
 
         } else {
-            SIBLING(VERTEX_TO_INNERREF(st->split.left)) = st->is.nxt_ind;
+            SIBLING(VERTEX_TO_REF(st->split.left)) = st->is.nxt_ind;
         }
     }
 }
@@ -102,7 +102,7 @@ static void insert_leaf_under_split(STree *st)
     } else {
 
         // splitchild is an inner vertex
-        VertexP p_splitchild = VERTEX_TO_INNERREF(st->split.child);
+        VertexP p_splitchild = VERTEX_TO_REF(st->split.child);
 
         // If the character of head is less than the one on the current tail,
         // then the new leaf edge is to be inserted 'to the right'.

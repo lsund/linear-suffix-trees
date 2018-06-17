@@ -55,7 +55,7 @@ static void find_last_successor(STree *st, Vertex *prev_p, Vertex vertex)
         if(IS_LEAF(vertex)) {
             vertex = LEAF_SIBLING(VERTEX_TO_LEAFREF(vertex));
         } else {
-            vertex = SIBLING(VERTEX_TO_INNERREF(vertex));
+            vertex = SIBLING(VERTEX_TO_REF(vertex));
         }
     } while(IS_SOMETHING(vertex));
     *prev_p = prev;
@@ -143,7 +143,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                 }
             }
 
-            vertexp = VERTEX_TO_INNERREF(rootchild);
+            vertexp = VERTEX_TO_REF(rootchild);
 
             update_chain(st, vertexp, &chainend, &distance);
             head = get_headpos(st, vertexp, &chainend, distance);
@@ -191,7 +191,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
                 } else {
 
-                    vertexp  = VERTEX_TO_INNERREF(vertex);
+                    vertexp  = VERTEX_TO_REF(vertex);
 
                     update_chain(st, vertexp, &chainend, &distance);
                     head = get_headpos(st, vertexp, &chainend, distance);
@@ -303,7 +303,7 @@ void scan_tail(STree *st)
             return;
         }
 
-        current_vertexp = VERTEX_TO_INNERREF(current_vertex);
+        current_vertexp = VERTEX_TO_REF(current_vertex);
 
         update_chain(st, current_vertexp, &chainend, &distance);
         head = get_headpos(st, current_vertexp, &chainend, distance);
@@ -348,7 +348,7 @@ void scan_tail(STree *st)
 
             } else {
 
-                current_vertexp   = VERTEX_TO_INNERREF(current_vertex);
+                current_vertexp   = VERTEX_TO_REF(current_vertex);
                 update_chain(st, current_vertexp, &chainend, &distance);
 
                 head      = get_headpos(st, current_vertexp, &chainend, distance);

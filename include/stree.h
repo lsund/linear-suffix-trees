@@ -72,12 +72,12 @@
 #define ROOT                    (st->is.fst)
 #define ROOT_CHILD(C)           (st->rootchildren[(Uint) (C)])
 // Index of a reference
-#define INNERREF_TO_INDEX(P)    ((Uint) ((P) - st->is.fst))
+#define REF_TO_INDEX(P)         ((Uint) ((P) - st->is.fst))
 #define LEAFREF_TO_INDEX(P)     ((Uint) ((P) - st->ls.fst))
 
 // The reference to this specific vertex
-#define VERTEX_TO_INNERREF(V)    st->is.fst + VERTEX_TO_INDEX((V)) // address
-#define VERTEX_TO_LEAFREF(V)     st->ls.fst + VERTEX_TO_INDEX((V))
+#define VERTEX_TO_REF(V)        st->is.fst + VERTEX_TO_INDEX((V)) // address
+#define VERTEX_TO_LEAFREF(V)    st->ls.fst + VERTEX_TO_INDEX((V))
 
 // Make a leaf vertex, or a small vertex
 #define MAKE_LEAF(V)            ((V) | LEAFBIT)

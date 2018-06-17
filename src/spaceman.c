@@ -14,10 +14,10 @@ void allocate_inner_vertices(STree *st)
 
         Uint chain;
         if(st->chain.fst != NULL) {
-            chain = INNERREF_TO_INDEX(st->chain.fst);
+            chain = REF_TO_INDEX(st->chain.fst);
         }
 
-        Uint head = INNERREF_TO_INDEX(st->head.vertex);
+        Uint head = REF_TO_INDEX(st->head.vertex);
         Uint size = st->is.size;
 
         st->is.fst = realloc(st->is.fst, sizeof(Uint) * size);
