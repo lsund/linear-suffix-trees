@@ -6,7 +6,7 @@ void init(STree *st)
 
     st->is.size = START_ALLOCSIZE;
 
-    st->ls.fst = realloc(NULL, sizeof(Uint) * textlen + 2);
+    st->ls.fst = realloc(NULL, sizeof(Uint) * text.len + 2);
     st->is.fst = realloc(NULL, sizeof(Uint) * st->is.size);
 
     for(i=0; i<LARGE_VERTEXSIZE; i++) {
@@ -19,7 +19,7 @@ void init(STree *st)
         *child = UNDEF;
     }
 
-    st->tail = text;
+    st->tail = text.content;
 
     Uint last = st->is.size - LARGE_VERTEXSIZE;
     st->allocated = st->is.fst + last;
@@ -37,7 +37,7 @@ void init(STree *st)
     st->head.label.end = NULL;
     st->head.depth     = 0;
 
-    SET_ROOTCHILD(*text, MAKE_LEAF(0));
+    SET_ROOTCHILD(*text.content, MAKE_LEAF(0));
 
     st->ls.fst[0]          = 0;
     st->ls.nxt_ind          = LEAF_VERTEXSIZE;

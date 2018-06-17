@@ -5,6 +5,7 @@
 
 #include "streedef.h"
 #include "types.h"
+#include "text.h"
 
 
 // A struct representing a string, with its start and length

@@ -8,11 +8,9 @@
  * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
  */
 
-
 #include "location.h"
 
 Text text;
-
 
 void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
 {

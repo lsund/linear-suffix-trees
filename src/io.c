@@ -19,35 +19,30 @@
 
 #include "io.h"
 
-Wchar *text;
-Uint textlen;
-Wchar *sentinel;
-
-
 void file_to_string(const char *filename)
 {
     FILE *in = fopen(filename, "r");
-    text = malloc(sizeof(Wchar) * MAX_ALLOC);
+    text.content = malloc(sizeof(Wchar) * MAX_ALLOC);
 
-    if(text == NULL) {
+    if(text.content == NULL) {
         fprintf(stderr,"Cannot open file %s\n", filename);
         exit(EXIT_FAILURE);
     }
 
     Uint c;
-    textlen = 0;
+    text.len = 0;
     while ((c = fgetwc(in)) != WEOF) {
-        if (textlen > MAX_ALLOC) {
+        if (text.len > MAX_ALLOC) {
             fprintf(stderr, "Trying to allocate too much space\n");
             exit(EXIT_FAILURE);
         }
-        text[textlen] = c;
-        textlen++;
+        text.content[text.len] = c;
+        text.len++;
     }
-    text[textlen + 1] = '\0';
-    sentinel = text + textlen - 1;
+    text.content[text.len + 1] = '\0';
+    text.sentinel = text.content + text.len - 1;
 
-    if(textlen == 0) {
+    if(text.len == 0) {
         fprintf(stderr,"file \"%s\" is empty\n", filename);
         exit(EXIT_FAILURE);
     }
@@ -137,7 +132,7 @@ FILE *open_append(const char *path)
 // Frees the text specified
 void freetextspace()
 {
-  (void) munmap((caddr_t) text, (size_t) textlen);
+  (void) munmap((caddr_t) text.content, (size_t) text.len);
 }
 
 

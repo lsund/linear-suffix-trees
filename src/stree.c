@@ -10,11 +10,6 @@
 
 #include "stree.h"
 
-Wchar *text;
-Wchar *sentinel;
-Uint textlen, alphasize;
-
-
 bool base_is_vertex(STree *st)
 {
     return st->head.label.end == NULL;
@@ -29,7 +24,7 @@ bool is_head_old(STree *st)
 
 bool tail_at_lastchar(STree *st)
 {
-    return st->tail == sentinel;
+    return st->tail == text.sentinel;
 }
 
 
@@ -44,9 +39,6 @@ void st_free(STree *st)
     free(st->rootchildren);
     free(st->is.fst);
 }
-
-
-Uint textlen;
 
 
 Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)

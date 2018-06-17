@@ -14,10 +14,6 @@
 #include "io.h"
 
 
-Wchar *text;
-Uint textlen;
-
-
 int main(int argc, char *argv[])
 {
     STree st;
@@ -33,7 +29,7 @@ int main(int argc, char *argv[])
 
     initclock();
 
-    fprintf(stdout, "Creating a suffix tree for text of length %lu\n", textlen);
+    fprintf(stdout, "Creating a suffix tree for text of length %lu\n", text.len);
 
     construct(&st);
 

@@ -5,7 +5,7 @@
 #include "streedef.h"
 #include "spaceman.h"
 #include "basedef.h"
-#include "externs.h"
+#include "text.h"
 #include "stree.h"
 
 // Insert a leaf edge from the current base vertex

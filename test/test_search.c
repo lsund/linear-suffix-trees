@@ -10,9 +10,6 @@ size_t strlenw(Wchar *s)
 }
 
 
-Wchar *text;
-Uint textlen, max_codepoint;
-
 static bool search_pattern(STree *st, Wchar *start, Loc *loc)
 {
     Uint pattlen = strlenw(start);

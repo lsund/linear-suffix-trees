@@ -1,7 +1,5 @@
 #include "insert.h"
 
-Wchar *sentinel;
-
 static void insert_rootleaf(STree *st, Wchar *start, Vertex v)
 {
     st->rootchildren[(Uint) *start] = v;

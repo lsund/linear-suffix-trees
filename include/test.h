@@ -14,7 +14,7 @@
 #include "search.h"
 #include "io.h"
 #include "naive_search.h"
-#include "externs.h"
+#include "text.h"
 #include "basedef.h"
 #include "scan.h"
 #include "stree.h"

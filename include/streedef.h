@@ -25,14 +25,6 @@ typedef struct table {
 } Table;
 
 
-typedef struct text {
-    Wchar *content;                // points to the input string
-    Wchar *sentinel;               // points to the position of the \(\$\)-symbol
-    Uint len;                      // the length of the input string
-    Uint alphasize;                // the number of different characters in t
-} Text;
-
-
 typedef struct chain {
     VertexP fst;
     Uint size;

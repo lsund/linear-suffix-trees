@@ -7,6 +7,7 @@
 #include "util.h"
 #include "location.h"
 #include "chain.h"
+#include "text.h"
 
 Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt);
 
