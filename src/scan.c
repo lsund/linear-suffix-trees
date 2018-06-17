@@ -67,8 +67,8 @@ static void update_st(STree *st, Wchar *label_start, Uint plen, Uint current_ver
 {
     st->head.label.start = label_start;
     st->head.label.end = label_start + (plen-1);
-    st->splitchild.vertex = current_vertex;
-    st->splitchild.left = prev;
+    st->split.child = current_vertex;
+    st->split.left = prev;
 }
 
 
@@ -299,7 +299,7 @@ void scan_tail(STree *st)
             st->tail += plen;
             st->head.label.start   = edgepatt.start - 1;
             st->head.label.end     = edgepatt.start - 1 + (plen-1);
-            st->splitchild.vertex = current_vertex;
+            st->split.child = current_vertex;
 
             return;
         }
@@ -317,7 +317,7 @@ void scan_tail(STree *st)
         if(depth > plen) {
 
             // cannot reach the successor, fall out of tree
-            st->splitchild.vertex     = current_vertex;
+            st->split.child     = current_vertex;
             st->head.label.start = label_start;
             st->head.label.end   = label_start + (plen - 1);
             return;
@@ -369,7 +369,7 @@ void scan_tail(STree *st)
 
             // No matching a-edge found
             // New edge will become right sibling of last vertex
-            st->splitchild.left = prev;
+            st->split.left = prev;
             st->head.label.end = NULL;
             return;
         }

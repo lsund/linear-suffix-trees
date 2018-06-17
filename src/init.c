@@ -73,8 +73,8 @@ void init(STree *st)
     st->ls.nxt              = st->ls.fst + LEAF_VERTEXSIZE;
     st->is.nxt               = st->is.fst + LARGE_VERTEXSIZE;
     st->is.nxt_ind           = LARGE_VERTEXSIZE;
-    st->splitchild.vertex       = UNDEF;
-    st->splitchild.left = UNDEF;
+    st->split.child       = UNDEF;
+    st->split.left = UNDEF;
     st->chain.size               = 0;
     st->chain.fst              = NULL;
 

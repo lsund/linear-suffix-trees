@@ -43,7 +43,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Bitdefs
 
-#define LEAFBIT                   SECOND_MSB         // mark leaf address
+#define LEAFBIT                   SECOND_MSB        // mark leaf address
 #define SMALLBIT                  MSB               // marks a small node
 #define NOTHING                   MSB               // Marks a nil referenc
 #define MAXINDEX                  (MSB - 1)         // Second biggest value
@@ -66,7 +66,6 @@
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (st->is.fst == V)
 #define EXISTS(V)                   ((V) != UNDEF)
-#define IS_LEFTMOST(V)              ((V) == UNDEF)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Vertices

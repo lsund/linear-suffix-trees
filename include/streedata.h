@@ -34,15 +34,6 @@ typedef struct chain {
 } Chain;
 
 
-// The edge that contains the end of head
-//
-// The right component of the head location uv.
-// head.label.start refers to the fst character of v
-// headend to the last character. In case, v = empty
-// headend = null
-// \(\emph{headend}=\emph{NULL}\).
-
-
 typedef struct label {
     Wchar *start;
     Wchar *end;
@@ -54,11 +45,22 @@ typedef struct head {
     VertexP vertex;  // the vertex u
 } Head;
 
+// The edge that contains the end of head
+//
+// The right component of the head location uv.
+// head.label.start refers to the fst character of v
+// headend to the last character. In case, v = empty
+// headend = null
 
-typedef struct splitchild {
-    Vertex vertex;
+
+// The edge which is to be splitted
+typedef struct split {
+    // refers to the vertex where the split edge ends
+    Vertex child;
+    // refers to the branching node to the left of the inner node to be
+    // inserted
     Vertex left;
-} SplitVertex;
+} SplitEdge;
 
 
 typedef struct suffixtree {
@@ -69,7 +71,7 @@ typedef struct suffixtree {
 
     Uint current_branchdepth;          // depth of the new branch node
 
-    SplitVertex splitchild;
+    SplitEdge split;
 
     Chain chain;                // address of the node current chains starts at
 

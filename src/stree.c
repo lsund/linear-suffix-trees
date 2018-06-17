@@ -50,18 +50,6 @@ VertexP get_next_leaf(STree *st)
 }
 
 
-Uint get_next_leafnum(STree *st)
-{
-    return st->ls.nxt_ind | LEAFBIT;
-}
-
-
-void set_next_leaf(STree *st, Vertex v)
-{
-    *st->ls.nxt = v;
-}
-
-
 void st_free(STree *st)
 {
     free(st->ls.fst);
