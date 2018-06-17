@@ -24,6 +24,7 @@ OBJ=         obj/stree.o\
              obj/insert.o\
              obj/location.o\
              obj/util.o\
+			 obj/chain.o\
              obj/construct.o
 
 TEST_OBJ = obj/test_search.o

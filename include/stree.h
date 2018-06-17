@@ -84,15 +84,12 @@
 #define MAKE_LEAF(V)            ((V) | LEAFBIT)
 #define MAKE_SMALL(V)           ((V) | SMALLBIT)
 
-// The right sibling of a leaf
-#define LEAF_SIBLING(P)        (*(P))
-
 // LEAF
 #define VERTEX_TO_INDEX(V)    ((V) & ~(MSB | SECOND_MSB))
+#define LEAF_SIBLING(P)        (*(P))
 
 // INNER
 #define CHILD(P)               ((*(P)) & ~(MSB))
-
 #define SIBLING(P)             (*((P) + 1))
 
 // Small inner

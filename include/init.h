@@ -2,10 +2,7 @@
 #define INIT_H
 
 #include "stree.h"
-
-void set_chain_distances(STree *st);
-
-void init_chain(STree *st);
+#include "chain.h"
 
 void init(STree *st);
 

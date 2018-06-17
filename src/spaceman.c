@@ -21,7 +21,7 @@ void allocate_inner_vertices(STree *st)
         Uint size = st->is.size;
 
         st->is.fst = realloc(st->is.fst, sizeof(Uint) * size);
-        st->is.nxt  = get_next_inner(st);
+        st->is.nxt  = st->is.fst + st->is.nxt_ind;
         st->head.vertex = st->is.fst + head;
 
         if(st->chain.fst != NULL) {

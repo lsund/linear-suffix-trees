@@ -38,18 +38,6 @@ Bool head_is_root(STree *st)
     return st->head.depth == 0;
 }
 
-VertexP get_next_inner(STree *st)
-{
-    return st->is.fst + st->is.nxt_ind;
-}
-
-
-VertexP get_next_leaf(STree *st)
-{
-    return st->ls.fst + st->ls.nxt_ind;
-}
-
-
 void st_free(STree *st)
 {
     free(st->ls.fst);
@@ -60,18 +48,6 @@ void st_free(STree *st)
 
 Uint textlen;
 
-
-void update_chain(STree *st, Uint *vertexp, Uint **chainend, Uint *distance)
-{
-    if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
-        *distance = 1 + (st->is.nxt - vertexp) / SMALL_VERTEXSIZE;
-    } else {
-        if(IS_SMALL(*(vertexp))) {
-            *distance = DISTANCE(vertexp);
-            *chainend   = CHAIN_END(vertexp, *distance);
-        }
-    }
-}
 
 Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
 {
