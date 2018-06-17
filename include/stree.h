@@ -103,8 +103,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Setters
 
-#define SET_ROOTCHILD(I, C)             (st->rootchildren[(Uint) (I)]) = (C)
-
 // Additionally sets the child bit for the parent
 #define SET_CHILD(V, VAL)               *(V) = ((*(V)) & MSB) | (VAL)
 

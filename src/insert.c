@@ -38,7 +38,7 @@ static void insert_new_inner(STree *st)
 {
     if(head_is_root(st)) {
 
-        SET_ROOTCHILD(*st->head.label.start, st->is.nxt_ind);
+        st->rootchildren[*st->head.label.start] = st->is.nxt_ind;
         SIBLING(st->is.nxt) = UNDEF;
 
     } else if (!EXISTS(st->split.left)) {
