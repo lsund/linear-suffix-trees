@@ -23,7 +23,6 @@
 #include "text.h"
 #include "types.h"
 #include "arraydef.h"
-#include "bitvector.h"
 #include "streedef.h"
 #include "bitvector.h"
 #include "init.h"

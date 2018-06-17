@@ -11,13 +11,13 @@
   Please report bugs and suggestions to <kurtz@zbh.uni-hamburg.de>
 */
 
-//\IgnoreLatex{
-
 #ifndef BITVECTOR_H
 #define BITVECTOR_H
+
 #include <limits.h>
 #include "types.h"
 #include "spaceman.h"
+#define LOGWORDSIZE    6
 
 
 #define INTWORDSIZE\

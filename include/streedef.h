@@ -7,15 +7,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Types
 
+typedef Uint Vertex;
+
+typedef Uint *VertexP;
 
 typedef struct pattern {
     Wchar *start;
     Wchar *end;
 } Pattern;
-
-typedef Uint Vertex;
-
-typedef Uint *VertexP;
 
 typedef struct table {
     Uint *fst;

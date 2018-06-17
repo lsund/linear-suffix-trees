@@ -1,28 +1,32 @@
 #include "init.h"
 
-void init(STree *st)
+static void init_root_children(STree *st)
 {
-    Uint i;
+    Uint *v;
+    for (v = st->rootchildren; v <= st->rootchildren + MAX_CHARS; v++) {
+        *v = UNDEF;
+    }
+}
 
-    st->is.size = START_ALLOCSIZE;
-
-    st->ls.fst = realloc(NULL, sizeof(Uint) * text.len + 2);
-    st->is.fst = realloc(NULL, sizeof(Uint) * st->is.size);
-
-    for(i=0; i<LARGE_VERTEXSIZE; i++) {
+static void nullify_tablestart(STree *st)
+{
+    for (int i = 0; i < LARGE_VERTEXSIZE; i++) {
         st->is.fst[i] = 0;
     }
+}
 
+void init(STree *st)
+{
+    st->is.size = START_ALLOCSIZE;
+    st->ls.fst       = realloc(NULL, sizeof(Uint) * text.len + 2);
+    st->is.fst       = realloc(NULL, sizeof(Uint) * st->is.size);
     st->rootchildren = realloc(NULL, sizeof(Uint) *  MAX_CHARS + 1);
-    for(Uint *child= st->rootchildren; child<=st->rootchildren + MAX_CHARS; child++)
-    {
-        *child = UNDEF;
-    }
+
+    init_root_children(st);
+    nullify_tablestart(st);
 
     st->tail = text.content;
-
-    Uint last = st->is.size - LARGE_VERTEXSIZE;
-    st->allocated = st->is.fst + last;
+    st->allocated = st->is.fst + st->is.size - LARGE_VERTEXSIZE;
 
     // Inner
     st->is.nxt = st->is.fst;
@@ -39,15 +43,15 @@ void init(STree *st)
 
     SET_ROOTCHILD(*text.content, MAKE_LEAF(0));
 
-    st->ls.fst[0]          = 0;
-    st->ls.nxt_ind          = LEAF_VERTEXSIZE;
-    st->ls.nxt              = st->ls.fst + LEAF_VERTEXSIZE;
-    st->is.nxt               = st->is.fst + LARGE_VERTEXSIZE;
-    st->is.nxt_ind           = LARGE_VERTEXSIZE;
-    st->split.child       = UNDEF;
-    st->split.left = UNDEF;
-    st->chain.size               = 0;
-    st->chain.fst              = NULL;
+    st->ls.fst[0]   = 0;
+    st->ls.nxt_ind  = LEAF_VERTEXSIZE;
+    st->ls.nxt      = st->ls.fst + LEAF_VERTEXSIZE;
+    st->is.nxt      = st->is.fst + LARGE_VERTEXSIZE;
+    st->is.nxt_ind  = LARGE_VERTEXSIZE;
+    st->split.child = UNDEF;
+    st->split.left  = UNDEF;
+    st->chain.size  = 0;
+    st->chain.fst   = NULL;
 
 
 }
