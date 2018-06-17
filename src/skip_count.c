@@ -47,14 +47,14 @@ void skip_count(STree *st)
         }
     }
 
-    while(True) {
+    while(true) {
 
         fstchar = *(st->head.label.start);
         prevnode = UNDEF;
         Vertex headchild = CHILD(st->head.vertex);
 
         // traverse the list of successors
-        while(True) {
+        while(true) {
             if(IS_LEAF(headchild)) {
 
                 leafindex = VERTEX_TO_INDEX(headchild);

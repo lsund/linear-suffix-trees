@@ -113,7 +113,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
     init_loc(vertexp, head, depth, loc);
 
-    while(True) {
+    while(true) {
 
         if (patt.start > patt.end) {
             return NULL;
@@ -156,7 +156,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
             Wchar labelchar;
             Uint vertex = CHILD(vertexp);
 
-            while(True) {
+            while(true) {
 
                 if (IS_NOTHING(vertex)) {
 
@@ -327,7 +327,7 @@ void scan_tail(STree *st)
     }
 
     // Head is not the root
-    while(True) {
+    while(true) {
 
         prev = UNDEF;
         current_vertex = CHILD(st->head.vertex);

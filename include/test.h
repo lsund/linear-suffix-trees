@@ -8,6 +8,7 @@
 #include <wchar.h>
 #include <locale.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "minunit.h"
 #include "search.h"

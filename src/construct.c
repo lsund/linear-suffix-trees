@@ -41,7 +41,7 @@ static void append_chain(STree *st)
     st->is.nxt_ind += SMALL_VERTEXSIZE;
 }
 
-static Bool label_empty(Label label)
+static bool label_empty(Label label)
 {
     return label.start == label.end;
 }

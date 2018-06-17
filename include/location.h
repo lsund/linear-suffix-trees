@@ -1,8 +1,16 @@
 #ifndef LOCATION_H
 #define LOCATION_H
 
+#include <stdbool.h>
+
 #include "streedef.h"
 #include "types.h"
+
+
+// A struct representing a string, with its start and length
+typedef struct {
+  Uint start, length;
+} String;
 
 // A location is implemented by the type `Loc`
 typedef struct
@@ -13,7 +21,7 @@ typedef struct
     Uint edgelen;            // length of edge
     Uint remain;             // number of remaining characters on edge
     Uint *nxt;              // reference to node the edge points to
-    Bool leafedge;           // Is the location on a leafedge
+    bool leafedge;           // Is the location on a leafedge
 } Loc;
 
 // If a location is a node u, we set `remain` to 0, and store a reference to

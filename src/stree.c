@@ -15,25 +15,25 @@ Wchar *sentinel;
 Uint textlen, alphasize;
 
 
-Bool base_is_vertex(STree *st)
+bool base_is_vertex(STree *st)
 {
     return st->head.label.end == NULL;
 }
 
 
-Bool is_head_old(STree *st)
+bool is_head_old(STree *st)
 {
     return base_is_vertex(st);
 }
 
 
-Bool tail_at_lastchar(STree *st)
+bool tail_at_lastchar(STree *st)
 {
     return st->tail == sentinel;
 }
 
 
-Bool head_is_root(STree *st)
+bool head_is_root(STree *st)
 {
     return st->head.depth == 0;
 }

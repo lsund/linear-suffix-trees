@@ -7,10 +7,9 @@
 #include "stree.h"
 
 typedef struct reference {
-    Bool toleaf;    // Points to a leaf?
+    bool toleaf;    // Points to a leaf?
     Uint *address;
 } Reference;
-
 
 Sint stree_dfs(STree *st,Reference *start,
         Sint (*processleaf)(Uint, ArrayUint *), ArrayUint *leaves);

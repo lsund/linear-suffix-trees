@@ -109,9 +109,9 @@
 // Additionally sets the child bit for the parent
 #define SET_CHILD(V, VAL)               *(V) = ((*(V)) & MSB) | (VAL)
 
-Bool base_is_vertex(STree *st);
+bool base_is_vertex(STree *st);
 
-Bool is_head_old(STree *st);
+bool is_head_old(STree *st);
 
 // Get info for branch vertex
 Uint get_depth_head(STree *st, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
@@ -126,9 +126,9 @@ Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **largep);
 void follow_link(STree *st);
 
 void set_child_and_sibling(STree *st, Uint child, Uint sibling);
-Bool tail_at_lastchar(STree *st);
+bool tail_at_lastchar(STree *st);
 
-Bool head_is_root(STree *st);
+bool head_is_root(STree *st);
 
 void stree_free(STree *st);
 

@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include "types.h"
+#include "streedef.h"
 
 Uint max(Uint a, Uint b);
 

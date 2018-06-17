@@ -55,7 +55,7 @@ typedef struct filehandle {
 // Functions
 
 
-caddr_t fileParts(int fd,Uint offset,Uint len,Bool writemap);
+caddr_t fileParts(int fd,Uint offset,Uint len,bool writemap);
 
 void freetextspace();
 

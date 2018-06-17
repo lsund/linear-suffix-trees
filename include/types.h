@@ -39,40 +39,4 @@ typedef signed   long  Slong;
 #define UintConst(N)   (N##UL)
 #define SintConst(N)   (N##L)
 
-#define Bool unsigned char
-
-#define False ((Bool) 0)
-
-#define True ((Bool) 1)
-
-//  Pair of Uint
-typedef struct {
-  Uint uint0, uint1;
-} PairUint;
-
-// Triple of Uint
-typedef struct {
-  Uint uint0, uint1, uint2;
-} ThreeUint;
-
-// A struct representing a string, with its start and length
-typedef struct {
-  Uint start, length;
-} String;
-
-//}
-
-// Information about a file
-typedef struct {
-  char *filenamebuf;    // pointer to a copy of a filename
-  Uint filelength;      // the length of the corresponding file
-} Fileinfo;             // \Typedef{Fileinfo}
-
-
-typedef struct pattern {
-    Wchar *start;
-    Wchar *end;
-} Pattern;
-
-
 #endif

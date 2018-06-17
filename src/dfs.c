@@ -36,17 +36,17 @@ typedef struct
     if(IS_LEAF(V))\
 {\
     currentnode.address = st->ls.fst + VERTEX_TO_INDEX(V);\
-    currentnode.toleaf = True;\
+    currentnode.toleaf = true;\
 } else\
 {\
     currentnode.address = VERTEX_TO_INNERREF(V);\
-    currentnode.toleaf = False;\
+    currentnode.toleaf = false;\
 }
 
 Sint stree_dfs(STree *st, Reference *start,
         Sint (*processleaf) (Uint, ArrayUint *), ArrayUint *leaves)
 {
-    Bool godown = True, readyforpop = False;
+    bool godown = true, readyforpop = false;
     Uint child, brotherval;
     Bref lcpnode = NULL;
     Reference currentnode;
@@ -58,7 +58,7 @@ Sint stree_dfs(STree *st, Reference *start,
         return 0;
     }
 
-    currentnode.toleaf = False;
+    currentnode.toleaf = false;
     currentnode.address = start->address;
     stack.spaceBref = NULL;
     stack.allocatedBref = stack.nxtfreeBref = 0;
@@ -70,14 +70,14 @@ Sint stree_dfs(STree *st, Reference *start,
     stack.spaceBref[stack.nxtfreeBref++] = currentnode.address;
     SETCURRENT(CHILD(currentnode.address));
 
-        while(True)
+        while(true)
         {
             if(currentnode.toleaf) {
                 processleaf(LEAFREF_TO_INDEX(currentnode.address), leaves);
                 brotherval = LEAF_SIBLING(currentnode.address);
                 if(IS_NOTHING(brotherval)) {
-                    readyforpop = True;
-                    currentnode.toleaf = False;
+                    readyforpop = true;
+                    currentnode.toleaf = false;
                 } else {
                     SETCURRENT(brotherval);     // current comes from brother
                     lcpnode = stack.spaceBref[stack.nxtfreeBref-1];
@@ -94,7 +94,7 @@ Sint stree_dfs(STree *st, Reference *start,
                     {
                         SETCURRENT(brotherval);    // current comes from brother
                         lcpnode = stack.spaceBref[stack.nxtfreeBref-1];
-                        readyforpop = False;
+                        readyforpop = false;
                     }
                 } else {
                     if(godown) {
@@ -111,7 +111,7 @@ Sint stree_dfs(STree *st, Reference *start,
                     } else {
                         brotherval = SIBLING(currentnode.address);
                         if(IS_NOTHING(brotherval)) {
-                            readyforpop = True;
+                            readyforpop = true;
                         } else {
                             SETCURRENT(brotherval);    // current comes brother
                         }
