@@ -24,7 +24,7 @@
 #include "types.h"
 #include "arraydef.h"
 #include "bitvector.h"
-#include "streedata.h"
+#include "streedef.h"
 #include "bitvector.h"
 #include "init.h"
 

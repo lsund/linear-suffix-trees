@@ -1,7 +1,7 @@
 #ifndef SKIP_COUNT_H
 #define SKIP_COUNT_H
 
-#include "streedata.h"
+#include "streedef.h"
 #include "externs.h"
 #include "chain.h"
 

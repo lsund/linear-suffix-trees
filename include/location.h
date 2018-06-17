@@ -1,7 +1,7 @@
 #ifndef LOCATION_H
 #define LOCATION_H
 
-#include "streedata.h"
+#include "streedef.h"
 #include "types.h"
 
 // A location is implemented by the type `Loc`

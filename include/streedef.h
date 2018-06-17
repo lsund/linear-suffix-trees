@@ -1,5 +1,5 @@
-#ifndef STREEDATA_H
-#define STREEDATA_H
+#ifndef STREEDEF_H
+#define STREEDEF_H
 
 #include "types.h"
 #include "arraydef.h"

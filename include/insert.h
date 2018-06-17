@@ -2,7 +2,7 @@
 #define INSERT_H
 
 #include "types.h"
-#include "streedata.h"
+#include "streedef.h"
 #include "spaceman.h"
 #include "basedef.h"
 #include "externs.h"

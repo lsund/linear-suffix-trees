@@ -12,7 +12,7 @@
 #include "util.h"
 #include "basedef.h"
 #include "stree.h"
-#include "streedata.h"
+#include "streedef.h"
 
 void allocate_inner_vertices(STree *st);
 

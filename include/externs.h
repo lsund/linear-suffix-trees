@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "basedef.h"
-#include "streedata.h"
+#include "streedef.h"
 
 extern Wchar *text;
 
