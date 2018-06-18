@@ -3,7 +3,7 @@
 static void init_root_children(STree *st)
 {
     Uint *v;
-    for (v = st->rootchildren; v <= st->rootchildren + MAX_CHARS; v++) {
+    for (v = st->rs; v <= st->rs + MAX_CHARS; v++) {
         *v = UNDEF;
     }
 }
@@ -48,7 +48,7 @@ static void init_vertices(STree *st)
 
 static void insert_firstleaf(STree *st)
 {
-    st->rootchildren[*text.content] = MAKE_LEAF(0);
+    st->rs[*text.content] = MAKE_LEAF(0);
 }
 
 
@@ -63,12 +63,12 @@ void init(STree *st)
     st->is.size = START_ALLOCSIZE;
     st->ls.fst       = realloc(NULL, sizeof(Uint) * text.len + 2);
     st->is.fst       = realloc(NULL, sizeof(Uint) * st->is.size);
-    st->rootchildren = realloc(NULL, sizeof(Uint) *  MAX_CHARS + 1);
+    st->rs = realloc(NULL, sizeof(Uint) *  MAX_CHARS + 1);
 
     init_root_children(st);
     nullify_tablestart(st);
 
-    st->allocated = st->is.fst + st->is.size - LARGE_VERTEXSIZE;
+    st->is.alloc = st->is.fst + st->is.size - LARGE_VERTEXSIZE;
 
     init_vertices(st);
     init_tail(st);

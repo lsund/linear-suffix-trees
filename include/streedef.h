@@ -21,6 +21,7 @@ typedef struct table {
     Uint *nxt;
     Uint nxt_ind;
     Uint size;
+    Uint *alloc;
 } Table;
 
 
@@ -35,18 +36,17 @@ typedef struct label {
     Wchar *end;
 } Label;
 
-typedef struct head {
-    Label label;
-    Uint depth;
-    VertexP vertex;  // the vertex u
-} Head;
-
 // The edge that contains the end of head
 //
 // The right component of the head location uv.
 // head.label.start refers to the fst character of v
 // headend to the last character. In case, v = empty
 // headend = null
+typedef struct head {
+    VertexP vertex;  // the vertex u
+    Label label;
+    Uint depth;
+} Head;
 
 
 // The edge which is to be splitted
@@ -61,23 +61,21 @@ typedef struct split {
 
 typedef struct suffixtree {
 
-    Uint *rootchildren;         // references to successors of root
-    Table is;
-    Table ls;
+    Table is;           // Inner vertices
+    Table ls;           // Leaf vertices
+    VertexP rs;         // references to successors of root
 
-    Uint current_branchdepth;          // depth of the new branch node
+    Uint c_depth;       // Current depth of the newly inserted inner vertex
 
-    SplitEdge split;
+    SplitEdge split;    // A reference to the child and left sibling of the
+                        // current edge split by the algorithm
 
-    Chain chain;                // address of the node current chains starts at
+    Chain chain;        // Address of the vertex current chains starts at,
+                        // and the total size of the chain
 
-    Head head;
-    Wchar *tail;            // points to the tail
+    Head head;          // Representing the edge containing the head location.
 
-    // refers to the last address, such that at
-    // least LARGE_VERTEXSIZE integers are available. So a large node can be
-    // stored in the available amount of space.
-    Uint *allocated;
+    Wchar *tail;        // Points to the tail
 
 } STree;
 

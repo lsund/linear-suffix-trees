@@ -18,7 +18,7 @@
 // Private
 
 
-static void insert_leafedge(STree *st)
+static void insert_tailedge(STree *st)
 {
     if(base_is_vertex(st)) {
         insert(st);
@@ -88,6 +88,6 @@ void construct(STree *st)
     init(st);
     while(!tail_at_lastchar(st)) {
         find_nxt_head(st);
-        insert_leafedge(st);
+        insert_tailedge(st);
     }
 }

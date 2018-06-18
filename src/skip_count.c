@@ -13,7 +13,7 @@ void skip_count(STree *st)
     if(head_is_root(st)) {
 
         fstchar = *(st->head.label.start);
-        Uint rootchild = st->rootchildren[(Uint) fstchar];
+        Uint rootchild = st->rs[(Uint) fstchar];
 
         if(IS_LEAF(rootchild)) {
             st->split.child = rootchild;

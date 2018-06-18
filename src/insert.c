@@ -2,7 +2,7 @@
 
 static void insert_rootleaf(STree *st, Wchar *start, Vertex v)
 {
-    st->rootchildren[(Uint) *start] = v;
+    st->rs[(Uint) *start] = v;
     LEAF_SIBLING(st->ls.nxt) = UNDEF;
 }
 
@@ -38,7 +38,7 @@ static void insert_new_inner(STree *st)
 {
     if(head_is_root(st)) {
 
-        st->rootchildren[*st->head.label.start] = st->is.nxt_ind;
+        st->rs[*st->head.label.start] = st->is.nxt_ind;
         SIBLING(st->is.nxt) = UNDEF;
 
     } else if (!EXISTS(st->split.left)) {
@@ -132,10 +132,10 @@ static void insert_leaf_under_split(STree *st)
 
 static void update_labels(STree *st)
 {
-    Uint headlabel_length   = (st->head.label.end - st->head.label.start + 1);
-    st->current_branchdepth = st->head.depth + headlabel_length;
-    DEPTH(st->is.nxt)       = st->current_branchdepth;
-    HEADPOS(st->is.nxt)     = st->ls.nxt_ind;
+    Uint headlabel_length = (st->head.label.end - st->head.label.start + 1);
+    st->c_depth           = st->head.depth + headlabel_length;
+    DEPTH(st->is.nxt)     = st->c_depth;
+    HEADPOS(st->is.nxt)   = st->ls.nxt_ind;
 }
 
 

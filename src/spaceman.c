@@ -8,7 +8,7 @@ static Uint *new_allocbound(STree *st)
 // Allocate space for branch vertices
 void allocate_inner_vertices(STree *st)
 {
-    if(st->is.nxt >= st->allocated) {
+    if(st->is.nxt >= st->is.alloc) {
 
         st->is.size += EXTRA_ALLOCSIZE;
 
@@ -27,6 +27,6 @@ void allocate_inner_vertices(STree *st)
         if(st->chain.fst != NULL) {
             st->chain.fst = st->is.fst + chain;
         }
-        st->allocated = new_allocbound(st);
+        st->is.alloc = new_allocbound(st);
     }
 }

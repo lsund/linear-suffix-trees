@@ -70,7 +70,7 @@
 // Vertices
 
 #define ROOT                    (st->is.fst)
-#define ROOT_CHILD(C)           (st->rootchildren[(Uint) (C)])
+#define ROOT_CHILD(C)           (st->rs[(Uint) (C)])
 // Index of a reference
 #define REF_TO_INDEX(P)         ((Uint) ((P) - st->is.fst))
 #define LEAFREF_TO_INDEX(P)     ((Uint) ((P) - st->ls.fst))
