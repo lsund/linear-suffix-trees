@@ -14,7 +14,7 @@ bool naive_search(Wchar *start, Wchar *end)
     for (Uint i = 0; i < text.len; i++) {
         k = i;
         for (j = 0; j < m; j++) {
-            if (pattern[j] == text.content[k]) {
+            if (pattern[j] == text.fst[k]) {
                 k++;
             } else {
                 break;

@@ -33,7 +33,7 @@
 
 // The label for a incoming edge to a vertex wu can be obtained by dropping
 // depth(w) characters of wu.
-#define LABEL_START(O)          text.content + (O)
+#define LABEL_START(O)          text.fst + (O)
 
 #define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (text.len + 1), 48);
 #define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (text.len + 1), 48);
@@ -60,7 +60,7 @@
 #define IS_LEAF(V)                  ((V) & LEAFBIT)
 #define IS_SMALL(V)                 ((V) & SMALLBIT)
 #define IS_LARGE(V)                 (!((V) & SMALLBIT))
-#define IS_LAST(C)                  ((C) >= text.sentinel)
+#define IS_LAST(C)                  ((C) >= text.lst)
 #define IS_NOTHING(P)               ((P) & NOTHING)
 #define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (st->is.fst == V)

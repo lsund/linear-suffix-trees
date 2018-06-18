@@ -59,7 +59,7 @@ typedef struct split {
 } SplitEdge;
 
 
-typedef struct suffixtree {
+typedef struct stree {
 
     Table is;           // Inner vertices
     Table ls;           // Leaf vertices

@@ -26,7 +26,7 @@ static void init_head(STree *st)
 
 static void init_tail(STree *st)
 {
-    st->tail = text.content;
+    st->tail = text.fst;
 }
 
 
@@ -48,7 +48,7 @@ static void init_vertices(STree *st)
 
 static void insert_firstleaf(STree *st)
 {
-    st->rs[*text.content] = MAKE_LEAF(0);
+    st->rs[*text.fst] = MAKE_LEAF(0);
 }
 
 

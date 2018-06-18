@@ -24,7 +24,7 @@ bool is_head_old(STree *st)
 
 bool tail_at_lastchar(STree *st)
 {
-    return st->tail == text.sentinel;
+    return st->tail == text.lst;
 }
 
 

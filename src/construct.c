@@ -52,7 +52,6 @@ static void find_base(STree *st)
             st->head.label.start++;
             skip_count(st);
         }
-
     } else {
         follow_link(st);
         skip_count(st);

@@ -58,7 +58,7 @@ void skip_count(STree *st)
             if(IS_LEAF(headchild)) {
 
                 leafindex = VERTEX_TO_INDEX(headchild);
-                edgechar = text.content[st->head.depth + leafindex];
+                edgechar = text.fst[st->head.depth + leafindex];
 
                 if(edgechar == fstchar) {
                     // correct edge found
@@ -77,7 +77,7 @@ void skip_count(STree *st)
                 vertex = VERTEX_TO_REF(headchild);
                 update_chain(st, vertex, &chainend, &distance);
                 head = get_headpos(st, vertex, &chainend, distance);
-                edgechar = text.content[st->head.depth + head];
+                edgechar = text.fst[st->head.depth + head];
                 // Correct edge found
                 if(edgechar == fstchar) {
                     break;

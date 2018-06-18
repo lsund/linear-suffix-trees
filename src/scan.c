@@ -31,7 +31,7 @@ static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
     if (remain < 0) {
         remain = 1;
     }
-    Pattern textpatt  = make_patt(start + remain, text.sentinel - 1);
+    Pattern textpatt  = make_patt(start + remain, text.lst - 1);
     Pattern curr_patt = make_patt(patt->start + remain, patt-> end);
     Uint lcp_res      = lcp(textpatt, curr_patt);
     return remain + lcp_res;
@@ -41,7 +41,7 @@ static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
 static Uint  match_leaf(Loc *loc, Uint vertex, Pattern *patt, Uint remain)
 {
     Uint leafnum = VERTEX_TO_INDEX(vertex);
-    loc->fst   = text.content + leafnum;
+    loc->fst   = text.fst + leafnum;
 
     return prefixlen(loc->fst, patt, remain);
 }
@@ -73,14 +73,14 @@ static void update_st(STree *st, Wchar *label_start, Uint plen, Uint current_ver
 
 static Uint tail_prefixlen(STree *st, Wchar *start, Wchar *end)
 {
-    Pattern tailpatt = make_patt(st->tail + 1, text.sentinel - 1);
+    Pattern tailpatt = make_patt(st->tail + 1, text.lst - 1);
     return 1 + lcp(tailpatt, make_patt(start, end));
 }
 
 
 static Wchar get_label(STree *st, Uint offset, Wchar **label_start)
 {
-    *label_start = text.content + (st->head.depth + offset);
+    *label_start = text.fst + (st->head.depth + offset);
     return **label_start;
 }
 
@@ -289,10 +289,10 @@ void scan_tail(STree *st)
         // successor edge is leaf, compare tail and leaf edge label
         if(IS_LEAF(current_vertex)) {
 
-            Wchar *suffix_start = text.content + VERTEX_TO_INDEX(current_vertex) + 1;
+            Wchar *suffix_start = text.fst + VERTEX_TO_INDEX(current_vertex) + 1;
 
-            Pattern edgepatt = make_patt(suffix_start, text.sentinel - 1);
-            Pattern tailpatt = make_patt(st->tail + 1, text.sentinel - 1);
+            Pattern edgepatt = make_patt(suffix_start, text.lst - 1);
+            Pattern tailpatt = make_patt(st->tail + 1, text.lst - 1);
             plen = lcp(edgepatt, tailpatt) + 1;
 
             st->tail += plen;
@@ -309,7 +309,7 @@ void scan_tail(STree *st)
         head = get_headpos(st, current_vertexp, &chainend, distance);
         depth = get_depth(st, current_vertexp, distance, &chainend);
 
-        label_start = text.content + head;
+        label_start = text.fst + head;
         plen = tail_prefixlen(st, label_start + 1, label_start + depth - 1);
 
         st->tail+= plen;
@@ -374,7 +374,7 @@ void scan_tail(STree *st)
         }
 
         if(IS_LEAF(current_vertex)) {
-            plen = tail_prefixlen(st, label_start + 1, text.sentinel - 1);
+            plen = tail_prefixlen(st, label_start + 1, text.lst - 1);
             (st->tail) += plen;
             update_st(st, label_start, plen, current_vertex, prev);
             return;

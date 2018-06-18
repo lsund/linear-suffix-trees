@@ -22,9 +22,9 @@
 void file_to_string(const char *filename)
 {
     FILE *in = fopen(filename, "r");
-    text.content = malloc(sizeof(Wchar) * MAX_ALLOC);
+    text.fst = malloc(sizeof(Wchar) * MAX_ALLOC);
 
-    if(text.content == NULL) {
+    if(text.fst == NULL) {
         fprintf(stderr,"Cannot open file %s\n", filename);
         exit(EXIT_FAILURE);
     }
@@ -36,11 +36,11 @@ void file_to_string(const char *filename)
             fprintf(stderr, "Trying to allocate too much space\n");
             exit(EXIT_FAILURE);
         }
-        text.content[text.len] = c;
+        text.fst[text.len] = c;
         text.len++;
     }
-    text.content[text.len + 1] = '\0';
-    text.sentinel = text.content + text.len - 1;
+    text.fst[text.len + 1] = '\0';
+    text.lst = text.fst + text.len - 1;
 
     if(text.len == 0) {
         fprintf(stderr,"file \"%s\" is empty\n", filename);
@@ -132,7 +132,7 @@ FILE *open_append(const char *path)
 // Frees the text specified
 void freetextspace()
 {
-  (void) munmap((caddr_t) text.content, (size_t) text.len);
+  (void) munmap((caddr_t) text.fst, (size_t) text.len);
 }
 
 
