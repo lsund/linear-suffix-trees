@@ -27,7 +27,7 @@ OBJ=         obj/stree.o\
 			 obj/chain.o\
              obj/construct.o
 
-TEST_OBJ = obj/test_search.o
+TEST_OBJ = obj/test_search.o obj/test_experiments.o
 
 dirs:
 	mkdir -p obj bin

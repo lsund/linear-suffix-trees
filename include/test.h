@@ -1,4 +1,3 @@
-
 #ifndef TEST_H
 #define TEST_H
 
@@ -33,6 +32,7 @@
 #define ANSI_COLOR_RESET    "\x1b[0m"
 
 char *test_search();
+char *test_experiments();
 
 enum MessageOption {
     MODULE,
