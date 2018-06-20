@@ -61,9 +61,9 @@ static void init_split(STree *st)
 void init(STree *st)
 {
     st->is.size = START_ALLOCSIZE;
-    st->ls.fst       = realloc(NULL, sizeof(Uint) * text.len + 2);
-    st->is.fst       = realloc(NULL, sizeof(Uint) * st->is.size);
-    st->rs = realloc(NULL, sizeof(Uint) *  MAX_CHARS + 1);
+    st->ls.fst = realloc(NULL, sizeof(Uint) * text.len + 2);
+    st->is.fst = realloc(NULL, sizeof(Uint) * st->is.size);
+    st->rs     = realloc(NULL, sizeof(Uint) *  (MAX_CHARS + 1));
 
     init_root_children(st);
     nullify_tablestart(st);
@@ -76,4 +76,11 @@ void init(STree *st)
     init_split(st);
     reset_chain(st);
     insert_firstleaf(st);
+}
+
+void destroy(STree *st)
+{
+    free(st->rs);
+    free(st->ls.fst);
+    free(st->is.fst);
 }

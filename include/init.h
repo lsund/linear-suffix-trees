@@ -6,4 +6,6 @@
 
 void init(STree *st);
 
+void destroy(STree *st);
+
 #endif

@@ -1,6 +1,13 @@
 
 #include "util.h"
 
+
+void printtime(FILE *file)
+{
+    fprintf(file, "time: %.2f\n", getruntime());
+}
+
+
 Uint lcp(Pattern patt1, Pattern patt2)
 {
     register Wchar *probe1 = patt1.start, *probe2 = patt2.start;
@@ -12,9 +19,16 @@ Uint lcp(Pattern patt1, Pattern patt2)
     return (Uint) (probe1 - patt1.start);
 }
 
+
 Uint max(Uint a, Uint b)
 {
     return a > b ? a : b;
+}
+
+
+Uint min(const Uint a, const Uint b)
+{
+    return a < b ? a : b;
 }
 
 
@@ -26,6 +40,7 @@ Pattern make_patt(Wchar *start, Wchar *end)
     return ret;
 }
 
+
 Pattern patt_inc(Pattern patt, Uint n)
 {
     Pattern ret;
@@ -33,3 +48,4 @@ Pattern patt_inc(Pattern patt, Uint n)
     ret.end = patt.end;
     return ret;
 }
+

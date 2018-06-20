@@ -20,11 +20,6 @@ static bool search_pattern(STree *st, Wchar *start, Loc *loc)
     return !rem || rem[0] == 0;
 }
 
-static Uint min(const Uint a, const Uint b)
-{
-    return a < b ? a : b;
-}
-
 char *test_count(char *patternfile, char *textfile, Uint count)
 {
     Uint patternslen;

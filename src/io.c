@@ -19,37 +19,7 @@
 
 #include "io.h"
 
-void file_to_string(const char *filename)
-{
-    FILE *in = fopen(filename, "r");
-    text.fst = malloc(sizeof(Wchar) * MAX_ALLOC);
-
-    if(text.fst == NULL) {
-        fprintf(stderr,"Cannot open file %s\n", filename);
-        exit(EXIT_FAILURE);
-    }
-
-    Uint c;
-    text.len = 0;
-    while ((c = fgetwc(in)) != WEOF) {
-        if (text.len > MAX_ALLOC) {
-            fprintf(stderr, "Trying to allocate too much space\n");
-            exit(EXIT_FAILURE);
-        }
-        text.fst[text.len] = c;
-        text.len++;
-    }
-    text.fst[text.len + 1] = '\0';
-    text.lst = text.fst + text.len - 1;
-
-    if(text.len == 0) {
-        fprintf(stderr,"file \"%s\" is empty\n", filename);
-        exit(EXIT_FAILURE);
-    }
-}
-
-
-static int open_file(char *name, Uint *filelen, bool writefile)
+static int open_file(const char *name, Uint *filelen, bool writefile)
 {
     struct stat buf;
     int fd = open(name,(writefile) ? O_RDWR : O_RDONLY);
@@ -69,6 +39,43 @@ static int open_file(char *name, Uint *filelen, bool writefile)
     return fd;
 }
 
+
+void file_to_string(const char *filename)
+{
+    /* open_file(filename, &text.len, true); */
+    FILE *in = fopen(filename, "r");
+    struct stat buf;
+    int fd = fileno(in);
+    fstat(fd, &buf);
+    text.len = (Uint) buf.st_size;
+    text.fst = malloc(sizeof(Wchar) * (text.len + 1));
+
+    if(text.fst == NULL) {
+        fprintf(stderr,"Cannot open file %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+
+    Uint c;
+    text.len = 0;
+    while ((c = fgetwc(in)) != WEOF) {
+        if (text.len > MAX_ALLOC) {
+            fprintf(stderr, "Trying to allocate too much space\n");
+            exit(EXIT_FAILURE);
+        }
+        text.fst[text.len] = c;
+        text.len++;
+    }
+    text.fst[text.len] = '\0';
+    text.lst = text.fst + text.len - 1;
+    fclose(in);
+
+    if(text.len == 0) {
+        fprintf(stderr,"file \"%s\" is empty\n", filename);
+        exit(EXIT_FAILURE);
+    }
+}
+
+
 Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
 {
     Wchar **words = *wordsp;
@@ -86,9 +93,7 @@ Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
     }
 
     Uint i;
-    for (i = 0; i < nlines; i++)
-    {
-        Uint j;
+    for (i = 0; i < nlines; i++) {
 
         /* Allocate space for the nxt line */
         words[i] = (Wchar *) malloc(max_line_len * sizeof(Wchar));
@@ -99,7 +104,7 @@ Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
         }
 
         wint_t c;
-        j = 0;
+        Uint j = 0;
         do  {
             c = fgetwc(fp);
             if (c == WEOF) {
@@ -134,5 +139,3 @@ void freetextspace()
 {
   (void) munmap((caddr_t) text.fst, (size_t) text.len);
 }
-
-

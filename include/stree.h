@@ -127,8 +127,6 @@ bool tail_at_lastchar(STree *st);
 
 bool head_is_root(STree *st);
 
-void stree_free(STree *st);
-
 VertexP get_next_inner(STree *st);
 
 Uint get_next_leafnum(STree *st);

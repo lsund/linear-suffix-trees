@@ -33,14 +33,6 @@ bool head_is_root(STree *st)
     return st->head.depth == 0;
 }
 
-void st_free(STree *st)
-{
-    free(st->ls.fst);
-    free(st->rs);
-    free(st->is.fst);
-}
-
-
 Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
 {
     if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
