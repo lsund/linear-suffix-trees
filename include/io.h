@@ -66,7 +66,7 @@ int file2Array(char *name, Uint *filelen, int nlines, char ***words);
 // Opens the path for appending, erasing any prior content of the same file
 FILE *open_append(const char *path);
 
-Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp);
+Uint file_to_strings(char *name, Uint nlines, Wchar ***wordsp);
 
 #endif
 

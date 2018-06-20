@@ -4,8 +4,8 @@
 #include "bitvector.h"
 
 /* #define MAX_ALLOC           5000000 // 5 MB */
-#define MAX_ALLOC           100000000 // 100 MB
-/* #define MAX_ALLOC           150000000 // 150 MB */
+/* #define MAX_ALLOC           100000000 // 100 MB */
+#define MAX_ALLOC           150000000 // 150 MB
 /* #define MAX_ALLOC           450000000 // 450 MB */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,8 +29,9 @@
 // Transform bytes into megabytes
 #define MEGABYTES(V)            ((double) (V)/((UintConst(1) << 20) - 1))
 
-#define MAX_CHARS               100000
-#define MAX_PATTERNS 20000
+#define MAX_CHARS               5000
+
+#define MAX_PATTERNS            20000
 
 
 // Fast division

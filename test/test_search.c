@@ -22,11 +22,10 @@ static bool search_pattern(STree *st, Wchar *start, Loc *loc)
 
 char *test_count(char *patternfile, char *textfile, Uint count)
 {
-    Uint patternslen;
     setlocale(LC_ALL, "en_US.utf8");
     file_to_string(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
-    int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
+    int npatterns  = file_to_strings(patternfile, MAX_PATTERNS, &patterns);
     STree st;
     construct(&st);
 
@@ -56,11 +55,10 @@ char *compare_vs_naive(char *patternfile, char *textfile)
 {
     int maxpatterns = 200;
 
-    Uint patternslen;
     setlocale(LC_ALL, "en_US.utf8");
     file_to_string(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
-    int npatterns  = file_to_strings(patternfile, &patternslen, MAX_PATTERNS, &patterns);
+    int npatterns  = file_to_strings(patternfile, MAX_PATTERNS, &patterns);
     STree st;
     construct(&st);
 

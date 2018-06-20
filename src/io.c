@@ -76,10 +76,11 @@ void file_to_string(const char *filename)
 }
 
 
-Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
+Uint file_to_strings(char *name, Uint nlines, Wchar ***wordsp)
 {
     Wchar **words = *wordsp;
-    int fd = open_file(name, filelen, false);
+    Uint filelen;
+    int fd = open_file(name, &filelen, false);
 
     if (fd < 0) {
         return -1;
@@ -108,7 +109,6 @@ Uint file_to_strings(char *name, Uint *filelen, Uint nlines, Wchar ***wordsp)
         do  {
             c = fgetwc(fp);
             if (c == WEOF) {
-
                 *wordsp = words;
                 fclose(fp);
                 return i;
