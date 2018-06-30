@@ -14,12 +14,17 @@
 #include "skip_count.h"
 #include "scan.h"
 
+Uint small_count = 0;
+Uint large_count = 0;
+Uint leaf_count = 0;
+
 ///////////////////////////////////////////////////////////////////////////////
 // Private
 
 
 static void insert_tailedge(STree *st)
 {
+    leaf_count++;
     if(base_is_vertex(st)) {
         insert(st);
     } else {
@@ -27,16 +32,6 @@ static void insert_tailedge(STree *st)
     }
 }
 
-
-static void append_chain(STree *st)
-{
-    if (!st->chain.fst) {
-        init_chain(st);
-    }
-    st->chain.size     += 1;
-    st->is.nxt     += SMALL_VERTEXSIZE;
-    st->is.nxt_ind += SMALL_VERTEXSIZE;
-}
 
 static bool label_empty(Label label)
 {
@@ -71,8 +66,10 @@ static void find_nxt_head(STree * st) {
             if(base_is_vertex(st)) {
                 set_chain_distances(st);
                 scan_tail(st);
+                large_count++;
             } else {
                 append_chain(st);
+                small_count++;
             }
         }
     }
@@ -84,9 +81,13 @@ static void find_nxt_head(STree * st) {
 
 void construct(STree *st)
 {
+    large_count = 0;
+    small_count = 0;
+    leaf_count = 0;
     init(st);
     while(!tail_at_lastchar(st)) {
         find_nxt_head(st);
         insert_tailedge(st);
     }
+    /* printf("%lu\n", small_count + large_count); */
 }

@@ -1,5 +1,15 @@
 #include "chain.h"
 
+void append_chain(STree *st)
+{
+    if (!st->chain.fst) {
+        init_chain(st);
+    }
+    st->chain.size     += 1;
+    st->is.nxt     += SMALL_VERTEXSIZE;
+    st->is.nxt_ind += SMALL_VERTEXSIZE;
+}
+
 void update_chain(STree *st, Uint *vertexp, Uint **chainend, Uint *distance)
 {
     if(st->chain.fst != NULL && vertexp >= st->chain.fst) {

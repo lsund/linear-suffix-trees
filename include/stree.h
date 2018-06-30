@@ -123,6 +123,7 @@ Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **largep);
 void follow_link(STree *st);
 
 void set_child_and_sibling(STree *st, Uint child, Uint sibling);
+
 bool tail_at_lastchar(STree *st);
 
 bool head_is_root(STree *st);

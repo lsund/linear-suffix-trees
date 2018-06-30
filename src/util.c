@@ -2,12 +2,6 @@
 #include "util.h"
 
 
-void printtime(FILE *file)
-{
-    fprintf(file, "time: %.2f\n", getruntime());
-}
-
-
 Uint lcp(Pattern patt1, Pattern patt2)
 {
     register Wchar *probe1 = patt1.start, *probe2 = patt2.start;

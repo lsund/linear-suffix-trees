@@ -10,6 +10,8 @@
 
 #include "scan.h"
 
+Uint iterate = 0;
+
 ///////////////////////////////////////////////////////////////////////////////
 // Private
 
@@ -91,7 +93,6 @@ static Wchar get_label(STree *st, Uint offset, Wchar **label_start)
 
 Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 {
-
     VertexP vertexp  = start_vertex;
     VertexP chainend = NULL;
     Vertex  head     = 0;
@@ -333,6 +334,7 @@ void scan_tail(STree *st)
         fstchar = *(st->tail);
 
         do {
+            iterate++;
             // find successor edge with fstchar = fstchar
             if(IS_LEAF(current_vertex)) {
 
@@ -364,7 +366,7 @@ void scan_tail(STree *st)
 
         } while(IS_SOMETHING(current_vertex));
 
-        if(IS_NOTHING(current_vertex) || labelchar > fstchar) {
+        if (IS_NOTHING(current_vertex) || labelchar > fstchar) {
 
             // No matching a-edge found
             // New edge will become right sibling of last vertex
@@ -373,7 +375,7 @@ void scan_tail(STree *st)
             return;
         }
 
-        if(IS_LEAF(current_vertex)) {
+        if (IS_LEAF(current_vertex)) {
             plen = tail_prefixlen(st, label_start + 1, text.lst - 1);
             (st->tail) += plen;
             update_st(st, label_start, plen, current_vertex, prev);

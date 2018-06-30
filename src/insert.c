@@ -156,7 +156,6 @@ void insert(STree *st)
 
         // head is the only child
         if (!EXISTS(st->split.left)) {
-
             insert_second_leaf(st, leaf);
         } else {
             insert_leaf(st, leaf);

@@ -11,5 +11,7 @@ void init_chain(STree *st);
 
 void set_chain_distances(STree *st);
 
+void append_chain(STree *st);
+
 #endif
 
