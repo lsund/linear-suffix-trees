@@ -5,10 +5,17 @@
 #include "config.h"
 #include "streedef.h"
 
+// A Text represents the text or string used to build a suffix tree.
 typedef struct text {
-    Wchar *fst;                // points to the input string
-    Wchar *lst;               // points to the position of the \(\$\)-symbol
-    Uint len;                      // the length of the input string
+    // Points to the start of the allocated block, the first character in the
+    // text.
+    Wchar *fst;
+    // Points to the last of the allocated black, the last character in the
+    // text.
+    Wchar *lst;
+    // The number of characters in the text.
+    Uint len;
+    // The distinct characters in alphabetical order.
     Uint asize;
 } Text;
 
