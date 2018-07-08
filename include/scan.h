@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "stree.h"
-#include "basedef.h"
+#include "config.h"
 #include "util.h"
 #include "location.h"
 #include "chain.h"

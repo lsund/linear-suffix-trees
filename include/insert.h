@@ -4,7 +4,7 @@
 #include "types.h"
 #include "streedef.h"
 #include "spaceman.h"
-#include "basedef.h"
+#include "config.h"
 #include "text.h"
 #include "stree.h"
 

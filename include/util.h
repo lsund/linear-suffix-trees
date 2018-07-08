@@ -5,6 +5,8 @@
 #include "streedef.h"
 #include "clock.h"
 
+#define MEGABYTES(V)  ((double) (V)/((UintConst(1) << 20) - 1))
+
 Uint max(Uint a, Uint b);
 
 Pattern make_patt(Wchar *start, Wchar *end);

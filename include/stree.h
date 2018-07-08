@@ -1,6 +1,7 @@
 #ifndef STREE_H
 #define STREE_H
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -8,13 +9,16 @@
 #include <limits.h>
 #include <stdbool.h>
 
-#include "basedef.h"
+#include "config.h"
 #include "clock.h"
 #include "text.h"
 #include "types.h"
 #include "streedef.h"
-#include "bitvector.h"
 #include "init.h"
+#include "util.h"
+
+#define MSB                         (UintConst(1) << (INTWORDSIZE - 1))
+#define SECOND_MSB                  (MSB >> 1)
 
 #define LEAF_VERTEXSIZE             1
 #define SMALL_VERTEXSIZE            3

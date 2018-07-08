@@ -2,7 +2,7 @@
 #define EXTERNS_H
 
 #include "types.h"
-#include "basedef.h"
+#include "config.h"
 #include "streedef.h"
 
 typedef struct text {

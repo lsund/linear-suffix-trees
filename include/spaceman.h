@@ -10,7 +10,7 @@
 #define SPACEMAN_H
 #include "types.h"
 #include "util.h"
-#include "basedef.h"
+#include "config.h"
 #include "stree.h"
 #include "streedef.h"
 

@@ -17,7 +17,7 @@
 #include "spaceman.h"
 #include "types.h"
 #include "error.h"
-#include "basedef.h"
+#include "config.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Macros

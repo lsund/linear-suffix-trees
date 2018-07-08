@@ -16,14 +16,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// This is the assumptions about the types
-// size(char) = 1
-// size (Ulong) >= 4
-// size(Uint) >= 4
-// size(Sint) >= 4
-// size(Ushort) = 2
-// size(Sshort) = 2
-
 // Primitives
 typedef wchar_t Wchar;
 typedef unsigned char  Uchar;

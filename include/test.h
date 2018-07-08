@@ -14,7 +14,7 @@
 #include "io.h"
 #include "naive_search.h"
 #include "text.h"
-#include "basedef.h"
+#include "config.h"
 #include "scan.h"
 #include "stree.h"
 #include "construct.h"
