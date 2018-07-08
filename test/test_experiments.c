@@ -44,7 +44,7 @@ char *log_runtime(FILE *out, char *textfile, char *patternfile)
     int npatterns  = file_to_strings(patternfile, MAX_PATTERNS, &patterns);
     STree st;
 
-    initclock();
+    clock_init();
     iterate = 0;
     construct(&st);
     /* printf("%lu\n", iterate); */
