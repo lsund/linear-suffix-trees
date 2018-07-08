@@ -13,40 +13,52 @@ typedef struct {
   Uint start, length;
 } String;
 
-// A location is implemented by the type `Loc`
+// A Loc is a location in the suffix tree.
+//
+// * If the location is a node u, then
+//
+// rem : 0
+// nxt : u
+// s   : the string for where u starts
+// d   : the depth of this string
+//
+// * If the location is an edge, then v is the string before the location and w
+// the string after the location on that string. The parent is represented by u
+// and thus the child by uvw.
+//
+// edgelen  : |vw|
+// prev     : u
+// rem      : |w|
+// nxt      : uvw
+//
+// Since w is not empty is a location a vertex iff remain = 0;
 typedef struct
 {
-    String string;           // string represented by location
-    Uint *prev;              // reference to previous node (which is branching)
-    Wchar *fst;            // fst character
-    Uint edgelen;            // length of edge
-    Uint remain;             // number of remaining characters on edge
-    Uint *nxt;              // reference to node the edge points to
-    bool leafedge;           // Is the location on a leafedge
+    Uint s;             // string represented by location
+    Uint d;             // The depth of the location, ie. the length of the string.
+    Uint *prev;         // reference to previous node (which is branching)
+    Wchar *fst;         // fst character
+    Uint edgelen;       // length of edge
+    Uint rem;           // number of remaining characters on edge
+    VertexP nxt;        // reference to node the edge points to
+    bool isleaf;        // Is the location on a leafedge
 } Loc;
-
-// If a location is a node u, we set `remain` to 0, and store a reference to
-// u in `nxt`. Moreover, we store a position where u starts and its length
-// in `string`. If the location is of form (u, v, w, uvw), then the
-// components of the location satisfies the following values:
-//
-// 1. `prev` is a reference to u
-//
-// 3. edgelen = |vw|
-//
-// 4. remain = |w|
-//
-// 5. nxt is a reference to uvw
-//
-// Since w is not empty, a location is a node location iff remain = 0.
 
 ///////////////////////////////////////////////////////////////////////////////
 // Functions
 
 void init_loc(Uint *v, Uint hd, Uint depth, Loc *loc);
 
-void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *fst);
+void make_loc(STree *st, Uint s, Uint plen, Loc *loc, Wchar *fst);
 
-void update_loc(Uint *nxt, Uint start, Uint plen, Wchar *fst, Uint depth, Uint edgelen, Loc *loc);
+void update_loc(
+        VertexP nxt,
+        Uint s,
+        Uint plen,
+        Wchar *fst,
+        Uint d,
+        Uint edgelen,
+        Loc *loc
+    );
 
 #endif

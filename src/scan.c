@@ -9,13 +9,13 @@ Uint iterate = 0;
 static void skip_edge(
         Loc *loc, Uint *v, Pattern *patt, Uint *depth, Uint hd, Uint plen, Uint edgelen)
 {
-    loc->string.start  = hd;
-    loc->string.length = *depth + plen;
+    loc->s  = hd;
+    loc->d = *depth + plen;
     patt->start        += edgelen;
     *depth             += edgelen;
     loc->prev          = loc->nxt;
     loc->nxt          = v;
-    loc->remain        = 0;
+    loc->rem        = 0;
 }
 
 static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
@@ -54,7 +54,7 @@ static void find_last_successor(STree *st, Vertex *prev_p, Vertex v)
 }
 
 
-static void update_st(STree *st, Wchar *label_start, Uint plen, Uint v, Uint prev)
+static void update_stree(STree *st, Wchar *label_start, Uint plen, Uint v, Uint prev)
 {
     st->hd.l.start = label_start;
     st->hd.l.end = label_start + (plen-1);
@@ -85,11 +85,11 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 {
     VertexP vertexp  = start_vertex;
     VertexP chainend = NULL;
-    Vertex  hd     = 0;
+    Vertex  hd       = 0;
     Uint depth       = 0;
     Uint distance    = 0;
     Uint remain      = 0;
-    Wchar fstchar  = 0;
+    Wchar fstchar    = 0;
     Uint edgelen     = 0;
 
     if(!IS_ROOT(vertexp)) {
@@ -126,7 +126,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
                 plen = match_leaf(loc, rootchild, &patt, remain);
 
-                loc->leafedge = true;
+                loc->isleaf = true;
                 if(MATCHED(plen, patt.end, patt.start)) {
                     return NULL;
                 } else {
@@ -168,7 +168,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
                     if(labelchar == fstchar) {
 
-                        loc->leafedge = true;
+                        loc->isleaf = true;
                         plen = prefixlen(label, &patt, remain);
                         if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
@@ -368,7 +368,7 @@ void scan_tail(STree *st)
         if (IS_LEAF(current_vertex)) {
             plen = tail_prefixlen(st, label_start + 1, text.lst - 1);
             (st->tl) += plen;
-            update_st(st, label_start, plen, current_vertex, prev);
+            update_stree(st, label_start, plen, current_vertex, prev);
             return;
         }
 
@@ -379,7 +379,7 @@ void scan_tail(STree *st)
 
         // cannot reach nxt node
         if(edgelen > plen) {
-            update_st(st, label_start, plen, current_vertex, prev);
+            update_stree(st, label_start, plen, current_vertex, prev);
             return;
         }
 

@@ -2,36 +2,44 @@
 
 Text text;
 
-void init_loc(Uint *v, Uint hd, Uint depth, Loc *loc)
+void init_loc(Uint *v, Uint hd, Uint d, Loc *loc)
 {
-    loc->nxt          = v;
-    loc->string.start  = hd;
-    loc->string.length = depth;
-    loc->remain        = 0;
-    loc->leafedge      = false;
+    loc->nxt    = v;
+    loc->s      = hd;
+    loc->d      = d;
+    loc->rem    = 0;
+    loc->isleaf = false;
 }
 
 
-void make_loc(STree *st, Uint leafnum, Uint plen, Loc *loc, Wchar *fst)
+void make_loc(STree *st, Uint s, Uint plen, Loc *loc, Wchar *fst)
 {
-    loc->string.start  = leafnum;
-    loc->string.length = plen;
-    loc->prev          = st->is.fst;
-    loc->edgelen       = text.len - leafnum + 1;
-    loc->remain        = loc->edgelen - plen;
-    loc->nxt          = st->ls.fst + leafnum;
-    loc->fst         = fst;
+    loc->s       = s;
+    loc->d       = plen;
+    loc->prev    = st->is.fst;
+    loc->edgelen = text.len - s + 1;
+    loc->rem     = loc->edgelen - plen;
+    loc->fst     = fst;
+    loc->nxt     = st->ls.fst + s;
 }
 
 
 
-void update_loc(Uint *nxt, Uint start, Uint plen, Wchar *fst, Uint depth, Uint edgelen, Loc *loc)
+void update_loc(
+        VertexP nxt,
+        Uint s,
+        Uint plen,
+        Wchar *fst,
+        Uint d,
+        Uint edgelen,
+        Loc *loc
+    )
 {
-    loc->string.start  = start;
-    loc->string.length = depth + plen;
-    loc->prev          = loc->nxt;
-    loc->edgelen       = edgelen;
-    loc->remain        = loc->edgelen - plen;
-    loc->fst         = fst;
-    loc->nxt          = nxt;
+    loc->s       = s;
+    loc->d       = d + plen;
+    loc->prev    = loc->nxt;
+    loc->edgelen = edgelen;
+    loc->rem     = loc->edgelen - plen;
+    loc->fst     = fst;
+    loc->nxt     = nxt;
 }
