@@ -1,22 +1,7 @@
-/*
- * Copyright (c) 2003 by Stefan Kurtz and The Institute for
- * Genomic Research.  This is OSI Certified Open Source Software.
- * Please see the file LICENSE for licensing information and
- * the file ACKNOWLEDGEMENTS for names of contributors to the
- * code base.
- *
- * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
- */
-
-
 #include "stree.h"
 #include "insert.h"
 #include "skip_count.h"
 #include "scan.h"
-
-Uint small_count = 0;
-Uint large_count = 0;
-Uint leaf_count = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Private
@@ -24,7 +9,6 @@ Uint leaf_count = 0;
 
 static void insert_tailedge(STree *st)
 {
-    leaf_count++;
     if(base_is_vertex(st)) {
         insert(st);
     } else {
@@ -33,10 +17,11 @@ static void insert_tailedge(STree *st)
 }
 
 
-static bool label_empty(Label label)
+static bool label_empty(Label l)
 {
-    return label.start == label.end;
+    return l.start == l.end;
 }
+
 
 static void find_base(STree *st)
 {
@@ -66,28 +51,23 @@ static void find_nxt_head(STree * st) {
             if(base_is_vertex(st)) {
                 finalize_chain(st);
                 scan_tail(st);
-                large_count++;
             } else {
                 grow_chain(st);
-                small_count++;
             }
         }
     }
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
-// Public
+// Public API
 
 
 void construct(STree *st)
 {
-    large_count = 0;
-    small_count = 0;
-    leaf_count = 0;
     init(st);
     while(!tail_at_lastchar(st)) {
         find_nxt_head(st);
         insert_tailedge(st);
     }
-    /* printf("%lu\n", small_count + large_count); */
 }
