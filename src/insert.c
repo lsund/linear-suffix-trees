@@ -1,17 +1,19 @@
 #include "insert.h"
 
+
 static void insert_rootleaf(STree *st, Wchar *start, Vertex v)
 {
     st->rs[(Uint) *start] = v;
     LEAF_SIBLING(st->ls.nxt) = UNDEF;
 }
 
+
 // If there is only one other leaf where the new one is to be inserted, then
 // simply make this its sibling.
 static void insert_second_leaf(STree *st, Vertex v)
 {
-    LEAF_SIBLING(st->ls.nxt) = CHILD(st->hd.vertex);
-    SET_CHILD(st->hd.vertex, v);
+    LEAF_SIBLING(st->ls.nxt) = CHILD(st->hd.v);
+    SET_CHILD(st->hd.v, v);
 }
 
 
@@ -46,7 +48,7 @@ static void insert_new_inner(STree *st)
         // If the split-edge has no left child, then the new inner vertex will
         // become the first child
 
-        SET_CHILD(st->hd.vertex, st->is.nxt_ind);
+        SET_CHILD(st->hd.v, st->is.nxt_ind);
 
     } else {
 

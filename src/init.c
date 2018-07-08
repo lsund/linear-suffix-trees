@@ -21,7 +21,7 @@ static void nullify_tablestart(STree *st)
 
 static void init_head(STree *st)
 {
-    st->hd.vertex    = st->is.fst;
+    st->hd.v    = st->is.fst;
     st->hd.label.end = NULL;
     st->hd.depth     = 0;
 }
@@ -43,9 +43,9 @@ static void init_vertices(STree *st)
     SET_CHILD(st->is.nxt, MAKE_LEAF(0));
     SIBLING(st->is.nxt) = 0;
     st->ls.fst[0]   = 0;
-    st->ls.nxt_ind  = LEAF_VERTEXSIZE;
     st->ls.nxt      = st->ls.fst + LEAF_VERTEXSIZE;
     st->is.nxt      = st->is.fst + LARGE_VERTEXSIZE;
+    st->ls.nxt_ind  = LEAF_VERTEXSIZE;
     st->is.nxt_ind  = LARGE_VERTEXSIZE;
 }
 

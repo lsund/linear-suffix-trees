@@ -1,13 +1,3 @@
-/*
- * Copyright (c) 2003 by Stefan Kurtz and The Institute for
- * Genomic Research.  This is OSI Certified Open Source Software.
- * Please see the file LICENSE for licensing information and
- * the file ACKNOWLEDGEMENTS for names of contributors to the
- * code base.
- *
- * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
- */
-
 #include "scan.h"
 
 Uint iterate = 0;
@@ -17,14 +7,14 @@ Uint iterate = 0;
 
 
 static void skip_edge(
-        Loc *loc, Uint *vertexp, Pattern *patt, Uint *depth, Uint hd, Uint plen, Uint edgelen)
+        Loc *loc, Uint *v, Pattern *patt, Uint *depth, Uint hd, Uint plen, Uint edgelen)
 {
     loc->string.start  = hd;
     loc->string.length = *depth + plen;
     patt->start        += edgelen;
     *depth             += edgelen;
     loc->prev          = loc->nxt;
-    loc->nxt          = vertexp;
+    loc->nxt          = v;
     loc->remain        = 0;
 }
 
@@ -40,35 +30,35 @@ static Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
 }
 
 
-static Uint  match_leaf(Loc *loc, Uint vertex, Pattern *patt, Uint remain)
+static Uint  match_leaf(Loc *loc, Uint v, Pattern *patt, Uint remain)
 {
-    Uint leafnum = VERTEX_TO_INDEX(vertex);
+    Uint leafnum = VERTEX_TO_INDEX(v);
     loc->fst   = text.fst + leafnum;
 
     return prefixlen(loc->fst, patt, remain);
 }
 
 
-static void find_last_successor(STree *st, Vertex *prev_p, Vertex vertex)
+static void find_last_successor(STree *st, Vertex *prev_p, Vertex v)
 {
     Vertex prev = *prev_p;
     do {
-        prev = vertex;
-        if(IS_LEAF(vertex)) {
-            vertex = LEAF_SIBLING(VERTEX_TO_LEAFREF(vertex));
+        prev = v;
+        if(IS_LEAF(v)) {
+            v = LEAF_SIBLING(VERTEX_TO_LEAFREF(v));
         } else {
-            vertex = SIBLING(VERTEX_TO_REF(vertex));
+            v = SIBLING(VERTEX_TO_REF(v));
         }
-    } while(IS_SOMETHING(vertex));
+    } while(IS_SOMETHING(v));
     *prev_p = prev;
 }
 
 
-static void update_st(STree *st, Wchar *label_start, Uint plen, Uint current_vertex, Uint prev)
+static void update_st(STree *st, Wchar *label_start, Uint plen, Uint v, Uint prev)
 {
     st->hd.label.start = label_start;
     st->hd.label.end = label_start + (plen-1);
-    st->split.child = current_vertex;
+    st->split.child = v;
     st->split.left = prev;
 }
 
@@ -154,17 +144,17 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
         } else {
 
             Wchar labelchar;
-            Uint vertex = CHILD(vertexp);
+            Uint v = CHILD(vertexp);
 
             while(true) {
 
-                if (IS_NOTHING(vertex)) {
+                if (IS_NOTHING(v)) {
 
                     return patt.start;
 
-                } else if (IS_LEAF(vertex)) {
+                } else if (IS_LEAF(v)) {
 
-                    leafnum = VERTEX_TO_INDEX(vertex);
+                    leafnum = VERTEX_TO_INDEX(v);
                     label   = LABEL_START(depth + leafnum);
 
                     if(IS_LAST(label)) {
@@ -183,16 +173,16 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                         if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
                         } else {
-                            loc->nxt = VERTEX_TO_LEAFREF(vertex);
+                            loc->nxt = VERTEX_TO_LEAFREF(v);
                             return patt.start + plen;
                         }
                     }
 
-                    vertex = LEAF_SIBLING(VERTEX_TO_LEAFREF(leafnum));
+                    v = LEAF_SIBLING(VERTEX_TO_LEAFREF(leafnum));
 
                 } else {
 
-                    vertexp  = VERTEX_TO_REF(vertex);
+                    vertexp  = VERTEX_TO_REF(v);
 
                     set_dist_and_chainend(st, vertexp, &chainend, &distance);
                     hd = get_headpos(st, vertexp, &chainend, distance);
@@ -208,7 +198,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                         break;
                     }
 
-                    vertex = SIBLING(vertexp);
+                    v = SIBLING(vertexp);
                 }
             }
         }
@@ -322,7 +312,7 @@ void scan_tail(STree *st)
             st->hd.label.end   = label_start + (plen - 1);
             return;
         }
-        st->hd.vertex = current_vertexp;
+        st->hd.v = current_vertexp;
         st->hd.depth = depth;
     }
 
@@ -330,7 +320,7 @@ void scan_tail(STree *st)
     while(true) {
 
         prev = UNDEF;
-        current_vertex = CHILD(st->hd.vertex);
+        current_vertex = CHILD(st->hd.v);
         fstchar = *(st->tail);
 
         do {
@@ -393,7 +383,7 @@ void scan_tail(STree *st)
             return;
         }
 
-        st->hd.vertex = current_vertexp;
+        st->hd.v = current_vertexp;
         st->hd.depth = depth;
     }
 }

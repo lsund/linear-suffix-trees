@@ -6,7 +6,7 @@ void skip_count(STree *st)
     Uint prevnode, depth, edgelen, leafindex, hd;
     Wchar fstchar, edgechar;
 
-    VertexP vertex  = NULL;;
+    VertexP v  = NULL;;
     VertexP chainend = NULL;
     Uint distance = 0;
 
@@ -21,9 +21,9 @@ void skip_count(STree *st)
 
         } else {
 
-            vertex = VERTEX_TO_REF(rootchild);
-            set_dist_and_chainend(st, vertex, &chainend, &distance);
-            depth = get_depth(st, vertex, distance, &chainend);
+            v = VERTEX_TO_REF(rootchild);
+            set_dist_and_chainend(st, v, &chainend, &distance);
+            depth = get_depth(st, v, distance, &chainend);
 
             Uint wlen = (st->hd.label.end - st->hd.label.start + 1);
 
@@ -32,8 +32,8 @@ void skip_count(STree *st)
                 st->split.child = rootchild;
                 return;
             } else {
-                // Go to successor vertex
-                st->hd.vertex = vertex;
+                // Go to successor v
+                st->hd.v = v;
                 st->hd.depth = depth;
             }
 
@@ -51,7 +51,7 @@ void skip_count(STree *st)
 
         fstchar = *(st->hd.label.start);
         prevnode = UNDEF;
-        Vertex headchild = CHILD(st->hd.vertex);
+        Vertex headchild = CHILD(st->hd.v);
 
         // traverse the list of successors
         while(true) {
@@ -74,20 +74,20 @@ void skip_count(STree *st)
             } else {
 
                 // successor is branch node
-                vertex = VERTEX_TO_REF(headchild);
-                set_dist_and_chainend(st, vertex, &chainend, &distance);
-                hd = get_headpos(st, vertex, &chainend, distance);
+                v = VERTEX_TO_REF(headchild);
+                set_dist_and_chainend(st, v, &chainend, &distance);
+                hd = get_headpos(st, v, &chainend, distance);
                 edgechar = text.fst[st->hd.depth + hd];
                 // Correct edge found
                 if(edgechar == fstchar) {
                     break;
                 }
                 prevnode = headchild;
-                headchild = SIBLING(vertex);
+                headchild = SIBLING(v);
             }
         }
 
-        depth = get_depth(st, vertex, distance, &chainend);
+        depth = get_depth(st, v, distance, &chainend);
         edgelen = depth - st->hd.depth;
         Uint wlen = (st->hd.label.end - st->hd.label.start + 1);
         if(edgelen > wlen) {
@@ -97,7 +97,7 @@ void skip_count(STree *st)
             return;
         }
         // go to the successor node
-        st->hd.vertex = vertex;
+        st->hd.v = v;
         st->hd.depth = depth;
         if(edgelen == wlen) {
             // location is found

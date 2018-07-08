@@ -12,9 +12,9 @@
 
 Text text;
 
-void init_loc(Uint *vertexp, Uint hd, Uint depth, Loc *loc)
+void init_loc(Uint *v, Uint hd, Uint depth, Loc *loc)
 {
-    loc->nxt          = vertexp;
+    loc->nxt          = v;
     loc->string.start  = hd;
     loc->string.length = depth;
     loc->remain        = 0;

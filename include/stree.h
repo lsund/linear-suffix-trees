@@ -104,14 +104,14 @@ bool base_is_vertex(STree *st);
 bool is_head_old(STree *st);
 
 // Get info for branch vertex
-Uint get_depth_head(STree *st, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
+Uint get_depth_head(STree *st, Uint *depth, Uint *head, Uint *v, Uint *largep);
 
 void set_dist_and_chainend(STree *st, Uint *v, Uint **end, Uint *dist);
 
-// The smallest integer i such that vertexp = head(i)
-Uint get_headpos(STree *st, Uint *vertexp, Uint **largep, Uint distance);
+// The smallest integer i such that v = head(i)
+Uint get_headpos(STree *st, Uint *v, Uint **largep, Uint distance);
 
-Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **largep);
+Uint get_depth(STree *st, Uint *v, Uint distance, Uint **largep);
 
 void follow_link(STree *st);
 

@@ -17,12 +17,12 @@ void allocate_inner_vertices(STree *st)
             chain = REF_TO_INDEX(st->chain.fst);
         }
 
-        Uint ind = REF_TO_INDEX(st->hd.vertex);
+        Uint ind = REF_TO_INDEX(st->hd.v);
         Uint size = st->is.size;
 
         st->is.fst = realloc(st->is.fst, sizeof(Uint) * size);
         st->is.nxt  = st->is.fst + st->is.nxt_ind;
-        st->hd.vertex = st->is.fst + ind;
+        st->hd.v = st->is.fst + ind;
 
         if(st->chain.fst != NULL) {
             st->chain.fst = st->is.fst + chain;

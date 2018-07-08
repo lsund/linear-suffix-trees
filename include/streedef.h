@@ -42,7 +42,7 @@ typedef struct label {
 // headend to the last character. In case, v = empty
 // headend = null
 typedef struct head {
-    VertexP vertex;  // the vertex u
+    VertexP v;  // the vertex u
     Label label;
     Uint depth;
 } Head;

@@ -33,26 +33,26 @@ bool head_is_root(STree *st)
     return st->hd.depth == 0;
 }
 
-Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
+Uint get_headpos(STree *st, Uint *v, Uint **chainend, Uint distance)
 {
-    if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
+    if(st->chain.fst != NULL && v >= st->chain.fst) {
         return st->ls.nxt_ind - distance;
     } else {
-        if(IS_LARGE(*(vertexp))) {
-            return HEADPOS(vertexp);
+        if(IS_LARGE(*(v))) {
+            return HEADPOS(v);
         } else {
             return HEADPOS(*chainend) - distance;
         }
     }
 }
 
-Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **chainend)
+Uint get_depth(STree *st, Uint *v, Uint distance, Uint **chainend)
 {
-    if(st->chain.fst != NULL && vertexp >= st->chain.fst) {
+    if(st->chain.fst != NULL && v >= st->chain.fst) {
         return st->c_depth  + distance;
     } else {
-        if(IS_LARGE(*vertexp)) {
-            return DEPTH(vertexp);
+        if(IS_LARGE(*v)) {
+            return DEPTH(v);
         } else {
             return DEPTH(*chainend) + distance;
         }
@@ -65,16 +65,16 @@ static Uint* suffix_link(STree *st)
     if(st->hd.depth == 1) {
         return fst;
     } else {
-        return fst + SUFFIX_LINK(st->hd.vertex);
+        return fst + SUFFIX_LINK(st->hd.v);
     }
 }
 
 void follow_link(STree *st)
 {
-    if(IS_LARGE(*st->hd.vertex)) {
-        st->hd.vertex = suffix_link(st);
+    if(IS_LARGE(*st->hd.v)) {
+        st->hd.v = suffix_link(st);
     } else {
-        st->hd.vertex += SMALL_VERTEXSIZE;
+        st->hd.v += SMALL_VERTEXSIZE;
     }
     st->hd.depth--;
 }
