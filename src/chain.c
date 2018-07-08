@@ -33,7 +33,7 @@ void finalize_chain(STree *st)
 {
     Uint dist;
 
-    SUFFIX_LINK(st->is.nxt) = REF_TO_INDEX(st->head.vertex);
+    SUFFIX_LINK(st->is.nxt) = REF_TO_INDEX(st->hd.vertex);
     if (st->chain.size > 0) {
         VertexP prev = st->is.nxt;
         for(dist = 1; dist <= st->chain.size; dist++) {

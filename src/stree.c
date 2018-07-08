@@ -12,7 +12,7 @@
 
 bool base_is_vertex(STree *st)
 {
-    return st->head.label.end == NULL;
+    return st->hd.label.end == NULL;
 }
 
 
@@ -30,7 +30,7 @@ bool tail_at_lastchar(STree *st)
 
 bool head_is_root(STree *st)
 {
-    return st->head.depth == 0;
+    return st->hd.depth == 0;
 }
 
 Uint get_headpos(STree *st, Uint *vertexp, Uint **chainend, Uint distance)
@@ -62,21 +62,21 @@ Uint get_depth(STree *st, Uint *vertexp, Uint distance, Uint **chainend)
 static Uint* suffix_link(STree *st)
 {
     Uint *fst = st->is.fst;
-    if(st->head.depth == 1) {
+    if(st->hd.depth == 1) {
         return fst;
     } else {
-        return fst + SUFFIX_LINK(st->head.vertex);
+        return fst + SUFFIX_LINK(st->hd.vertex);
     }
 }
 
 void follow_link(STree *st)
 {
-    if(IS_LARGE(*st->head.vertex)) {
-        st->head.vertex = suffix_link(st);
+    if(IS_LARGE(*st->hd.vertex)) {
+        st->hd.vertex = suffix_link(st);
     } else {
-        st->head.vertex += SMALL_VERTEXSIZE;
+        st->hd.vertex += SMALL_VERTEXSIZE;
     }
-    st->head.depth--;
+    st->hd.depth--;
 }
 
 

@@ -1,26 +1,5 @@
 #include "init.h"
 
-// Iterate over the text and store the counts of each character. Then iterate
-// over 1->256 (all uchars) and store them in the `alpha` parameter, if the
-// occurence is greater than 0.
-static Uint get_characters()
-{
-    Wchar alpha[MAX_CHARS + 1];
-    Uint counts[MAX_CHARS + 1] = {0};
-    Wchar *text_probe;
-
-    for (text_probe = text.fst; text_probe < text.fst + text.len; text_probe++) {
-        counts[(Uint) *text_probe]++;
-    }
-
-    Uint i, j;
-    for (j = 0, i = 0; i <= MAX_CHARS; i++) {
-        if (counts[i] > 0) {
-            alpha[j++] = (Wchar) i;
-        }
-    }
-    return j;
-}
 
 static void init_root_children(STree *st)
 {
@@ -30,6 +9,7 @@ static void init_root_children(STree *st)
     }
 }
 
+
 static void nullify_tablestart(STree *st)
 {
     for (int i = 0; i < LARGE_VERTEXSIZE; i++) {
@@ -38,12 +18,14 @@ static void nullify_tablestart(STree *st)
 }
 
 
+
 static void init_head(STree *st)
 {
-    st->head.vertex    = st->is.fst;
-    st->head.label.end = NULL;
-    st->head.depth     = 0;
+    st->hd.vertex    = st->is.fst;
+    st->hd.label.end = NULL;
+    st->hd.depth     = 0;
 }
+
 
 
 static void init_tail(STree *st)
@@ -80,6 +62,7 @@ static void init_split(STree *st)
     st->split.left  = UNDEF;
 }
 
+
 void init(STree *st)
 {
     st->is.size = START_ALLOCSIZE;
@@ -101,6 +84,7 @@ void init(STree *st)
 
     text.asize = get_characters();
 }
+
 
 void destroy(STree *st)
 {

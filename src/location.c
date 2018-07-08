@@ -12,10 +12,10 @@
 
 Text text;
 
-void init_loc(Uint *vertexp, Uint head, Uint depth, Loc *loc)
+void init_loc(Uint *vertexp, Uint hd, Uint depth, Loc *loc)
 {
     loc->nxt          = vertexp;
-    loc->string.start  = head;
+    loc->string.start  = hd;
     loc->string.length = depth;
     loc->remain        = 0;
     loc->leafedge      = false;

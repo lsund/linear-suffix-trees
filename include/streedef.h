@@ -72,7 +72,7 @@ typedef struct stree {
     Chain chain;        // Address of the vertex current chains starts at,
                         // and the total size of the chain
 
-    Head head;          // Representing the edge containing the head location.
+    Head hd;          // Representing the edge containing the head location.
 
     Wchar *tail;        // Points to the tail
 

@@ -10,8 +10,8 @@ static void insert_rootleaf(STree *st, Wchar *start, Vertex v)
 // simply make this its sibling.
 static void insert_second_leaf(STree *st, Vertex v)
 {
-    LEAF_SIBLING(st->ls.nxt) = CHILD(st->head.vertex);
-    SET_CHILD(st->head.vertex, v);
+    LEAF_SIBLING(st->ls.nxt) = CHILD(st->hd.vertex);
+    SET_CHILD(st->hd.vertex, v);
 }
 
 
@@ -38,7 +38,7 @@ static void insert_new_inner(STree *st)
 {
     if(head_is_root(st)) {
 
-        st->rs[*st->head.label.start] = st->is.nxt_ind;
+        st->rs[*st->hd.label.start] = st->is.nxt_ind;
         SIBLING(st->is.nxt) = UNDEF;
 
     } else if (!EXISTS(st->split.left)) {
@@ -46,7 +46,7 @@ static void insert_new_inner(STree *st)
         // If the split-edge has no left child, then the new inner vertex will
         // become the first child
 
-        SET_CHILD(st->head.vertex, st->is.nxt_ind);
+        SET_CHILD(st->hd.vertex, st->is.nxt_ind);
 
     } else {
 
@@ -65,7 +65,7 @@ static void insert_new_inner(STree *st)
 
 static void insert_leaf_under_split(STree *st)
 {
-    Wchar head_continuation = *(st->head.label.end + 1);
+    Wchar head_continuation = *(st->hd.label.end + 1);
     Wchar tail_continuation = *st->tail;
 
     // Then insert leafedge
@@ -132,8 +132,8 @@ static void insert_leaf_under_split(STree *st)
 
 static void update_labels(STree *st)
 {
-    Uint headlabel_length = (st->head.label.end - st->head.label.start + 1);
-    st->c_depth           = st->head.depth + headlabel_length;
+    Uint headlabel_length = (st->hd.label.end - st->hd.label.start + 1);
+    st->c_depth           = st->hd.depth + headlabel_length;
     DEPTH(st->is.nxt)     = st->c_depth;
     HEADPOS(st->is.nxt)   = st->ls.nxt_ind;
 }
