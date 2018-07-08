@@ -56,8 +56,8 @@ static void find_last_successor(STree *st, Vertex *prev_p, Vertex v)
 
 static void update_st(STree *st, Wchar *label_start, Uint plen, Uint v, Uint prev)
 {
-    st->hd.label.start = label_start;
-    st->hd.label.end = label_start + (plen-1);
+    st->hd.l.start = label_start;
+    st->hd.l.end = label_start + (plen-1);
     st->split.child = v;
     st->split.left = prev;
 }
@@ -72,7 +72,7 @@ static Uint tail_prefixlen(STree *st, Wchar *start, Wchar *end)
 
 static Wchar get_label(STree *st, Uint offset, Wchar **label_start)
 {
-    *label_start = text.fst + (st->hd.depth + offset);
+    *label_start = text.fst + (st->hd.d + offset);
     return **label_start;
 }
 
@@ -266,14 +266,14 @@ void scan_tail(STree *st)
 
         // There is no $-edge
         if(tail_at_lastchar(st)) {
-            st->hd.label.end = NULL;
+            st->hd.l.end = NULL;
             return;
         }
 
         fstchar = *(st->tail);
         current_vertex = ROOT_CHILD(fstchar);
         if(current_vertex == UNDEF) {
-            st->hd.label.end = NULL;
+            st->hd.l.end = NULL;
             return;
         }
 
@@ -287,8 +287,8 @@ void scan_tail(STree *st)
             plen = lcp(edgepatt, tailpatt) + 1;
 
             st->tail += plen;
-            st->hd.label.start   = edgepatt.start - 1;
-            st->hd.label.end     = edgepatt.start - 1 + (plen-1);
+            st->hd.l.start   = edgepatt.start - 1;
+            st->hd.l.end     = edgepatt.start - 1 + (plen-1);
             st->split.child = current_vertex;
 
             return;
@@ -308,12 +308,12 @@ void scan_tail(STree *st)
 
             // cannot reach the successor, fall out of tree
             st->split.child     = current_vertex;
-            st->hd.label.start = label_start;
-            st->hd.label.end   = label_start + (plen - 1);
+            st->hd.l.start = label_start;
+            st->hd.l.end   = label_start + (plen - 1);
             return;
         }
         st->hd.v = current_vertexp;
-        st->hd.depth = depth;
+        st->hd.d = depth;
     }
 
     // Head is not the root
@@ -361,7 +361,7 @@ void scan_tail(STree *st)
             // No matching a-edge found
             // New edge will become right sibling of last vertex
             st->split.left = prev;
-            st->hd.label.end = NULL;
+            st->hd.l.end = NULL;
             return;
         }
 
@@ -373,7 +373,7 @@ void scan_tail(STree *st)
         }
 
         depth   = get_depth(st, current_vertexp, distance, &chainend);
-        edgelen = depth - st->hd.depth;
+        edgelen = depth - st->hd.d;
         plen    = tail_prefixlen(st, label_start + 1, label_start + edgelen - 1);
         (st->tail) += plen;
 
@@ -384,6 +384,6 @@ void scan_tail(STree *st)
         }
 
         st->hd.v = current_vertexp;
-        st->hd.depth = depth;
+        st->hd.d = depth;
     }
 }

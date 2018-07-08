@@ -1,18 +1,8 @@
-/*
- * Copyright (c) 2003 by Stefan Kurtz and The Institute for
- * Genomic Research.  This is OSI Certified Open Source Software.
- * Please see the file LICENSE for licensing information and
- * the file ACKNOWLEDGEMENTS for names of contributors to the
- * code base.
- *
- * Modified by Ludvig Sundström 2018 under permission by Stefan Kurtz.
- */
-
 #include "stree.h"
 
 bool base_is_vertex(STree *st)
 {
-    return st->hd.label.end == NULL;
+    return st->hd.l.end == NULL;
 }
 
 
@@ -30,7 +20,7 @@ bool tail_at_lastchar(STree *st)
 
 bool head_is_root(STree *st)
 {
-    return st->hd.depth == 0;
+    return st->hd.d == 0;
 }
 
 Uint get_headpos(STree *st, Uint *v, Uint **chainend, Uint distance)
@@ -62,7 +52,7 @@ Uint get_depth(STree *st, Uint *v, Uint distance, Uint **chainend)
 static Uint* suffix_link(STree *st)
 {
     Uint *fst = st->is.fst;
-    if(st->hd.depth == 1) {
+    if(st->hd.d == 1) {
         return fst;
     } else {
         return fst + SUFFIX_LINK(st->hd.v);
@@ -76,7 +66,7 @@ void follow_link(STree *st)
     } else {
         st->hd.v += SMALL_VERTEXSIZE;
     }
-    st->hd.depth--;
+    st->hd.d--;
 }
 
 

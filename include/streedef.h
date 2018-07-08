@@ -43,8 +43,8 @@ typedef struct label {
 // headend = null
 typedef struct head {
     VertexP v;  // the vertex u
-    Label label;
-    Uint depth;
+    Label l;
+    Uint d;
 } Head;
 
 

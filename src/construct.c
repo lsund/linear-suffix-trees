@@ -26,10 +26,10 @@ static bool label_empty(Label l)
 static void find_base(STree *st)
 {
     if (head_is_root(st)) {
-        if (label_empty(st->hd.label)) {
-            st->hd.label.end = NULL;
+        if (label_empty(st->hd.l)) {
+            st->hd.l.end = NULL;
         } else {
-            st->hd.label.start++;
+            st->hd.l.start++;
             skip_count(st);
         }
     } else {

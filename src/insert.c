@@ -40,7 +40,7 @@ static void insert_new_inner(STree *st)
 {
     if(head_is_root(st)) {
 
-        st->rs[*st->hd.label.start] = st->is.nxt_ind;
+        st->rs[*st->hd.l.start] = st->is.nxt_ind;
         SIBLING(st->is.nxt) = UNDEF;
 
     } else if (!EXISTS(st->split.left)) {
@@ -67,7 +67,7 @@ static void insert_new_inner(STree *st)
 
 static void insert_leaf_under_split(STree *st)
 {
-    Wchar head_continuation = *(st->hd.label.end + 1);
+    Wchar head_continuation = *(st->hd.l.end + 1);
     Wchar tail_continuation = *st->tail;
 
     // Then insert leafedge
@@ -134,8 +134,8 @@ static void insert_leaf_under_split(STree *st)
 
 static void update_labels(STree *st)
 {
-    Uint headlabel_length = (st->hd.label.end - st->hd.label.start + 1);
-    st->c_depth           = st->hd.depth + headlabel_length;
+    Uint headlabel_length = (st->hd.l.end - st->hd.l.start + 1);
+    st->c_depth           = st->hd.d + headlabel_length;
     DEPTH(st->is.nxt)     = st->c_depth;
     HEADPOS(st->is.nxt)   = st->ls.nxt_ind;
 }

@@ -22,8 +22,8 @@ static void nullify_tablestart(STree *st)
 static void init_head(STree *st)
 {
     st->hd.v    = st->is.fst;
-    st->hd.label.end = NULL;
-    st->hd.depth     = 0;
+    st->hd.l.end = NULL;
+    st->hd.d     = 0;
 }
 
 

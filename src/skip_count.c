@@ -12,7 +12,7 @@ void skip_count(STree *st)
 
     if(head_is_root(st)) {
 
-        fstchar = *(st->hd.label.start);
+        fstchar = *(st->hd.l.start);
         Uint rootchild = st->rs[(Uint) fstchar];
 
         if(IS_LEAF(rootchild)) {
@@ -25,7 +25,7 @@ void skip_count(STree *st)
             set_dist_and_chainend(st, v, &chainend, &distance);
             depth = get_depth(st, v, distance, &chainend);
 
-            Uint wlen = (st->hd.label.end - st->hd.label.start + 1);
+            Uint wlen = (st->hd.l.end - st->hd.l.start + 1);
 
             if(depth > wlen) {
                 // cannot reach the successor node
@@ -34,22 +34,22 @@ void skip_count(STree *st)
             } else {
                 // Go to successor v
                 st->hd.v = v;
-                st->hd.depth = depth;
+                st->hd.d = depth;
             }
 
             // location has been scanned
             if(depth == wlen) {
-                st->hd.label.end = NULL;
+                st->hd.l.end = NULL;
                 return;
             } else {
-                (st->hd.label.start) += depth;
+                (st->hd.l.start) += depth;
             }
         }
     }
 
     while(true) {
 
-        fstchar = *(st->hd.label.start);
+        fstchar = *(st->hd.l.start);
         prevnode = UNDEF;
         Vertex headchild = CHILD(st->hd.v);
 
@@ -58,7 +58,7 @@ void skip_count(STree *st)
             if(IS_LEAF(headchild)) {
 
                 leafindex = VERTEX_TO_INDEX(headchild);
-                edgechar = text.fst[st->hd.depth + leafindex];
+                edgechar = text.fst[st->hd.d + leafindex];
 
                 if(edgechar == fstchar) {
                     // correct edge found
@@ -77,7 +77,7 @@ void skip_count(STree *st)
                 v = VERTEX_TO_REF(headchild);
                 set_dist_and_chainend(st, v, &chainend, &distance);
                 hd = get_headpos(st, v, &chainend, distance);
-                edgechar = text.fst[st->hd.depth + hd];
+                edgechar = text.fst[st->hd.d + hd];
                 // Correct edge found
                 if(edgechar == fstchar) {
                     break;
@@ -88,8 +88,8 @@ void skip_count(STree *st)
         }
 
         depth = get_depth(st, v, distance, &chainend);
-        edgelen = depth - st->hd.depth;
-        Uint wlen = (st->hd.label.end - st->hd.label.start + 1);
+        edgelen = depth - st->hd.d;
+        Uint wlen = (st->hd.l.end - st->hd.l.start + 1);
         if(edgelen > wlen) {
             // cannot reach the succ node
             st->split.child = headchild;
@@ -98,12 +98,12 @@ void skip_count(STree *st)
         }
         // go to the successor node
         st->hd.v = v;
-        st->hd.depth = depth;
+        st->hd.d = depth;
         if(edgelen == wlen) {
             // location is found
-            st->hd.label.end = NULL;
+            st->hd.l.end = NULL;
             return;
         }
-        (st->hd.label.start) += edgelen;
+        (st->hd.l.start) += edgelen;
     }
 }
