@@ -1,4 +1,3 @@
-
 #ifndef IO_H
 #define IO_H
 
@@ -16,11 +15,7 @@
 #include <stdbool.h>
 #include "spaceman.h"
 #include "types.h"
-#include "error.h"
-#include "config.h"
-
-///////////////////////////////////////////////////////////////////////////////
-// Macros
+#include "search.h"
 
 // Writing binary mode
 #define WRITEMODE  "wb"
@@ -29,44 +24,25 @@
 // Appending binary mode
 #define APPENDMODE "ab"
 
-#define INCFILEHANDLES 16
+// Load the patterns in the file `filename` into the `patterns` variable. The
+// input file is assumed to consist of a number of newline separated patterns,
+// each not longer than MAX_PATTERNLEN as defined in config.h and the total
+// number of patterns not longer than MAX_NPATTERNS as defined in config.h.
+// `patterns` will give access to a list of pointers, each pointing to a
+// separate patterns as read in from the file. `nlines` will take on the value
+// of the number of lines read from the file.
+Uint patterns_initialize(char *filename, Uint nlines, Wchar ***patterns);
 
-///////////////////////////////////////////////////////////////////////////////
-// Structs
+// Initializes the global variable `text` depending on the content of
+// `filename`, setting its respective fields to the correct values.
+void text_initialize(const char *filename);
 
-// A handle for  user opened files. A file handle consists of
-// 1. The filepointer
-// 2. A string describing the open mode, corresponding to the second argument
-//    of fopen.
-// 3. The line number and the program file call where the open function was
-//    done.
-//
-// `file` and `line` if they occur are always the filename and linenumber,
-// where the function is called from.
-typedef struct filehandle {
-  char path[PATH_MAX + 1],
-       createmode[3],
-       *createfile;
-  Uint createline;
-} Filehandle;
+// Truncates the file, then open it for appending. Returned is the FILE pointer
+// to the opened file.
+FILE *truncate_open_append(const char *path);
 
-
-///////////////////////////////////////////////////////////////////////////////
-// Functions
-
-
-caddr_t fileParts(int fd,Uint offset,Uint len,bool writemap);
-
-void freetextspace();
-
-void file_to_string(const char *filename);
-
-int file2Array(char *name, Uint *filelen, int nlines, char ***words);
-
-// Opens the path for appending, erasing any prior content of the same file
-FILE *open_append(const char *path);
-
-Uint file_to_strings(char *name, Uint nlines, Wchar ***wordsp);
+// 'Destroys' the global variable `text` by freeing and unmapping its allocated
+// memory.
+void text_destroy();
 
 #endif
-

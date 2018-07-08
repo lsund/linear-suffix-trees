@@ -5,7 +5,7 @@
 
 #define BRANCHWIDTH             UintConst(2)
 
-#define MAXPATTERNLEN           100000
+#define MAX_PATTERNLEN           100000
 
 #define MAX_CHARS               100000
 

@@ -39,9 +39,9 @@ static bool search_pattern(STree *st, Wchar *start, Loc *loc)
 
 char *log_runtime(FILE *out, char *textfile, char *patternfile)
 {
-    file_to_string(textfile);
+    text_initialize(textfile);
     Wchar **patterns = (Wchar **) malloc(sizeof(Wchar *) * MAX_PATTERNS);
-    int npatterns  = file_to_strings(patternfile, MAX_PATTERNS, &patterns);
+    int npatterns  = patterns_initialize(patternfile, MAX_PATTERNS, &patterns);
     STree st;
 
     clock_init();

@@ -1,6 +1,6 @@
 #include "io.h"
 
-static int open_file(const char *name, Uint *filelen, bool writefile)
+static int open_file(const char *name, Uint *textlen, bool writefile)
 {
     struct stat buf;
     int fd = open(name,(writefile) ? O_RDWR : O_RDONLY);
@@ -16,18 +16,23 @@ static int open_file(const char *name, Uint *filelen, bool writefile)
         return EXIT_FAILURE;
     }
 
-    *filelen = (Uint) buf.st_size;
+    *textlen = (Uint) buf.st_size;
     return fd;
 }
 
 
-void file_to_string(const char *filename)
+///////////////////////////////////////////////////////////////////////////////
+// Public API
+
+
+void text_initialize(const char *filename)
 {
-    /* open_file(filename, &text.len, true); */
     FILE *in = fopen(filename, "r");
-    struct stat buf;
     int fd = fileno(in);
+
+    struct stat buf;
     fstat(fd, &buf);
+
     text.len = (Uint) buf.st_size;
     text.fst = malloc(sizeof(Wchar) * (text.len + 1));
 
@@ -39,10 +44,6 @@ void file_to_string(const char *filename)
     Uint c;
     text.len = 0;
     while ((c = fgetwc(in)) != WEOF) {
-        if (text.len > MAX_ALLOC) {
-            fprintf(stderr, "Trying to allocate too much space\n");
-            exit(EXIT_FAILURE);
-        }
         text.fst[text.len] = c;
         text.len++;
     }
@@ -54,14 +55,15 @@ void file_to_string(const char *filename)
         fprintf(stderr,"file \"%s\" is empty\n", filename);
         exit(EXIT_FAILURE);
     }
+
 }
 
 
-Uint file_to_strings(char *name, Uint nlines, Wchar ***wordsp)
+Uint patterns_initialize(char *name, Uint nlines, Wchar ***patterns)
 {
-    Wchar **words = *wordsp;
-    Uint filelen;
-    int fd = open_file(name, &filelen, false);
+    Wchar **words = *patterns;
+    Uint len;
+    int fd = open_file(name, &len, false);
 
     if (fd < 0) {
         return -1;
@@ -75,9 +77,10 @@ Uint file_to_strings(char *name, Uint nlines, Wchar ***wordsp)
 
     Uint i;
     for (i = 0; i < nlines; i++) {
+        Uint j;
 
-        /* Allocate space for the nxt line */
-        words[i] = (Wchar *) malloc(MAXPATTERNLEN * sizeof(Wchar));
+        // Allocate space for the next line
+        words[i] = (Wchar *) malloc(MAX_PATTERNLEN * sizeof(Wchar));
 
         if (words[i] == NULL) {
             fprintf(stderr,"Out of memory (3).\n");
@@ -85,37 +88,40 @@ Uint file_to_strings(char *name, Uint nlines, Wchar ***wordsp)
         }
 
         wint_t c;
-        Uint j = 0;
+        j = 0;
         do  {
             c = fgetwc(fp);
             if (c == WEOF) {
-                *wordsp = words;
+                *patterns = words;
                 fclose(fp);
                 return i;
             }
             words[i][j] = c;
             j++;
+            if ((int) j > MAX_PATTERNLEN) {
+                fprintf(stderr, "Line too long!: %lu\n", j);
+                exit(EXIT_FAILURE);
+            }
         } while (c != 10);
 
         words[i][j - 1] = 0;
     }
     fprintf(stderr, "Warning, not all patterns were read\n");
-    *wordsp = words;
+    *patterns = words;
     fclose(fp);
     return i;
 }
 
 
-// Opens the path for appending, erasing any prior content of the same file
-FILE *open_append(const char *path)
+FILE *truncate_open_append(const char *path)
 {
-    fclose(fopen(path, WRITEMODE));
-    return fopen(path, APPENDMODE);
+    fclose(fopen(path, "w"));
+    return fopen(path, "a");
 }
 
 
-// Frees the text specified
-void freetextspace()
+void text_destroy()
 {
   (void) munmap((caddr_t) text.fst, (size_t) text.len);
+  free(text.fst);
 }

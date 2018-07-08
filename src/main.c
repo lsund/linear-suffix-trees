@@ -14,9 +14,9 @@ int main(int argc, char *argv[])
     char *filename = argv[1];
 
     setlocale(LC_ALL, "en_US.utf8");
-    file_to_string(filename);
+    text_initialize(filename);
 
-    initclock();
+    clock_init();
 
     fprintf(stdout, "Creating a suffix tree for text of length %lu\n", text.len);
 
