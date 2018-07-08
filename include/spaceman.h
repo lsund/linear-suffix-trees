@@ -6,6 +6,7 @@
 #include "stree.h"
 #include "streedef.h"
 
+// Dynamically allocates the space needed for inner vertices.
 void allocate_inner_vertices(STree *st);
 
 #endif

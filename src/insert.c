@@ -87,7 +87,7 @@ static void insert_leaf_under_new(STree *st)
             SIBLING(st->is.nxt) = LEAF_SIBLING(p_splitchild);
             // A new leaf edge is created from the newly inserted vertex
             LEAF_SIBLING(p_splitchild) = MAKE_LEAF(st->ls.nxt_ind);
-            LEAF_SIBLING(st->ls.nxt)   = NOTHING;
+            LEAF_SIBLING(st->ls.nxt)   = UNDEF;
 
         // Otherwise the new leaf is to be inserted 'to the left'
         } else {
@@ -98,7 +98,7 @@ static void insert_leaf_under_new(STree *st)
             SIBLING(st->is.nxt) = LEAF_SIBLING(p_splitchild);
             // The new vertex gets splitchild as sibling
             LEAF_SIBLING(st->ls.nxt) = st->split.child;
-            LEAF_SIBLING(p_splitchild) = NOTHING;
+            LEAF_SIBLING(p_splitchild) = UNDEF;
         }
 
     } else {
@@ -116,7 +116,7 @@ static void insert_leaf_under_new(STree *st)
             SIBLING(st->is.nxt) = SIBLING(p_splitchild);
             // new leaf = brother of old branch
             SIBLING(p_splitchild)    = MAKE_LEAF(st->ls.nxt_ind);
-            LEAF_SIBLING(st->ls.nxt) = NOTHING;
+            LEAF_SIBLING(st->ls.nxt) = UNDEF;
 
         } else {
 
@@ -126,7 +126,7 @@ static void insert_leaf_under_new(STree *st)
             SIBLING(st->is.nxt) = SIBLING(p_splitchild);
             // new branch is brother of new leaf
             LEAF_SIBLING(st->ls.nxt) = st->split.child;
-            SIBLING(p_splitchild) = NOTHING;
+            SIBLING(p_splitchild) = UNDEF;
         }
     }
 }

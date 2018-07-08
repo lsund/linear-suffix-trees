@@ -3,24 +3,17 @@
 
 #include "types.h"
 
-///////////////////////////////////////////////////////////////////////////////
-// Types
-
-typedef Uint Vertex;
-
-typedef Uint *VertexP;
-
 typedef struct pattern {
     Wchar *start;
     Wchar *end;
 } Pattern;
 
 typedef struct table {
-    Uint *fst;
-    Uint *nxt;
+    VertexP fst;
+    VertexP nxt;
     Uint nxt_ind;
     Uint size;
-    Uint *alloc;
+    VertexP alloc;
 } Table;
 
 

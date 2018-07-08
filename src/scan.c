@@ -49,7 +49,7 @@ static void find_last_successor(STree *st, Vertex *prev_p, Vertex v)
         } else {
             v = SIBLING(VERTEX_TO_REF(v));
         }
-    } while(IS_SOMETHING(v));
+    } while(EXISTS(v));
     *prev_p = prev;
 }
 
@@ -148,7 +148,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
             while(true) {
 
-                if (IS_NOTHING(v)) {
+                if (!EXISTS(v)) {
 
                     return patt.start;
 
@@ -354,9 +354,9 @@ void scan_tail(STree *st)
                 current_vertex = SIBLING(current_vertexp);
             }
 
-        } while(IS_SOMETHING(current_vertex));
+        } while(EXISTS(current_vertex));
 
-        if (IS_NOTHING(current_vertex) || labelchar > fstchar) {
+        if (!EXISTS(current_vertex) || labelchar > fstchar) {
 
             // No matching a-edge found
             // New edge will become right sibling of last vertex

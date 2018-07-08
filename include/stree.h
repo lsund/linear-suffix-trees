@@ -17,32 +17,35 @@
 #include "init.h"
 #include "util.h"
 
+// Constant representing an undefined value
+#define UNDEF                     (~((Uint) 0))
+#define NOTHING                   MSB               // Marks a nil referenc
+
+// The number of integers required to represent a leaf.
+#define LEAF_VERTEXSIZE             1
+// The number of integers required to represent a small inner vertex.
+#define SMALL_VERTEXSIZE            3
+// The number of integers required to represent a large inner vertex.
+#define LARGE_VERTEXSIZE            5
+
+// The value represented by the most significant bit of an unsigned integer.
 #define MSB                         (UintConst(1) << (INTWORDSIZE - 1))
+// The value represented by the second most significant bit of an unsigned
+// integer.
 #define SECOND_MSB                  (MSB >> 1)
 
-#define LEAF_VERTEXSIZE             1
-#define SMALL_VERTEXSIZE            3
-#define LARGE_VERTEXSIZE            5
+// The initial amount of memory allocated by the program.
+#define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (text.len + 1), 48);
+
+// The additional memory the program allocates when needed.
+#define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (text.len + 1), 48);
+
+///////////////////////////////////////////////////////////////////////////////
+// Query and modify vertices
 
 // The label for a incoming edge to a vertex wu can be obtained by dropping
 // depth(w) characters of wu.
 #define LABEL_START(O)          text.fst + (O)
-
-#define START_ALLOCSIZE         max(0.5 * SMALL_VERTEXSIZE * (text.len + 1), 48);
-#define EXTRA_ALLOCSIZE         max(0.05 * SMALL_VERTEXSIZE * (text.len + 1), 48);
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Bitdefs
-
-#define LEAFBIT                   SECOND_MSB        // mark leaf address
-#define SMALLBIT                  MSB               // marks a small node
-#define NOTHING                   MSB               // Marks a nil referenc
-#define MAXINDEX                  (MSB - 1)         // Second biggest value
-#define MAXDISTANCE               MAXINDEX          // maximal distance value
-#define MAXTEXTLEN                ((MAXINDEX / ((LARGE_VERTEXSIZE+SMALL_VERTEXSIZE) / 2)) - 3)
-#define UNDEF                     (~((Uint) 0))    // All ones
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Queries
@@ -50,12 +53,10 @@
 // An extra bit
 // with each such integer tells whereth the reference is to a leaf or to a
 // branching vertex
-#define IS_LEAF(V)                  ((V) & LEAFBIT)
-#define IS_SMALL(V)                 ((V) & SMALLBIT)
-#define IS_LARGE(V)                 (!((V) & SMALLBIT))
+#define IS_LEAF(V)                  ((V) & SECOND_MSB)
+#define IS_SMALL(V)                 ((V) & MSB)
+#define IS_LARGE(V)                 (!((V) & MSB))
 #define IS_LAST(C)                  ((C) >= text.lst)
-#define IS_NOTHING(P)               ((P) & NOTHING)
-#define IS_SOMETHING(P)             (!IS_NOTHING((P)))
 #define IS_ROOT(V)                  (st->is.fst == V)
 #define EXISTS(V)                   ((V) != UNDEF)
 
@@ -73,8 +74,8 @@
 #define VERTEX_TO_LEAFREF(V)    st->ls.fst + VERTEX_TO_INDEX((V))
 
 // Make a leaf vertex, or a small vertex
-#define MAKE_LEAF(V)            ((V) | LEAFBIT)
-#define MAKE_SMALL(V)           ((V) | SMALLBIT)
+#define MAKE_LEAF(V)            ((V) | SECOND_MSB)
+#define MAKE_SMALL(V)           ((V) | MSB)
 
 // LEAF
 #define VERTEX_TO_INDEX(V)    ((V) & ~(MSB | SECOND_MSB))
