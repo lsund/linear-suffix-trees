@@ -30,7 +30,7 @@ static void init_head(STree *st)
 
 static void init_tail(STree *st)
 {
-    st->tail = text.fst;
+    st->tl = text.fst;
 }
 
 

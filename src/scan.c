@@ -65,7 +65,7 @@ static void update_st(STree *st, Wchar *label_start, Uint plen, Uint v, Uint pre
 
 static Uint tail_prefixlen(STree *st, Wchar *start, Wchar *end)
 {
-    Pattern tailpatt = make_patt(st->tail + 1, text.lst - 1);
+    Pattern tailpatt = make_patt(st->tl + 1, text.lst - 1);
     return 1 + lcp(tailpatt, make_patt(start, end));
 }
 
@@ -270,7 +270,7 @@ void scan_tail(STree *st)
             return;
         }
 
-        fstchar = *(st->tail);
+        fstchar = *(st->tl);
         current_vertex = ROOT_CHILD(fstchar);
         if(current_vertex == UNDEF) {
             st->hd.l.end = NULL;
@@ -283,10 +283,10 @@ void scan_tail(STree *st)
             Wchar *suffix_start = text.fst + VERTEX_TO_INDEX(current_vertex) + 1;
 
             Pattern edgepatt = make_patt(suffix_start, text.lst - 1);
-            Pattern tailpatt = make_patt(st->tail + 1, text.lst - 1);
+            Pattern tailpatt = make_patt(st->tl + 1, text.lst - 1);
             plen = lcp(edgepatt, tailpatt) + 1;
 
-            st->tail += plen;
+            st->tl += plen;
             st->hd.l.start   = edgepatt.start - 1;
             st->hd.l.end     = edgepatt.start - 1 + (plen-1);
             st->split.child = current_vertex;
@@ -303,7 +303,7 @@ void scan_tail(STree *st)
         label_start = text.fst + hd;
         plen = tail_prefixlen(st, label_start + 1, label_start + depth - 1);
 
-        st->tail+= plen;
+        st->tl+= plen;
         if(depth > plen) {
 
             // cannot reach the successor, fall out of tree
@@ -321,7 +321,7 @@ void scan_tail(STree *st)
 
         prev = UNDEF;
         current_vertex = CHILD(st->hd.v);
-        fstchar = *(st->tail);
+        fstchar = *(st->tl);
 
         do {
             iterate++;
@@ -367,7 +367,7 @@ void scan_tail(STree *st)
 
         if (IS_LEAF(current_vertex)) {
             plen = tail_prefixlen(st, label_start + 1, text.lst - 1);
-            (st->tail) += plen;
+            (st->tl) += plen;
             update_st(st, label_start, plen, current_vertex, prev);
             return;
         }
@@ -375,7 +375,7 @@ void scan_tail(STree *st)
         depth   = get_depth(st, current_vertexp, distance, &chainend);
         edgelen = depth - st->hd.d;
         plen    = tail_prefixlen(st, label_start + 1, label_start + edgelen - 1);
-        (st->tail) += plen;
+        (st->tl) += plen;
 
         // cannot reach nxt node
         if(edgelen > plen) {

@@ -65,10 +65,10 @@ static void insert_new_inner(STree *st)
 }
 
 
-static void insert_leaf_under_split(STree *st)
+static void insert_leaf_under_new(STree *st)
 {
     Wchar head_continuation = *(st->hd.l.end + 1);
-    Wchar tail_continuation = *st->tail;
+    Wchar tail_continuation = *st->tl;
 
     // Then insert leafedge
     if(IS_LEAF(st->split.child)) {
@@ -115,14 +115,14 @@ static void insert_leaf_under_split(STree *st)
             // The inner vertex gets splitchilds sibling
             SIBLING(st->is.nxt) = SIBLING(p_splitchild);
             // new leaf = brother of old branch
-            SIBLING(p_splitchild) = MAKE_LEAF(st->ls.nxt_ind);
+            SIBLING(p_splitchild)    = MAKE_LEAF(st->ls.nxt_ind);
             LEAF_SIBLING(st->ls.nxt) = NOTHING;
 
         } else {
 
             // First child is new leaf
-            // Inherit brother
             SET_CHILD(st->is.nxt, MAKE_LEAF(st->ls.nxt_ind));
+            // Inherit brother
             SIBLING(st->is.nxt) = SIBLING(p_splitchild);
             // new branch is brother of new leaf
             LEAF_SIBLING(st->ls.nxt) = st->split.child;
@@ -132,6 +132,7 @@ static void insert_leaf_under_split(STree *st)
 }
 
 
+// Update the labels of the tree, completing the insert
 static void update_labels(STree *st)
 {
     Uint headlabel_length = (st->hd.l.end - st->hd.l.start + 1);
@@ -141,9 +142,10 @@ static void update_labels(STree *st)
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// Public API
 
-// head is already a vertex. A new leaf edge is supposed to be inserted under
-// it. In this case, split == head
+
 void insert(STree *st)
 {
     Uint leaf = MAKE_LEAF(st->ls.nxt_ind);
@@ -151,13 +153,13 @@ void insert(STree *st)
     if (head_is_root(st)) {
 
         if (!tail_at_lastchar(st)) {
-            insert_rootleaf(st, st->tail, leaf);
+            insert_rootleaf(st, st->tl, leaf);
         }
 
     } else {
 
-        // head is the only child
         if (!EXISTS(st->split.left)) {
+            // head is the only child
             insert_second_leaf(st, leaf);
         } else {
             insert_leaf(st, leaf);
@@ -177,7 +179,7 @@ void split_and_insert(STree *st)
     // splitedge was hanging from.
     insert_new_inner(st);
     // Then insert a new leaf under that inner vertex and attach the splitedge.
-    insert_leaf_under_split(st);
+    insert_leaf_under_new(st);
     // Finally update the labels
     update_labels(st);
 
@@ -185,4 +187,3 @@ void split_and_insert(STree *st)
     st->ls.nxt_ind++;
     st->ls.nxt += LEAF_VERTEXSIZE;
 }
-

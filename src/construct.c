@@ -40,7 +40,7 @@ static void find_base(STree *st)
 
 static void find_nxt_head(STree * st) {
     if(head_is_root(st) && base_is_vertex(st)) {
-        st->tail++;
+        st->tl++;
         scan_tail(st);
     } else {
         if (is_head_old(st)) {

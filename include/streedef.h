@@ -74,7 +74,7 @@ typedef struct stree {
 
     Head hd;          // Representing the edge containing the head location.
 
-    Wchar *tail;        // Points to the tail
+    Wchar *tl;        // Points to the tail
 
 } STree;
 
