@@ -64,11 +64,11 @@ static void find_nxt_head(STree * st) {
         } else {
             find_base(st);
             if(base_is_vertex(st)) {
-                set_chain_distances(st);
+                finalize_chain(st);
                 scan_tail(st);
                 large_count++;
             } else {
-                append_chain(st);
+                grow_chain(st);
                 small_count++;
             }
         }

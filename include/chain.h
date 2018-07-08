@@ -3,15 +3,17 @@
 
 #include "stree.h"
 
-void update_chain(STree *st, Uint *vertexp, Uint **chainend, Uint *distance);
 
+// Reset the fields of the chain to default values
 void reset_chain(STree *st);
 
-void init_chain(STree *st);
+// Grow a chain by adding a small vertex
+void grow_chain(STree *st);
 
-void set_chain_distances(STree *st);
-
-void append_chain(STree *st);
+// Finalize a chain. This procedure first sets the distances for all small
+// vertices in the chain accordingly, then adds a large vertex to the chain and
+// resets it.
+void finalize_chain(STree *st);
 
 #endif
 

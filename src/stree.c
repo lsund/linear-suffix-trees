@@ -78,3 +78,16 @@ void follow_link(STree *st)
     }
     st->head.depth--;
 }
+
+
+void set_dist_and_chainend(STree *st, VertexP v, VertexP *end, Uint *dist)
+{
+    if(st->chain.fst != NULL && v >= st->chain.fst) {
+        *dist = 1 + (st->is.nxt - v) / SMALL_VERTEXSIZE;
+    } else if (IS_SMALL(*v)) {
+            *dist = DISTANCE(v);
+            *end   = CHAIN_END(v, *dist);
+    }
+}
+
+

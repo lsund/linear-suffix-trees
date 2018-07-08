@@ -106,7 +106,7 @@ bool is_head_old(STree *st);
 // Get info for branch vertex
 Uint get_depth_head(STree *st, Uint *depth, Uint *head, Uint *vertexp, Uint *largep);
 
-void update_chain(STree *st, Uint *vertexp, Uint **largep, Uint *distance);
+void set_dist_and_chainend(STree *st, Uint *v, Uint **end, Uint *dist);
 
 // The smallest integer i such that vertexp = head(i)
 Uint get_headpos(STree *st, Uint *vertexp, Uint **largep, Uint distance);

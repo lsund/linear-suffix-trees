@@ -104,10 +104,10 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
     if(!IS_ROOT(vertexp)) {
 
-        update_chain(st, vertexp, &chainend, &distance);
+        set_dist_and_chainend(st, vertexp, &chainend, &distance);
         head = get_headpos(st, vertexp, &chainend, distance);
 
-        update_chain(st, vertexp, &chainend, &distance);
+        set_dist_and_chainend(st, vertexp, &chainend, &distance);
         depth = get_depth(st, vertexp, distance, &chainend);
     }
 
@@ -146,7 +146,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
             vertexp = VERTEX_TO_REF(rootchild);
 
-            update_chain(st, vertexp, &chainend, &distance);
+            set_dist_and_chainend(st, vertexp, &chainend, &distance);
             head = get_headpos(st, vertexp, &chainend, distance);
 
             label   = LABEL_START(head);
@@ -194,7 +194,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
                     vertexp  = VERTEX_TO_REF(vertex);
 
-                    update_chain(st, vertexp, &chainend, &distance);
+                    set_dist_and_chainend(st, vertexp, &chainend, &distance);
                     head = get_headpos(st, vertexp, &chainend, distance);
 
                     label    = LABEL_START(depth + head);
@@ -215,7 +215,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
         Uint prevdepth = depth;
 
-        update_chain(st, vertexp, &chainend, &distance);
+        set_dist_and_chainend(st, vertexp, &chainend, &distance);
         depth = get_depth(st, vertexp, distance, &chainend);
         edgelen = depth - prevdepth;
         loc->edgelen = edgelen;
@@ -306,7 +306,7 @@ void scan_tail(STree *st)
 
         current_vertexp = VERTEX_TO_REF(current_vertex);
 
-        update_chain(st, current_vertexp, &chainend, &distance);
+        set_dist_and_chainend(st, current_vertexp, &chainend, &distance);
         head = get_headpos(st, current_vertexp, &chainend, distance);
         depth = get_depth(st, current_vertexp, distance, &chainend);
 
@@ -351,7 +351,7 @@ void scan_tail(STree *st)
             } else {
 
                 current_vertexp   = VERTEX_TO_REF(current_vertex);
-                update_chain(st, current_vertexp, &chainend, &distance);
+                set_dist_and_chainend(st, current_vertexp, &chainend, &distance);
 
                 head      = get_headpos(st, current_vertexp, &chainend, distance);
                 labelchar = get_label(st, head, &label_start);
