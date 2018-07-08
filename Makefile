@@ -13,7 +13,6 @@ INCLUDE=-I'include'
 CFLAGS=$(INCLUDE) $(SIZEFLAG) -g
 
 OBJ=         obj/stree.o\
-			 obj/dfs.o\
              obj/naive_search.o\
              obj/spaceman.o\
              obj/io.o\

@@ -94,53 +94,9 @@ char *compare_vs_naive(char *patternfile, char *textfile)
     return NULL;
 }
 
-char *leafcounts(const char *fname)
-{
-    setlocale(LC_ALL, "en_US.utf8");
-    file_to_string(fname);
-    STree st;
-    construct(&st);
-
-    Wchar current_pattern[5] = L"211";
-
-    Loc loc;
-    bool exists = search_pattern(&st, current_pattern, &loc);
-    printf("exists: %d\n", exists);
-
-    Reference start;
-    start.toleaf = loc.leafedge;
-    start.address = loc.nxt;
-    ArrayUint stack;
-    stack.spaceUint = NULL;
-    stack.allocatedUint = stack.nxtfreeUint = 0;
-
-    makeleaflist(&st, &stack, &start);
-
-    return NULL;
-}
-
-char *utest_leaves()
-{
-    char *error;
-    mu_message(DATA, "Leafs: Smyth\n");
-    error = leafcounts("data/smyth.txt");
-    if (error) return error;
-
-    return NULL;
-}
-
 char *utest_patterns()
 {
-
-
     char *error;
-    mu_message(DATA, "Trivial\n");
-    error = compare_vs_naive(
-                "data/trivial-patterns.txt",
-                "data/trivial.txt"
-            );
-    if (error) return error;
-
 
     mu_message(DATA, "Random existing patterns\n");
     error = compare_vs_naive(
@@ -191,7 +147,6 @@ char *utest_patterns()
 char *test_search()
 {
     mu_run_utest(utest_patterns);
-    mu_run_utest(utest_leaves);
 
     return NULL;
 }
