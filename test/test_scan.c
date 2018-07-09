@@ -1,5 +1,23 @@
 #include "test.h"
 
+static void update_loc(
+        VertexP nxt,
+        Uint s,
+        Uint plen,
+        Wchar *fst,
+        Uint d,
+        Uint edgelen,
+        Loc *loc
+    )
+{
+    loc->str     = s;
+    loc->d       = d;
+    loc->prev    = loc->nxt;
+    loc->edgelen = edgelen;
+    loc->rem     = loc->edgelen - plen;
+    loc->fst     = fst;
+    loc->nxt     = nxt;
+}
 static int prefixlen(Wchar *start, Uint len, Pattern *patt)
 {
     if (len < 0) {
@@ -23,7 +41,7 @@ static Uint match_leaf(Loc *loc, Uint v, Pattern *patt, Uint len)
 static void skip_edge(Loc *loc, Uint *v, Pattern *patt, Uint *depth, Uint hd,
         Uint plen, Uint edgelen)
 {
-    loc->s       = hd;
+    loc->str     = hd;
     loc->d       = *depth + plen;
     patt->start += edgelen;
     *depth      += edgelen;
@@ -152,11 +170,11 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
             }
         }
 
-        Uint prevdepth = depth;
+        Uint prev_depth = depth;
 
         set_dist_and_chainterm(st, vertexp, &chain_term, &dist);
         depth = get_depth(st, vertexp, dist, chain_term);
-        edgelen = depth - prevdepth;
+        edgelen = depth - prev_depth;
         loc->edgelen = edgelen;
 
         if(remain > 0) {
@@ -178,11 +196,11 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
         if(plen == edgelen) {
 
-            skip_edge(loc, vertexp, &patt, &prevdepth, hd, plen, edgelen);
+            skip_edge(loc, vertexp, &patt, &prev_depth, hd, plen, edgelen);
 
         } else {
 
-            update_loc(vertexp, hd, plen, label, prevdepth, edgelen, loc);
+            update_loc(vertexp, hd, plen, label, prev_depth + plen, edgelen, loc);
 
             if(MATCHED(plen, patt.end, patt.start)) {
                 return NULL;

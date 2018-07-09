@@ -34,7 +34,7 @@ typedef struct {
 // Since w is not empty is a location a vertex iff remain = 0;
 typedef struct
 {
-    Uint s;             // string represented by location
+    Uint str;             // string represented by location
     Uint d;             // The depth of the location, ie. the length of the string.
     Uint *prev;         // reference to previous node (which is branching)
     Wchar *fst;         // fst character
@@ -47,18 +47,7 @@ typedef struct
 ///////////////////////////////////////////////////////////////////////////////
 // Functions
 
-void init_location(Uint *v, Uint hd, Uint depth, Loc *loc);
-
-void make_loc(STree *st, Uint s, Uint plen, Loc *loc, Wchar *fst);
-
-void update_loc(
-        VertexP nxt,
-        Uint s,
-        Uint plen,
-        Wchar *fst,
-        Uint d,
-        Uint edgelen,
-        Loc *loc
-    );
+// Initializes a location, giving it default values as well as the given ones.
+void init_location(Uint *nxt, Uint str, Uint d, Loc *loc);
 
 #endif
