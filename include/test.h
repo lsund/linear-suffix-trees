@@ -34,6 +34,8 @@
 char *test_search();
 char *test_experiments();
 
+Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt);
+
 enum MessageOption {
     MODULE,
     UNIT,

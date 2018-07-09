@@ -13,6 +13,8 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt);
 
 void scan_tail(STree *st);
 
+Uint prefixlen(Wchar *start, Pattern *patt, Uint remain);
+
 #define MATCHED(X, R, L)        (X) == (Uint) ((R) - (L) + 1)
 
 #endif

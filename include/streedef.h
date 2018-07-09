@@ -41,27 +41,29 @@ typedef struct table {
     VertexP alloc;
 } Table;
 
-// A HeadEdge represents The edge that contains the head location. In case this
-// location is on the last character of the edge then the end of the label is
-// NULL.
-typedef struct head {
-    // The parent vertex of the edge
+// A HeadLoc represents location of the current head.
+typedef struct head_edge {
+    // The parent vertex of the edge containing the head location.
     VertexP v;
-    // The characters from the head location to the end of the edge.
+    // The characters from the head location to the end of the edge label it
+    // resides in. If the location is the last character of the edge then the
+    // end component of `l` is NULL.
     Label l;
-    // The depth of the head location
+    // The depth of the head location, that is, the label-depth of the string
+    // it represents
     Uint d;
-} HeadEdge;
+} HeadLoc;
 
-// A SplitEdge represents the edge that is to be splitted after finding the new
+// A SplitLoc represents the edge that is to be splitted after finding the new
 // head location.
 typedef struct split {
-    // refers to the vertex where the split edge ends
+    // Represents the endpoint (i.e) the child vertex of the edge that is
+    // about to be split.
     Vertex child;
-    // refers to the branching node to the left of the inner node to be
-    // inserted.
+    // Refers to the branching vertex to the left of the inner vertex about to
+    // be split.
     Vertex left;
-} SplitEdge;
+} SplitLoc;
 
 // A Chain is a sequence of small vertices terminating in a large vertex. The
 // structure stores a reference to the address of the first vertex in the chain
@@ -90,10 +92,10 @@ typedef struct stree {
     Chain chain;
 
     // The edge to be split after finding a new head location.
-    SplitEdge split;
+    SplitLoc split;
 
     // The edge containing the current head in the tree
-    HeadEdge hd;
+    HeadLoc hd;
 
     // Points to the tail
     Wchar *tl;

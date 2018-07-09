@@ -47,7 +47,7 @@ typedef struct
 ///////////////////////////////////////////////////////////////////////////////
 // Functions
 
-void init_loc(Uint *v, Uint hd, Uint depth, Loc *loc);
+void init_location(Uint *v, Uint hd, Uint depth, Loc *loc);
 
 void make_loc(STree *st, Uint s, Uint plen, Loc *loc, Wchar *fst);
 

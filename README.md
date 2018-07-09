@@ -29,6 +29,11 @@ tree.
     ./bin/wotd TEXTFILE
 ```
 
+## Documentation
+
+The purpose of every public function is explained in its corresponding
+headerfile in `include`.
+
 ## Acknowledgements
 
 The initial commit `6346d8bcde34e77cc3c690c12ed33902eb818199 "Initial Commit"`

@@ -2,7 +2,7 @@
 
 Text text;
 
-void init_loc(Uint *v, Uint hd, Uint d, Loc *loc)
+void init_location(Uint *v, Uint hd, Uint d, Loc *loc)
 {
     loc->nxt    = v;
     loc->s      = hd;

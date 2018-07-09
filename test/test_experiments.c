@@ -1,6 +1,5 @@
 #include "test.h"
 
-extern Uint iterate;
 extern Uint small_count, large_count, leaf_count;
 
 static void print_statistics(
@@ -45,9 +44,7 @@ char *log_runtime(FILE *out, char *textfile, char *patternfile)
     STree st;
 
     clock_init();
-    iterate = 0;
     construct(&st);
-    /* printf("%lu\n", iterate); */
 
     Loc loc;
 
