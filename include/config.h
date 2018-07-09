@@ -16,4 +16,6 @@
 #define INTWORDSIZE\
         (UINT(1) << LOGWORDSIZE)     // # of bits in Uint = w
 
+#define LOCALE                  "en_US.utf8"
+
 #endif

@@ -63,7 +63,7 @@ static void init_split(STree *st)
 }
 
 
-void init(STree *st)
+void stree_init(STree *st)
 {
     st->is.size = START_ALLOCSIZE;
     st->ls.fst = realloc(NULL, sizeof(Uint) * text.len + 2);
@@ -86,7 +86,7 @@ void init(STree *st)
 }
 
 
-void destroy(STree *st)
+void stree_destroy(STree *st)
 {
     free(st->rs);
     free(st->ls.fst);

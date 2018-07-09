@@ -11,16 +11,19 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Need exactly one argument");
         return EXIT_FAILURE;
     }
-    char *filename = argv[1];
+    char *textfile = argv[1];
 
-    setlocale(LC_ALL, "en_US.utf8");
-    text_initialize(filename);
+    setlocale(LC_ALL, LOCALE);
+    printf("Loading a text file based on the locale: %s\n", LOCALE);
+    text_initialize(textfile);
 
     clock_init();
 
-    fprintf(stdout, "Creating a suffix tree for text of length %lu\n", text.len);
-
+    fprintf(stdout, "Creating a suffix tree for text based on %s\n", textfile);
     construct(&st);
+
+    stree_destroy(&st);
+    text_destroy();
 
     return EXIT_SUCCESS;
 }

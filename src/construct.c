@@ -65,7 +65,7 @@ static void find_nxt_head(STree * st) {
 
 void construct(STree *st)
 {
-    init(st);
+    stree_init(st);
     while(!tail_at_lastchar(st)) {
         find_nxt_head(st);
         insert_tailedge(st);

@@ -64,7 +64,7 @@ char *log_runtime(FILE *out, char *textfile, char *patternfile)
     }
 
     free(patterns);
-    destroy(&st);
+    stree_destroy(&st);
     free(text.fst);
     return NULL;
 }

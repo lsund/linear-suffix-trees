@@ -8,9 +8,9 @@
 
 // Initializes the suffix tree pointed to by `st` by allocating sufficient
 // space and setting its fields to default, sound values.
-void init(STree *st);
+void stree_init(STree *st);
 
 // Destroys the suffix tree pointed to by `st` by freeing its allocated memory.
-void destroy(STree *st);
+void stree_destroy(STree *st);
 
 #endif

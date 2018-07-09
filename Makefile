@@ -22,17 +22,10 @@ TEST_OBJ = obj/test_search.o obj/test_experiments.o
 dirs:
 	mkdir -p obj bin
 
-run: clean dirs mcc
+all: dirs mcc
+
+run: clean all
 	./bin/mcc /home/lsund/Data/testdata/akz/data.xml
-
-quarter: clean dirs mcc
-	./bin/mcc /home/lsund/Data/testdata/doctronic/data-diffsize/quarter.xml
-
-half: clean dirs mcc
-	./bin/mcc /home/lsund/Data/testdata/doctronic/data-diffsize/half.xml
-
-full: clean dirs mcc
-	./bin/mcc /home/lsund/Data/testdata/doctronic/data-diffsize/full.xml
 
 runtest: clean test
 	./bin/test
@@ -48,6 +41,9 @@ obj/%.o:src/%.c
 
 obj/test_%.o:test/test_%.c
 	$(CC) $(CFLAGS) -c test/test_$*.c -o $@
+
+memcheck: clean all
+	valgrind -v --leak-check=full --show-leak-kinds=all ./bin/mcc ~/Data/testdata/members/diffsize/005.txt
 
 .PHONY:clean
 clean:

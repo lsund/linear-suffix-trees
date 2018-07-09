@@ -10,12 +10,13 @@ void skip_count(STree *st)
     VertexP chainend = NULL;
     Uint distance = 0;
 
-    if(head_is_root(st)) {
+    if (head_is_root(st)) {
 
         fstchar = *(st->hd.l.start);
         Uint rootchild = st->rs[(Uint) fstchar];
 
-        if(IS_LEAF(rootchild)) {
+        if (IS_LEAF(rootchild)) {
+
             st->split.child = rootchild;
             return;
 

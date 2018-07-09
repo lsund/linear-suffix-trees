@@ -55,7 +55,7 @@ Uint get_depth(STree *st, VertexP v, Uint dist, VertexP chain_term)
     if(st->chain.fst != NULL && v >= st->chain.fst) {
         return st->c_depth  + dist;
     } else {
-        if(IS_LARGE(*v)) {
+        if (IS_LARGE(*v)) {
             return DEPTH(v);
         } else {
             return DEPTH(chain_term) + dist;
