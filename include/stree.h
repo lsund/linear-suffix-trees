@@ -109,4 +109,13 @@ void set_head_to_suffixlink(STree *st);
 // distance.
 void set_dist_and_chainterm(STree *st, Uint *v, Uint **end, Uint *dist);
 
+// Sets the head label and its length, as well as the split child and left
+// vertex
+void update_head_and_splitloc(
+        STree *st,
+        Wchar *label_start,
+        Wchar *label_end,
+        Vertex split_child,
+        Vertex split_left
+    );
 #endif

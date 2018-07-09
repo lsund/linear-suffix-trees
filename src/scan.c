@@ -1,15 +1,5 @@
 #include "scan.h"
 
-Uint prefixlen(Wchar *start, Pattern *patt, Uint remain)
-{
-    if (remain < 0) {
-        remain = 1;
-    }
-    Pattern textpatt  = make_patt(start + remain, text.lst - 1);
-    Pattern curr_patt = make_patt(patt->start + remain, patt-> end);
-    return remain + lcp(textpatt, curr_patt);
-}
-
 
 static Uint lcp_with_tail(STree *st, Wchar *start, Wchar *end)
 {
@@ -18,19 +8,10 @@ static Uint lcp_with_tail(STree *st, Wchar *start, Wchar *end)
 }
 
 
-static void update_stree(STree *st, Wchar *label_start, Uint plen, Uint v, Uint prev)
+static Wchar get_label(STree *st, Uint offset, Wchar **label)
 {
-    st->hd.l.start = label_start;
-    st->hd.l.end = label_start + (plen-1);
-    st->split.child = v;
-    st->split.left = prev;
-}
-
-
-static Wchar get_label(STree *st, Uint offset, Wchar **label_start)
-{
-    *label_start = text.fst + (st->hd.d + offset);
-    return **label_start;
+    *label = text.fst + (st->hd.d + offset);
+    return **label;
 }
 
 
@@ -38,144 +19,143 @@ static Wchar get_label(STree *st, Uint offset, Wchar **label_start)
 // Public
 
 
-// Scans a prefix of the current tail down from a given node
+// Scans a prefix of the current tail from the current base vertex
 void scan_tail(STree *st)
 {
-    VertexP chain_term = NULL;
-    Uint leafindex;
-    Uint depth;
-    Uint edgelen;
-    Vertex current_vertex;
-    VertexP current_vertexp = NULL;
-    Uint dist = 0;
-    Uint prev;
-    Uint plen;
-    Uint hd;
-    Wchar *label_start = NULL;
-    Wchar fst;
-    Wchar labelchar = 0;
+    Wchar fst              = 0;
+    Uint plen, depth, dist = 0;
+    Vertex child           = 0;
+    Wchar *label           = NULL;
+    VertexP chain_term     = NULL;
+    VertexP curr_vertex    = NULL;
 
     if(head_is_root(st)) {
 
-        // There is no $-edge
         if(tail_at_lastchar(st)) {
             st->hd.l.end = NULL;
             return;
         }
 
+        // Get the
         fst = *(st->tl);
-        current_vertex = ROOT_CHILD(fst);
-        if(current_vertex == UNDEF) {
+        child = ROOT_CHILD(fst);
+        if(child == UNDEF) {
             st->hd.l.end = NULL;
             return;
         }
 
         // successor edge is leaf, compare tail and leaf edge label
-        if(IS_LEAF(current_vertex)) {
+        if(IS_LEAF(child)) {
 
-            Wchar *suffix_start = text.fst + VERTEX_TO_INDEX(current_vertex) + 1;
+            Wchar *suffix_start = text.fst + VERTEX_TO_INDEX(child) + 1;
 
-            Pattern edgepatt = make_patt(suffix_start, text.lst - 1);
+            Pattern patt = make_patt(suffix_start, text.lst - 1);
             Pattern tailpatt = make_patt(st->tl + 1, text.lst - 1);
-            plen = lcp(edgepatt, tailpatt) + 1;
+            plen = lcp(patt, tailpatt) + 1;
 
             st->tl += plen;
-            st->hd.l.start   = edgepatt.start - 1;
-            st->hd.l.end     = edgepatt.start - 1 + (plen-1);
-            st->split.child = current_vertex;
+
+            update_head_and_splitloc(
+                    st,
+                    patt.start - 1,
+                    patt.start - 1 + plen - 1,
+                    child,
+                    st->split.left
+                );
 
             return;
+        } else {
+
+            // The root edge is an inner vertex
+            curr_vertex = VERTEX_TO_REF(child);
+
+            set_dist_and_chainterm(st, curr_vertex, &chain_term, &dist);
+            Uint hp = get_headpos(st, curr_vertex, dist, chain_term);
+            depth   = get_depth(st, curr_vertex, dist, chain_term);
+            label   = text.fst + hp;
+            plen    = lcp_with_tail(st, label + 1, label + depth - 1);
+
+            st->tl += plen;
+            if (depth > plen) {
+                // cannot reach the child, fall out of tree
+                Vertex left = st->split.left;
+                update_head_and_splitloc(st, label, label + plen - 1, child, left);
+                return;
+            }
+            st->hd.v = curr_vertex;
+            st->hd.d = depth;
         }
-
-        current_vertexp = VERTEX_TO_REF(current_vertex);
-
-        set_dist_and_chainterm(st, current_vertexp, &chain_term, &dist);
-        hd = get_headpos(st, current_vertexp, dist, chain_term);
-        depth = get_depth(st, current_vertexp, dist, chain_term);
-
-        label_start = text.fst + hd;
-        plen = lcp_with_tail(st, label_start + 1, label_start + depth - 1);
-
-        st->tl+= plen;
-        if(depth > plen) {
-
-            // cannot reach the successor, fall out of tree
-            st->split.child     = current_vertex;
-            st->hd.l.start = label_start;
-            st->hd.l.end   = label_start + (plen - 1);
-            return;
-        }
-        st->hd.v = current_vertexp;
-        st->hd.d = depth;
     }
 
     // Head is not the root
     while(true) {
 
-        prev = UNDEF;
-        current_vertex = CHILD(st->hd.v);
-        fst = *(st->tl);
+        Vertex prev = UNDEF;
+        child = CHILD(st->hd.v);
+        fst = *st->tl;
+        Wchar edge_c;
 
         do {
-            // find successor edge with fst = fst
-            if(IS_LEAF(current_vertex)) {
+            // Iterate over all children, find the correct edge
+            if(IS_LEAF(child)) {
 
-                leafindex = VERTEX_TO_INDEX(current_vertex);
-                labelchar = get_label(st, leafindex, &label_start);
+                Uint leaf_ind = VERTEX_TO_INDEX(child);
+                edge_c = get_label(st, leaf_ind, &label);
 
-                if (labelchar >= fst) {
+                if (edge_c >= fst) {
                     break;
                 }
 
-                prev          = current_vertex;
-                current_vertex = LEAF_SIBLING(st->ls.fst + leafindex);
+                prev  = child;
+                child = LEAF_SIBLING(st->ls.fst + leaf_ind);
 
             } else {
 
-                current_vertexp   = VERTEX_TO_REF(current_vertex);
-                set_dist_and_chainterm(st, current_vertexp, &chain_term, &dist);
+                curr_vertex = VERTEX_TO_REF(child);
+                set_dist_and_chainterm(st, curr_vertex, &chain_term, &dist);
 
-                hd      = get_headpos(st, current_vertexp, dist, chain_term);
-                labelchar = get_label(st, hd, &label_start);
+                Uint hp  = get_headpos(st, curr_vertex, dist, chain_term);
+                edge_c = get_label(st, hp, &label);
 
-                if (labelchar >= fst) {
+                if (edge_c >= fst) {
                     break;
                 }
 
-                prev          = current_vertex;
-                current_vertex = SIBLING(current_vertexp);
+                prev  = child;
+                child = SIBLING(curr_vertex);
             }
 
-        } while(EXISTS(current_vertex));
+        } while(EXISTS(child));
 
-        if (!EXISTS(current_vertex) || labelchar > fst) {
-
+        if (!EXISTS(child) || edge_c > fst) {
             // No matching a-edge found
             // New edge will become right sibling of last vertex
             st->split.left = prev;
-            st->hd.l.end = NULL;
+            st->hd.l.end   = NULL;
             return;
+        } else {
+            // `child` is the child of the matching a-edge
+            if (IS_LEAF(child)) {
+                plen = lcp_with_tail(st, label + 1, text.lst - 1);
+                st->tl += plen;
+                update_head_and_splitloc(st, label, label + plen - 1, child, prev);
+                return;
+            }
+
+            depth   = get_depth(st, curr_vertex, dist, chain_term);
+            Uint edge_len = depth - st->hd.d;
+            plen    = lcp_with_tail(st, label + 1, label + edge_len - 1);
+            st->tl += plen;
+
+            // Nothing more to scan
+            if(edge_len > plen) {
+                update_head_and_splitloc(st, label, label + plen - 1, child, prev);
+                return;
+            }
+
+            st->hd.v = curr_vertex;
+            st->hd.d = depth;
         }
-
-        if (IS_LEAF(current_vertex)) {
-            plen = lcp_with_tail(st, label_start + 1, text.lst - 1);
-            (st->tl) += plen;
-            update_stree(st, label_start, plen, current_vertex, prev);
-            return;
-        }
-
-        depth   = get_depth(st, current_vertexp, dist, chain_term);
-        edgelen = depth - st->hd.d;
-        plen    = lcp_with_tail(st, label_start + 1, label_start + edgelen - 1);
-        (st->tl) += plen;
-
-        // cannot reach nxt node
-        if(edgelen > plen) {
-            update_stree(st, label_start, plen, current_vertex, prev);
-            return;
-        }
-
-        st->hd.v = current_vertexp;
-        st->hd.d = depth;
+        // Reiterate...
     }
 }

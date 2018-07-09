@@ -53,43 +53,43 @@ void skip_count(STree *st)
 
         fst              = *st->hd.l.start;
         Vertex prev      = UNDEF;
-        Vertex v_child = CHILD(st->hd.v);
+        Vertex child = CHILD(st->hd.v);
 
         // iterate over the children
         while(true) {
 
             Wchar edge_c;
             Uint leaf_ind;
-            if(IS_LEAF(v_child)) {
+            if(IS_LEAF(child)) {
 
                 // Child is a leaf
-                leaf_ind = VERTEX_TO_INDEX(v_child);
+                leaf_ind = VERTEX_TO_INDEX(child);
                 edge_c = text.fst[st->hd.d + leaf_ind];
 
                 if(edge_c == fst) {
                     // correct edge found
-                    st->split.child = v_child;
+                    st->split.child = child;
                     st->split.left = prev;
                     return;
                 }
 
-                prev = v_child;
-                v_child = st->ls.fst[leaf_ind];
+                prev = child;
+                child = st->ls.fst[leaf_ind];
                 continue;
 
             } else {
 
                 // Child is an inner vertex
-                curr_vertex = VERTEX_TO_REF(v_child);
+                curr_vertex = VERTEX_TO_REF(child);
                 set_dist_and_chainterm(st, curr_vertex, &chain_term, &dist);
-                Vertex hd = get_headpos(st, curr_vertex, dist, chain_term);
-                edge_c = text.fst[st->hd.d + hd];
+                Uint hp = get_headpos(st, curr_vertex, dist, chain_term);
+                edge_c = text.fst[st->hd.d + hp];
                 // Correct edge found
                 if(edge_c == fst) {
                     break;
                 }
-                prev = v_child;
-                v_child = SIBLING(curr_vertex);
+                prev = child;
+                child = SIBLING(curr_vertex);
             }
         }
 
@@ -99,7 +99,7 @@ void skip_count(STree *st)
         Uint base_depth = st->hd.l.end - st->hd.l.start + 1;
         if(edge_len > base_depth) {
             // cannot reach the child
-            st->split.child = v_child;
+            st->split.child = child;
             st->split.left = prev;
             return;
         }

@@ -85,3 +85,18 @@ void set_dist_and_chainterm(STree *st, VertexP v, VertexP *end, Uint *dist)
             *end   = chain_term;
     }
 }
+
+
+void update_head_and_splitloc(
+        STree *st,
+        Wchar *label_start,
+        Wchar *label_end,
+        Vertex split_child,
+        Vertex split_left
+    )
+{
+    st->hd.l.start  = label_start;
+    st->hd.l.end    = label_end;
+    st->split.child = split_child;
+    st->split.left  = split_left;
+}

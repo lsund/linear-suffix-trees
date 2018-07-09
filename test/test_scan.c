@@ -1,11 +1,22 @@
 #include "test.h"
 
-static Uint match_leaf(Loc *loc, Uint v, Pattern *patt, Uint remain)
+static int prefixlen(Wchar *start, Uint len, Pattern *patt)
+{
+    if (len < 0) {
+        len = 1;
+    }
+    Pattern textpatt  = make_patt(start + len, text.lst - 1);
+    Pattern curr_patt = make_patt(patt->start + len, patt-> end);
+    return len + lcp(textpatt, curr_patt);
+}
+
+
+static Uint match_leaf(Loc *loc, Uint v, Pattern *patt, Uint len)
 {
     Uint leafnum = VERTEX_TO_INDEX(v);
     loc->fst   = text.fst + leafnum;
 
-    return prefixlen(loc->fst, patt, remain);
+    return prefixlen(loc->fst, len, patt);
 }
 
 
@@ -107,7 +118,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                     if(labelchar == fst) {
 
                         loc->isleaf = true;
-                        plen = prefixlen(label, &patt, remain);
+                        plen = prefixlen(label, remain, &patt);
                         if(MATCHED(plen, patt.end, patt.start)) {
                             return NULL;
                         } else {

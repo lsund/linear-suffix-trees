@@ -9,11 +9,8 @@
 #include "chain.h"
 #include "text.h"
 
-Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt);
-
+// Scans a prefix of the current tail from the current base vertex
 void scan_tail(STree *st);
-
-Uint prefixlen(Wchar *start, Pattern *patt, Uint remain);
 
 #define MATCHED(X, R, L)        (X) == (Uint) ((R) - (L) + 1)
 
