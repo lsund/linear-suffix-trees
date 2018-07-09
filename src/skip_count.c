@@ -1,110 +1,117 @@
-
 #include "skip_count.h"
 
 void skip_count(STree *st)
 {
-    Uint prevnode, depth, edgelen, leafindex, hd;
-    Wchar fstchar, edgechar;
-
-    VertexP v  = NULL;;
-    VertexP chainend = NULL;
-    Uint distance = 0;
+    Wchar fst;
+    Uint depth;
+    VertexP curr_vertex          = NULL;
+    VertexP chain_term = NULL;
+    Uint dist = 0;
 
     if (head_is_root(st)) {
 
-        fstchar = *(st->hd.l.start);
-        Uint rootchild = st->rs[(Uint) fstchar];
+        fst = *(st->hd.l.start);
+        Uint root_child = st->rs[(Uint) fst];
 
-        if (IS_LEAF(rootchild)) {
+        if (IS_LEAF(root_child)) {
 
-            st->split.child = rootchild;
+            // Head is on a root edge which leads to a leaf
+            st->split.child = root_child;
             return;
 
         } else {
 
-            v = VERTEX_TO_REF(rootchild);
-            set_dist_and_chainterm(st, v, &chainend, &distance);
-            depth = get_depth(st, v, distance, chainend);
+            // Head is on root a edge but not a leaf
+            curr_vertex = VERTEX_TO_REF(root_child);
+            set_dist_and_chainterm(st, curr_vertex, &chain_term, &dist);
 
-            Uint wlen = (st->hd.l.end - st->hd.l.start + 1);
+            depth           = get_depth(st, curr_vertex, dist, chain_term);
+            Uint base_depth = st->hd.l.end - st->hd.l.start + 1;
 
-            if(depth > wlen) {
-                // cannot reach the successor node
-                st->split.child = rootchild;
+            if(depth > base_depth) {
+                // cannot reach the child
+                st->split.child = root_child;
                 return;
             } else {
-                // Go to successor v
-                st->hd.v = v;
+                // Update head to the child
+                st->hd.v = curr_vertex;
                 st->hd.d = depth;
             }
 
-            // location has been scanned
-            if(depth == wlen) {
+            if(depth == base_depth) {
+                // Location found
                 st->hd.l.end = NULL;
                 return;
             } else {
-                (st->hd.l.start) += depth;
+                st->hd.l.start += depth;
             }
         }
     }
 
+    // The new head was not found directly under root
     while(true) {
 
-        fstchar = *(st->hd.l.start);
-        prevnode = UNDEF;
-        Vertex headchild = CHILD(st->hd.v);
+        fst              = *st->hd.l.start;
+        Vertex prev      = UNDEF;
+        Vertex v_child = CHILD(st->hd.v);
 
-        // traverse the list of successors
+        // iterate over the children
         while(true) {
-            if(IS_LEAF(headchild)) {
 
-                leafindex = VERTEX_TO_INDEX(headchild);
-                edgechar = text.fst[st->hd.d + leafindex];
+            Wchar edge_c;
+            Uint leaf_ind;
+            if(IS_LEAF(v_child)) {
 
-                if(edgechar == fstchar) {
+                // Child is a leaf
+                leaf_ind = VERTEX_TO_INDEX(v_child);
+                edge_c = text.fst[st->hd.d + leaf_ind];
+
+                if(edge_c == fst) {
                     // correct edge found
-                    st->split.child = headchild;
-                    st->split.left = prevnode;
+                    st->split.child = v_child;
+                    st->split.left = prev;
                     return;
                 }
 
-                prevnode = headchild;
-                headchild = st->ls.fst[leafindex];
+                prev = v_child;
+                v_child = st->ls.fst[leaf_ind];
                 continue;
 
             } else {
 
-                // successor is branch node
-                v = VERTEX_TO_REF(headchild);
-                set_dist_and_chainterm(st, v, &chainend, &distance);
-                hd = get_headpos(st, v, distance, chainend);
-                edgechar = text.fst[st->hd.d + hd];
+                // Child is an inner vertex
+                curr_vertex = VERTEX_TO_REF(v_child);
+                set_dist_and_chainterm(st, curr_vertex, &chain_term, &dist);
+                Vertex hd = get_headpos(st, curr_vertex, dist, chain_term);
+                edge_c = text.fst[st->hd.d + hd];
                 // Correct edge found
-                if(edgechar == fstchar) {
+                if(edge_c == fst) {
                     break;
                 }
-                prevnode = headchild;
-                headchild = SIBLING(v);
+                prev = v_child;
+                v_child = SIBLING(curr_vertex);
             }
         }
 
-        depth = get_depth(st, v, distance, chainend);
-        edgelen = depth - st->hd.d;
-        Uint wlen = (st->hd.l.end - st->hd.l.start + 1);
-        if(edgelen > wlen) {
-            // cannot reach the succ node
-            st->split.child = headchild;
-            st->split.left = prevnode;
+        // At this point, the correct edge has been found.
+        depth           = get_depth(st, curr_vertex, dist, chain_term);
+        Uint edge_len   = depth - st->hd.d;
+        Uint base_depth = st->hd.l.end - st->hd.l.start + 1;
+        if(edge_len > base_depth) {
+            // cannot reach the child
+            st->split.child = v_child;
+            st->split.left = prev;
             return;
         }
-        // go to the successor node
-        st->hd.v = v;
+        // The head becomes the next vertex
+        st->hd.v = curr_vertex;
         st->hd.d = depth;
-        if(edgelen == wlen) {
-            // location is found
+        if(edge_len == base_depth) {
+            // Location found
             st->hd.l.end = NULL;
             return;
         }
-        (st->hd.l.start) += edgelen;
+        st->hd.l.start += edge_len;
+        // Iterate...
     }
 }
