@@ -3,7 +3,13 @@
 
 #include "types.h"
 #include "config.h"
-#include "streedef.h"
+
+// A Label represents an edge label in the suffix tree, with a start and an
+// end.
+typedef struct label {
+    Wchar *start;
+    Wchar *end;
+} Label;
 
 // The label for a incoming edge to a vertex wu can be obtained by dropping
 // depth(w) characters of wu.

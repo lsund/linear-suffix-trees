@@ -16,6 +16,7 @@
 #include "streedef.h"
 #include "init.h"
 #include "util.h"
+#include "chain.h"
 
 // Constant representing an undefined value
 #define UNDEF                     (~((Uint) 0))

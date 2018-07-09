@@ -2,6 +2,7 @@
 #define STREEDEF_H
 
 #include "types.h"
+#include "text.h"
 
 // The root is at the first address in the inner table
 #define ROOT                    (st->is.fst)
@@ -20,71 +21,82 @@
 // reference.
 #define VERTEX_TO_LEAFREF(V)    st->ls.fst + VERTEX_TO_INDEX((V))
 
+// A Pattern is a search pattern. A pattern has a start and an end.
 typedef struct pattern {
     Wchar *start;
     Wchar *end;
 } Pattern;
 
+// A Table represents an array for storing vertices.
 typedef struct table {
+    // The address of the first occupied vertex.
     VertexP fst;
+    // The address of the next, unoccupied vertex.
     VertexP nxt;
+    // The next unoccupied index.
     Uint nxt_ind;
+    // The number of vertices stored.
     Uint size;
+    // The next unoccupied address, such that a large vertex can be stored.
     VertexP alloc;
 } Table;
 
+// A HeadEdge represents The edge that contains the head location. In case this
+// location is on the last character of the edge then the end of the label is
+// NULL.
+typedef struct head {
+    // The parent vertex of the edge
+    VertexP v;
+    // The characters from the head location to the end of the edge.
+    Label l;
+    // The depth of the head location
+    Uint d;
+} HeadEdge;
 
+// A SplitEdge represents the edge that is to be splitted after finding the new
+// head location.
+typedef struct split {
+    // refers to the vertex where the split edge ends
+    Vertex child;
+    // refers to the branching node to the left of the inner node to be
+    // inserted.
+    Vertex left;
+} SplitEdge;
+
+// A Chain is a sequence of small vertices terminating in a large vertex. The
+// structure stores a reference to the address of the first vertex in the chain
+// as well as the number of vertices in the chain.
 typedef struct chain {
     VertexP fst;
     Uint size;
 } Chain;
 
 
-typedef struct label {
-    Wchar *start;
-    Wchar *end;
-} Label;
-
-// The edge that contains the end of head
-//
-// The right component of the head location uv.
-// head.label.start refers to the fst character of v
-// headend to the last character. In case, v = empty
-// headend = null
-typedef struct head {
-    VertexP v;  // the vertex u
-    Label l;
-    Uint d;
-} Head;
-
-
-// The edge which is to be splitted
-typedef struct split {
-    // refers to the vertex where the split edge ends
-    Vertex child;
-    // refers to the branching node to the left of the inner node to be
-    // inserted
-    Vertex left;
-} SplitEdge;
-
-
+// A STree represents a suffix tree.
 typedef struct stree {
 
-    Table is;           // Inner vertices
-    Table ls;           // Leaf vertices
-    VertexP rs;         // references to successors of root
+    // The table of inner vertices.
+    Table is;
+    // The table of leaf vertices.
+    Table ls;
 
-    Uint c_depth;       // Current depth of the newly inserted inner vertex
+    // The list of root children.
+    VertexP rs;
 
-    SplitEdge split;    // A reference to the child and left sibling of the
-                        // current edge split by the algorithm
+    // The current depth of the most newly inserted inner vertex.
+    Uint c_depth;
 
-    Chain chain;        // Address of the vertex current chains starts at,
-                        // and the total size of the chain
+    // The current chain of small vertices.
+    Chain chain;
 
-    Head hd;          // Representing the edge containing the head location.
+    // The edge to be split after finding a new head location.
+    SplitEdge split;
 
-    Wchar *tl;        // Points to the tail
+    // The edge containing the current head in the tree
+    HeadEdge hd;
+
+    // Points to the tail
+    Wchar *tl;
 
 } STree;
 
