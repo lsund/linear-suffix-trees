@@ -30,7 +30,7 @@
 #define LARGE_VERTEXSIZE            5
 
 // The value represented by the most significant bit of an unsigned integer.
-#define MSB                         (UintConst(1) << (INTWORDSIZE - 1))
+#define MSB                         (UINT(1) << (INTWORDSIZE - 1))
 // The value represented by the second most significant bit of an unsigned
 // integer.
 #define SECOND_MSB                  (MSB >> 1)

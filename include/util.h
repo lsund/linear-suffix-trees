@@ -5,18 +5,22 @@
 #include "streedef.h"
 #include "clock.h"
 
-#define MEGABYTES(V)  ((double) (V)/((UintConst(1) << 20) - 1))
+// Bytes into megabytes.
+#define MEGABYTES(V)  ((double) (V)/((UINT(1) << 20) - 1))
 
-Uint max(Uint a, Uint b);
+// The longest common prefix of the two patterns x and y.
+Uint lcp(Pattern x, Pattern y);
 
+// Create a pattern, given a start and an end pointer.
 Pattern make_patt(Wchar *start, Wchar *end);
 
-Uint lcp(Pattern patt1, Pattern patt2);
-
+// Increment the start pointer of a pattern by `n`.
 Pattern patt_inc(Pattern patt, Uint n);
 
+// The smaller of the numbers a and b.
 Uint min(const Uint a, const Uint b);
 
-void printtime(FILE *file);
+// The larger of the numbers a and b.
+Uint max(const Uint a, const Uint b);
 
 #endif

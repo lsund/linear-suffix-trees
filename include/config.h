@@ -3,7 +3,7 @@
 
 #define MAX_ALLOC           450000000 // 450 MB
 
-#define BRANCHWIDTH             UintConst(2)
+#define BRANCHWIDTH             UINT(2)
 
 #define MAX_PATTERNLEN           100000
 
@@ -14,6 +14,6 @@
 #define LOGWORDSIZE    6
 
 #define INTWORDSIZE\
-        (UintConst(1) << LOGWORDSIZE)     // # of bits in Uint = w
+        (UINT(1) << LOGWORDSIZE)     // # of bits in Uint = w
 
 #endif

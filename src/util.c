@@ -2,27 +2,15 @@
 #include "util.h"
 
 
-Uint lcp(Pattern patt1, Pattern patt2)
+Uint lcp(Pattern x, Pattern y)
 {
-    register Wchar *probe1 = patt1.start, *probe2 = patt2.start;
+    register Wchar *px = x.start, *py = y.start;
 
-    while(probe1 <= patt1.end && probe2 <= patt2.end && *probe1 == *probe2) {
-        probe1++;
-        probe2++;
+    while(px <= x.end && py <= y.end && *px == *py) {
+        px++;
+        py++;
     }
-    return (Uint) (probe1 - patt1.start);
-}
-
-
-Uint max(Uint a, Uint b)
-{
-    return a > b ? a : b;
-}
-
-
-Uint min(const Uint a, const Uint b)
-{
-    return a < b ? a : b;
+    return (Uint) (px - x.start);
 }
 
 
@@ -43,3 +31,14 @@ Pattern patt_inc(Pattern patt, Uint n)
     return ret;
 }
 
+
+Uint max(const Uint a, const Uint b)
+{
+    return a > b ? a : b;
+}
+
+
+Uint min(const Uint a, const Uint b)
+{
+    return a < b ? a : b;
+}
