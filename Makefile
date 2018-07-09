@@ -24,8 +24,8 @@ dirs:
 
 all: dirs mcc
 
-run: clean all
-	./bin/mcc /home/lsund/Data/testdata/akz/data.xml
+testrun: clean all
+	./bin/mcc ./test-data/members.xml
 
 runtest: clean test
 	./bin/test

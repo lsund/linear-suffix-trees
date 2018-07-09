@@ -25,5 +25,7 @@ int main(int argc, char *argv[])
     stree_destroy(&st);
     text_destroy();
 
+    fprintf(stdout, "Done in %.2f seconds\n", getruntime());
+
     return EXIT_SUCCESS;
 }
