@@ -43,89 +43,69 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Query and modify vertices
 
-// The label for a incoming edge to a vertex wu can be obtained by dropping
-// depth(w) characters of wu.
-#define LABEL_START(O)          text.fst + (O)
-
-///////////////////////////////////////////////////////////////////////////////
-// Queries
-
-// An extra bit
-// with each such integer tells whereth the reference is to a leaf or to a
-// branching vertex
-#define IS_LEAF(V)                  ((V) & SECOND_MSB)
-#define IS_SMALL(V)                 ((V) & MSB)
-#define IS_LARGE(V)                 (!((V) & MSB))
-#define IS_LAST(C)                  ((C) >= text.lst)
-#define IS_ROOT(V)                  (st->is.fst == V)
-#define EXISTS(V)                   ((V) != UNDEF)
-
-///////////////////////////////////////////////////////////////////////////////
-// Vertices
-
-#define ROOT                    (st->is.fst)
-#define ROOT_CHILD(C)           (st->rs[(Uint) (C)])
-// Index of a reference
-#define REF_TO_INDEX(P)         ((Uint) ((P) - st->is.fst))
-#define LEAFREF_TO_INDEX(P)     ((Uint) ((P) - st->ls.fst))
-
-// The reference to this specific vertex
-#define VERTEX_TO_REF(V)        st->is.fst + VERTEX_TO_INDEX((V)) // address
-#define VERTEX_TO_LEAFREF(V)    st->ls.fst + VERTEX_TO_INDEX((V))
-
-// Make a leaf vertex, or a small vertex
+// Mark a vertex to be a leaf
 #define MAKE_LEAF(V)            ((V) | SECOND_MSB)
+// Mark a vertex to be a small, inner vertex
 #define MAKE_SMALL(V)           ((V) | MSB)
 
-// LEAF
-#define VERTEX_TO_INDEX(V)    ((V) & ~(MSB | SECOND_MSB))
+// Is this vertex a leaf?
+#define IS_LEAF(V)                  ((V) & SECOND_MSB)
+// Is this vertex a small, inner vertex?
+#define IS_SMALL(V)                 ((V) & MSB)
+// Is this vertex a large vertex?
+#define IS_LARGE(V)                 (!((V) & MSB))
+// Is this vertex the root?
+#define IS_ROOT(V)                  (st->is.fst == V)
+// Is this vertex not undefined?
+#define EXISTS(V)                   ((V) != UNDEF)
+
+// The index of a vertex is obtained by stripping of the most and second most
+// significant bits.
+#define VERTEX_TO_INDEX(V)     ((V) & ~(MSB | SECOND_MSB))
+
+// A leaf directly stores its sibling
 #define LEAF_SIBLING(P)        (*(P))
 
-// INNER
+// An inner vertex stores its leftmost child ...
 #define CHILD(P)               ((*(P)) & ~(MSB))
+// ... and its sibling.
 #define SIBLING(P)             (*((P) + 1))
-
-// Small inner
+// Small inner vertices store the distance to the last vertex in the chain.
 #define DISTANCE(P)            (*((P) + 2))
-// Large inner
+// Large inner vertices store their label-depth in the tree ...
 #define DEPTH(P)               (*((P) + 2))
+// ... their head position ...
 #define HEADPOS(P)             (*((P) + 3))
+// ... and suffix link.
 #define SUFFIX_LINK(P)         (*((P) + 4))
-
-#define CHAIN_END(P, D)        (P) + SMALL_VERTEXSIZE * (D)
-
-///////////////////////////////////////////////////////////////////////////////
-// Setters
 
 // Additionally sets the child bit for the parent
 #define SET_CHILD(V, VAL)               *(V) = ((*(V)) & MSB) | (VAL)
 
+// Is the base location w, a vertex?
 bool base_is_vertex(STree *st);
 
+// Was the head created by some iteration prior to the last?
 bool is_head_old(STree *st);
 
-// Get info for branch vertex
-Uint get_depth_head(STree *st, Uint *depth, Uint *head, Uint *v, Uint *largep);
-
-void set_dist_and_chainend(STree *st, Uint *v, Uint **end, Uint *dist);
-
-// The smallest integer i such that v = head(i)
-Uint get_headpos(STree *st, Uint *v, Uint **largep, Uint distance);
-
-Uint get_depth(STree *st, Uint *v, Uint distance, Uint **largep);
-
-void follow_link(STree *st);
-
-void set_child_and_sibling(STree *st, Uint child, Uint sibling);
-
+// Does the tail point to the last character in `text`?
 bool tail_at_lastchar(STree *st);
 
 bool head_is_root(STree *st);
 
-VertexP get_next_inner(STree *st);
+// The head position of the vertex `v`. The head position is the smallest integer
+// i such that `v` = head(i).
+Uint get_headpos(STree *st, VertexP v, Uint dist, VertexP chain_term);
 
-Uint get_next_leafnum(STree *st);
+// The label-depth of vertex `v`. This is the length of the string that the
+// vertex corresponds to in the tree.
+Uint get_depth(STree *st, VertexP v, Uint dist, VertexP chain_term);
 
-void set_next_leaf(STree *st, Vertex v);
+// Sets the current head to the suffix link of the current head.
+void set_head_to_suffixlink(STree *st);
+
+// Sets the distance for vertex `v` and the chain terminator depending on this
+// distance.
+void set_dist_and_chainterm(STree *st, Uint *v, Uint **end, Uint *dist);
 
 #endif

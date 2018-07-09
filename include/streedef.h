@@ -3,6 +3,23 @@
 
 #include "types.h"
 
+// The root is at the first address in the inner table
+#define ROOT                    (st->is.fst)
+// The root children, unique with respect to a character
+#define ROOT_CHILD(C)           (st->rs[(Uint) (C)])
+
+// To retrieve an index for an inner vertex, subtract the root
+#define REF_TO_INDEX(P)         ((Uint) ((P) - st->is.fst))
+// To retrieve an index for a leaf, subtract the first leaf
+#define LEAFREF_TO_INDEX(P)     ((Uint) ((P) - st->ls.fst))
+
+// To get the corresponding inner vertex reference, add its index to the first
+// reference.
+#define VERTEX_TO_REF(V)        st->is.fst + VERTEX_TO_INDEX((V)) // address
+// To get the corresponding leaf reference, add its index to the first
+// reference.
+#define VERTEX_TO_LEAFREF(V)    st->ls.fst + VERTEX_TO_INDEX((V))
+
 typedef struct pattern {
     Wchar *start;
     Wchar *end;

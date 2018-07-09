@@ -22,8 +22,8 @@ void skip_count(STree *st)
         } else {
 
             v = VERTEX_TO_REF(rootchild);
-            set_dist_and_chainend(st, v, &chainend, &distance);
-            depth = get_depth(st, v, distance, &chainend);
+            set_dist_and_chainterm(st, v, &chainend, &distance);
+            depth = get_depth(st, v, distance, chainend);
 
             Uint wlen = (st->hd.l.end - st->hd.l.start + 1);
 
@@ -75,8 +75,8 @@ void skip_count(STree *st)
 
                 // successor is branch node
                 v = VERTEX_TO_REF(headchild);
-                set_dist_and_chainend(st, v, &chainend, &distance);
-                hd = get_headpos(st, v, &chainend, distance);
+                set_dist_and_chainterm(st, v, &chainend, &distance);
+                hd = get_headpos(st, v, distance, chainend);
                 edgechar = text.fst[st->hd.d + hd];
                 // Correct edge found
                 if(edgechar == fstchar) {
@@ -87,7 +87,7 @@ void skip_count(STree *st)
             }
         }
 
-        depth = get_depth(st, v, distance, &chainend);
+        depth = get_depth(st, v, distance, chainend);
         edgelen = depth - st->hd.d;
         Uint wlen = (st->hd.l.end - st->hd.l.start + 1);
         if(edgelen > wlen) {

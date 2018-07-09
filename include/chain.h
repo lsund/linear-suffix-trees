@@ -3,7 +3,6 @@
 
 #include "stree.h"
 
-
 // Reset the fields of the chain to default values
 void reset_chain(STree *st);
 

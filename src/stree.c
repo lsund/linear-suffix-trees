@@ -1,5 +1,17 @@
 #include "stree.h"
 
+
+static Uint* head_suffix_link(STree *st)
+{
+    VertexP root = st->is.fst;
+    if(st->hd.d == 1) {
+        return root;
+    } else {
+        return root + SUFFIX_LINK(st->hd.v);
+    }
+}
+
+
 bool base_is_vertex(STree *st)
 {
     return st->hd.l.end == NULL;
@@ -23,46 +35,39 @@ bool head_is_root(STree *st)
     return st->hd.d == 0;
 }
 
-Uint get_headpos(STree *st, Uint *v, Uint **chainend, Uint distance)
+
+Uint get_headpos(STree *st, VertexP v, Uint dist, VertexP chain_term)
 {
     if(st->chain.fst != NULL && v >= st->chain.fst) {
-        return st->ls.nxt_ind - distance;
+        return st->ls.nxt_ind - dist;
     } else {
-        if(IS_LARGE(*(v))) {
+        if (IS_LARGE(*v)) {
             return HEADPOS(v);
         } else {
-            return HEADPOS(*chainend) - distance;
+            return HEADPOS(chain_term) - dist;
         }
     }
 }
 
-Uint get_depth(STree *st, Uint *v, Uint distance, Uint **chainend)
+
+Uint get_depth(STree *st, VertexP v, Uint dist, VertexP chain_term)
 {
     if(st->chain.fst != NULL && v >= st->chain.fst) {
-        return st->c_depth  + distance;
+        return st->c_depth  + dist;
     } else {
         if(IS_LARGE(*v)) {
             return DEPTH(v);
         } else {
-            return DEPTH(*chainend) + distance;
+            return DEPTH(chain_term) + dist;
         }
     }
 }
 
-static Uint* suffix_link(STree *st)
-{
-    Uint *fst = st->is.fst;
-    if(st->hd.d == 1) {
-        return fst;
-    } else {
-        return fst + SUFFIX_LINK(st->hd.v);
-    }
-}
 
-void follow_link(STree *st)
+void set_head_to_suffixlink(STree *st)
 {
     if(IS_LARGE(*st->hd.v)) {
-        st->hd.v = suffix_link(st);
+        st->hd.v = head_suffix_link(st);
     } else {
         st->hd.v += SMALL_VERTEXSIZE;
     }
@@ -70,14 +75,13 @@ void follow_link(STree *st)
 }
 
 
-void set_dist_and_chainend(STree *st, VertexP v, VertexP *end, Uint *dist)
+void set_dist_and_chainterm(STree *st, VertexP v, VertexP *end, Uint *dist)
 {
     if(st->chain.fst != NULL && v >= st->chain.fst) {
         *dist = 1 + (st->is.nxt - v) / SMALL_VERTEXSIZE;
     } else if (IS_SMALL(*v)) {
             *dist = DISTANCE(v);
-            *end   = CHAIN_END(v, *dist);
+            VertexP chain_term = v + SMALL_VERTEXSIZE * *dist;
+            *end   = chain_term;
     }
 }
-
-

@@ -33,7 +33,7 @@ static void find_base(STree *st)
             skip_count(st);
         }
     } else {
-        follow_link(st);
+        set_head_to_suffixlink(st);
         skip_count(st);
     }
 }
@@ -44,7 +44,7 @@ static void find_nxt_head(STree * st) {
         scan_tail(st);
     } else {
         if (is_head_old(st)) {
-            follow_link(st);
+            set_head_to_suffixlink(st);
             scan_tail(st);
         } else {
             find_base(st);

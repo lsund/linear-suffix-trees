@@ -84,7 +84,7 @@ static Wchar get_label(STree *st, Uint offset, Wchar **label_start)
 Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 {
     VertexP vertexp  = start_vertex;
-    VertexP chainend = NULL;
+    VertexP chain_term = NULL;
     Vertex  hd       = 0;
     Uint depth       = 0;
     Uint distance    = 0;
@@ -94,11 +94,11 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
     if(!IS_ROOT(vertexp)) {
 
-        set_dist_and_chainend(st, vertexp, &chainend, &distance);
-        hd = get_headpos(st, vertexp, &chainend, distance);
+        set_dist_and_chainterm(st, vertexp, &chain_term, &distance);
+        hd = get_headpos(st, vertexp, distance, chain_term);
 
-        set_dist_and_chainend(st, vertexp, &chainend, &distance);
-        depth = get_depth(st, vertexp, distance, &chainend);
+        set_dist_and_chainterm(st, vertexp, &chain_term, &distance);
+        depth = get_depth(st, vertexp, distance, chain_term);
     }
 
     init_loc(vertexp, hd, depth, loc);
@@ -136,10 +136,10 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
             vertexp = VERTEX_TO_REF(rootchild);
 
-            set_dist_and_chainend(st, vertexp, &chainend, &distance);
-            hd = get_headpos(st, vertexp, &chainend, distance);
+            set_dist_and_chainterm(st, vertexp, &chain_term, &distance);
+            hd = get_headpos(st, vertexp, distance, chain_term);
 
-            label   = LABEL_START(hd);
+            label   = LABEL(hd);
 
         } else {
 
@@ -155,9 +155,9 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
                 } else if (IS_LEAF(v)) {
 
                     leafnum = VERTEX_TO_INDEX(v);
-                    label   = LABEL_START(depth + leafnum);
+                    label   = LABEL(depth + leafnum);
 
-                    if(IS_LAST(label)) {
+                    if(label >= text.lst) {
                         return patt.start;
                     }
 
@@ -184,10 +184,10 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
                     vertexp  = VERTEX_TO_REF(v);
 
-                    set_dist_and_chainend(st, vertexp, &chainend, &distance);
-                    hd = get_headpos(st, vertexp, &chainend, distance);
+                    set_dist_and_chainterm(st, vertexp, &chain_term, &distance);
+                    hd = get_headpos(st, vertexp, distance, chain_term);
 
-                    label    = LABEL_START(depth + hd);
+                    label    = LABEL(depth + hd);
                     labelchar = *label;
 
                     if (labelchar > fstchar) {
@@ -205,8 +205,8 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 
         Uint prevdepth = depth;
 
-        set_dist_and_chainend(st, vertexp, &chainend, &distance);
-        depth = get_depth(st, vertexp, distance, &chainend);
+        set_dist_and_chainterm(st, vertexp, &chain_term, &distance);
+        depth = get_depth(st, vertexp, distance, chain_term);
         edgelen = depth - prevdepth;
         loc->edgelen = edgelen;
 
@@ -248,7 +248,7 @@ Wchar *scan(STree *st, Loc *loc, Uint *start_vertex, Pattern patt)
 // Scans a prefix of the current tail down from a given node
 void scan_tail(STree *st)
 {
-    VertexP chainend = NULL;
+    VertexP chain_term = NULL;
     Uint leafindex;
     Uint depth;
     Uint edgelen;
@@ -296,9 +296,9 @@ void scan_tail(STree *st)
 
         current_vertexp = VERTEX_TO_REF(current_vertex);
 
-        set_dist_and_chainend(st, current_vertexp, &chainend, &distance);
-        hd = get_headpos(st, current_vertexp, &chainend, distance);
-        depth = get_depth(st, current_vertexp, distance, &chainend);
+        set_dist_and_chainterm(st, current_vertexp, &chain_term, &distance);
+        hd = get_headpos(st, current_vertexp, distance, chain_term);
+        depth = get_depth(st, current_vertexp, distance, chain_term);
 
         label_start = text.fst + hd;
         plen = tail_prefixlen(st, label_start + 1, label_start + depth - 1);
@@ -341,9 +341,9 @@ void scan_tail(STree *st)
             } else {
 
                 current_vertexp   = VERTEX_TO_REF(current_vertex);
-                set_dist_and_chainend(st, current_vertexp, &chainend, &distance);
+                set_dist_and_chainterm(st, current_vertexp, &chain_term, &distance);
 
-                hd      = get_headpos(st, current_vertexp, &chainend, distance);
+                hd      = get_headpos(st, current_vertexp, distance, chain_term);
                 labelchar = get_label(st, hd, &label_start);
 
                 if (labelchar >= fstchar) {
@@ -372,7 +372,7 @@ void scan_tail(STree *st)
             return;
         }
 
-        depth   = get_depth(st, current_vertexp, distance, &chainend);
+        depth   = get_depth(st, current_vertexp, distance, chain_term);
         edgelen = depth - st->hd.d;
         plen    = tail_prefixlen(st, label_start + 1, label_start + edgelen - 1);
         (st->tl) += plen;

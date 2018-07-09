@@ -5,6 +5,10 @@
 #include "config.h"
 #include "streedef.h"
 
+// The label for a incoming edge to a vertex wu can be obtained by dropping
+// depth(w) characters of wu.
+#define LABEL(O)          text.fst + (O)
+
 // A Text represents the text or string used to build a suffix tree.
 typedef struct text {
     // Points to the start of the allocated block, the first character in the
